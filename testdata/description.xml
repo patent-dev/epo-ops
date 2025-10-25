@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ops:world-patent-data xmlns:ops="http://ops.epo.org" xmlns="http://www.epo.org/exchange">
+  <ftxt:fulltext-documents xmlns:ftxt="http://www.epo.org/fulltext">
+    <ftxt:fulltext-document system="ops.epo.org" fulltext-format="text-only" lang="en" status="granted" country="EP" doc-number="2400812" kind="B1">
+      <description>
+        <p id="p-0001" num="0001">The present invention relates to a system and method for wireless communication.</p>
+        <p id="p-0002" num="0002">In recent years, wireless communication devices have become increasingly prevalent. There is a need for improved systems that can handle multiple device connections efficiently.</p>
+        <heading id="h-0001">BACKGROUND OF THE INVENTION</heading>
+        <p id="p-0003" num="0003">Conventional wireless systems suffer from various limitations when managing device connections.</p>
+        <heading id="h-0002">SUMMARY OF THE INVENTION</heading>
+        <p id="p-0004" num="0004">The present invention addresses these limitations by providing an improved connection management system.</p>
+      </description>
+    </ftxt:fulltext-document>
+  </ftxt:fulltext-documents>
+</ops:world-patent-data>

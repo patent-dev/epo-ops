@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="../../../../../style/pub-inquiry.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ops:fulltext-inquiry>
+        <ops:publication-reference>
+            <document-id document-id-type="docdb">
+                <country>EP</country>
+                <doc-number>2400812</doc-number>
+                <kind>A1</kind>
+            </document-id>
+        </ops:publication-reference>
+        <ops:inquiry-result>
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>2400812</doc-number>
+                    <kind>A1</kind>
+                </document-id>
+            </publication-reference>
+            <ops:fulltext-instance system="ops.epo.org" lang="EN" desc="description">
+                <ops:fulltext-format-options>
+                    <ops:fulltext-format>text-only</ops:fulltext-format>
+                </ops:fulltext-format-options>
+            </ops:fulltext-instance>
+            <ops:fulltext-instance system="ops.epo.org" lang="EN" desc="claims">
+                <ops:fulltext-format-options>
+                    <ops:fulltext-format>text-only</ops:fulltext-format>
+                </ops:fulltext-format-options>
+            </ops:fulltext-instance>
+        </ops:inquiry-result>
+    </ops:fulltext-inquiry>
+</ops:world-patent-data>

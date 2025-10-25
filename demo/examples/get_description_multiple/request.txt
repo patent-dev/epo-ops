@@ -1,0 +1,6 @@
+Method: GetDescriptionMultiple
+
+Parameters:
+  refType: publication
+  format: docdb
+  numbers: bulk test patents from CSV

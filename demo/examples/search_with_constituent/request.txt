@@ -1,0 +1,6 @@
+Method: SearchWithConstituent
+
+Parameters:
+  constituent: biblio
+  query: pa=Siemens
+  range: 1-3

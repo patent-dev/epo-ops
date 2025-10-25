@@ -1,0 +1,6 @@
+Method: GetDescription
+
+Parameters:
+  format: docdb
+  number: EP.2400812.A1
+  refType: publication

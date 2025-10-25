@@ -1,0 +1,7 @@
+Method: ConvertPatentNumber
+
+Parameters:
+  outputFormat: epodoc
+  number: EP.2400812.A1
+  refType: publication
+  inputFormat: docdb

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ops:world-patent-data xmlns:ops="http://ops.epo.org" xmlns:reg="http://www.epo.org/register">
+  <ops:register-search>
+    <reg:register-documents>
+      <reg:register-document produced-by="EPO" country="EP" doc-number="2400812" lang="en">
+        <reg:bibliographic-data>
+          <reg:publication-reference>
+            <document-id document-id-type="docdb">
+              <country>EP</country>
+              <doc-number>2400812</doc-number>
+              <kind>B1</kind>
+            </document-id>
+          </reg:publication-reference>
+        </reg:bibliographic-data>
+        <reg:legal-data>
+          <reg:status>
+            <reg:status-code>GRANTED</reg:status-code>
+            <reg:status-date>20140115</reg:status-date>
+          </reg:status>
+          <reg:procedural-step>
+            <reg:step-code>PUBL</reg:step-code>
+            <reg:step-date>20111228</reg:step-date>
+            <reg:step-description lang="en">Publication</reg:step-description>
+          </reg:procedural-step>
+          <reg:procedural-step>
+            <reg:step-code>GRANT</reg:step-code>
+            <reg:step-date>20140115</reg:step-date>
+            <reg:step-description lang="en">Grant</reg:step-description>
+          </reg:procedural-step>
+        </reg:legal-data>
+      </reg:register-document>
+    </reg:register-documents>
+  </ops:register-search>
+</ops:world-patent-data>

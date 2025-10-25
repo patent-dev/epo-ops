@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ops:world-patent-data xmlns:ops="http://ops.epo.org" xmlns="http://www.epo.org/exchange">
+  <ops:biblio-search total-result-count="1523">
+    <ops:query syntax="CQL">ti="battery"</ops:query>
+    <ops:range begin="1" end="5"/>
+    <exchange-documents>
+      <exchange-document system="ops.epo.org" family-id="43088294" country="EP" doc-number="2400812" kind="A1">
+        <bibliographic-data>
+          <publication-reference>
+            <document-id document-id-type="docdb">
+              <country>EP</country>
+              <doc-number>2400812</doc-number>
+              <kind>A1</kind>
+            </document-id>
+          </publication-reference>
+          <invention-title lang="en">Battery Management System</invention-title>
+        </bibliographic-data>
+      </exchange-document>
+      <exchange-document system="ops.epo.org" family-id="43088295" country="EP" doc-number="2400813" kind="A1">
+        <bibliographic-data>
+          <publication-reference>
+            <document-id document-id-type="docdb">
+              <country>EP</country>
+              <doc-number>2400813</doc-number>
+              <kind>A1</kind>
+            </document-id>
+          </publication-reference>
+          <invention-title lang="en">Improved Battery Technology</invention-title>
+        </bibliographic-data>
+      </exchange-document>
+    </exchange-documents>
+  </ops:biblio-search>
+</ops:world-patent-data>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ops:world-patent-data xmlns:ops="http://ops.epo.org">
+  <ops:document-inquiry>
+    <ops:inquiry-result>
+      <ops:document-instance desc="Drawing" number-of-pages="8" doc-type="Drawing">
+        <ops:document-instance-link href="/rest-services/published-data/images/EP/1000000/B1/Drawing/fullimage"/>
+        <ops:document-format-options>
+          <ops:document-format>application/pdf</ops:document-format>
+          <ops:document-format>image/tiff</ops:document-format>
+        </ops:document-format-options>
+      </ops:document-instance>
+      <ops:document-instance desc="FullDocument" number-of-pages="15" doc-type="FullDocument">
+        <ops:document-instance-link href="/rest-services/published-data/images/EP/1000000/B1/FullDocument/fullimage"/>
+        <ops:document-format-options>
+          <ops:document-format>application/pdf</ops:document-format>
+        </ops:document-format-options>
+      </ops:document-instance>
+      <ops:document-instance desc="FirstPageClipping" number-of-pages="1" doc-type="FirstPageClipping">
+        <ops:document-instance-link href="/rest-services/published-data/images/EP/1000000/B1/FirstPageClipping/fullimage"/>
+        <ops:document-format-options>
+          <ops:document-format>image/tiff</ops:document-format>
+        </ops:document-format-options>
+      </ops:document-instance>
+    </ops:inquiry-result>
+  </ops:document-inquiry>
+</ops:world-patent-data>

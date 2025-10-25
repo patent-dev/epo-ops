@@ -1,0 +1,7 @@
+Method: GetClassificationSchemaSubclass
+
+Parameters:
+  subclass: 00
+  ancestors: false
+  navigation: false
+  class: H04W4

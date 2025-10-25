@@ -1,0 +1,3464 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--Please add namespace attributes, a targetNamespace attribute and import elements according to your requirements-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.epo.org/register" targetNamespace="http://www.epo.org/register" elementFormDefault="qualified" version="20161030">
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+	<xs:element name="register-documents">
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element ref="register-document"/>
+			</xs:sequence>
+			<xs:attribute name="date-produced" type="xs:anySimpleType"/>
+			<xs:attribute name="dtd-version" type="xs:anySimpleType"/>
+			<xs:attribute name="produced-by" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="DO"/>
+						<xs:enumeration value="ISA"/>
+						<xs:enumeration value="EO"/>
+						<xs:enumeration value="RO"/>
+						<xs:enumeration value="applicant"/>
+						<xs:enumeration value="IB"/>
+						<xs:enumeration value="IPEA"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="ro" type="xs:anySimpleType"/>
+			<xs:attribute name="status" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="register-document">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-patent-statuses"/>
+				<xs:element ref="bibliographic-data"/>
+				<xs:element ref="procedural-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="events-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="file-wrapper-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="unitary-patent" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="date-produced" type="xs:anySimpleType"/>
+			<xs:attribute name="dtd-version" type="xs:anySimpleType"/>
+			<xs:attribute name="file" type="xs:anySimpleType"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="produced-by" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="DO"/>
+						<xs:enumeration value="ISA"/>
+						<xs:enumeration value="EO"/>
+						<xs:enumeration value="RO"/>
+						<xs:enumeration value="applicant"/>
+						<xs:enumeration value="IB"/>
+						<xs:enumeration value="IPEA"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="ro" type="xs:anySimpleType"/>
+			<xs:attribute name="status" type="xs:anySimpleType"/>
+			<xs:attribute name="file-reference-id" type="xs:anySimpleType"/>
+			<xs:attribute name="unitary-patent-status" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-patent-statuses">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-patent-status" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-patent-status">
+		<xs:complexType mixed="true">
+			<xs:attribute name="change-date" type="xs:anySimpleType" use="required"/>
+			<xs:attribute name="status-code" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="bibliographic-data">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="plain-language-designation" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="publication-reference" maxOccurs="unbounded"/>
+				<xs:element ref="classification-ipc" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="classifications-ipcr" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="classification-national" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="classification-locarno" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="classification-udc" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="application-reference" maxOccurs="unbounded"/>
+				<xs:element ref="language-of-filing" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="language-of-publication" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="priority-claims" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="parties"/>
+				<xs:element ref="designation-of-states" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="invention-title" maxOccurs="unbounded"/>
+				<xs:element ref="assignees" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="licensee-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-of-earliest-priority" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-complete-specification-filed" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="dates-of-public-availability" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="term-of-grant" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="dates-rights-effective" minOccurs="0"/>
+				<xs:element ref="patent-family" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="field-of-search" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="figures" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="references-cited" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="examiners" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="number-of-claims" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="related-documents" minOccurs="0"/>
+				<xs:element ref="st50-republication" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-exhibition-filed" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-pct-article-22-39-fulfilled" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="pct-application-no-longer-effective" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="bio-deposit" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="pct-or-regional-filing-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="pct-or-regional-publishing-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="defer-publication-of-search-report" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-application-refused" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-rights-reestablished" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-application-withdrawn-by-applicant" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-application-deemed-withdrawn" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-of-revocation" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="cmea-havana-agreement" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="date-application-partially-withdrawn" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="office-specific-bib-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="opposition-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="search-reports-information" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="country" type="xs:anySimpleType"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="status" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="plain-language-designation">
+		<xs:complexType mixed="true">
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="publication-reference">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="document-id">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country"/>
+				<xs:element ref="doc-number"/>
+				<xs:element ref="kind" minOccurs="0"/>
+				<xs:element ref="name" minOccurs="0"/>
+				<xs:element ref="date" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="document-id-type" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="country">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="doc-number">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="kind">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="name">
+		<xs:complexType mixed="true">
+			<xs:attribute name="name-type">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="natural"/>
+						<xs:enumeration value="legal"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="name-format">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="as-filed"/>
+						<xs:enumeration value="standardized"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="classification-ipc">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="edition"/>
+				<xs:element ref="main-classification"/>
+				<xs:element ref="further-classification" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element ref="additional-info"/>
+					<xs:element ref="linked-indexing-code-group"/>
+					<xs:element ref="unlinked-indexing-code"/>
+				</xs:choice>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="main-classification">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="further-classification">
+		<xs:complexType mixed="true">
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="sequence" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="text">
+		<xs:complexType mixed="true">
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="edition">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="additional-info">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="p" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="p">
+		<xs:complexType mixed="true">
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="num" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="linked-indexing-code-group">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="main-linked-indexing-code"/>
+				<xs:element ref="sub-linked-indexing-code" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="main-linked-indexing-code">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="sub-linked-indexing-code">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="unlinked-indexing-code">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="classifications-ipcr">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="classification-ipcr" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="classification-ipcr">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="ipc-version-indicator"/>
+					<xs:element ref="classification-level" minOccurs="0"/>
+					<xs:element ref="section"/>
+					<xs:element ref="class"/>
+					<xs:element ref="subclass"/>
+					<xs:element ref="main-group" minOccurs="0"/>
+					<xs:element ref="subgroup" minOccurs="0"/>
+					<xs:element ref="symbol-position" minOccurs="0"/>
+					<xs:element ref="classification-value" minOccurs="0"/>
+					<xs:element ref="action-date" minOccurs="0"/>
+					<xs:element ref="generating-office" minOccurs="0"/>
+					<xs:element ref="classification-status" minOccurs="0"/>
+					<xs:element ref="classification-data-source" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="sequence" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="section">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="class">
+		<xs:complexType mixed="true">
+			<xs:attribute name="class-type" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="subclass">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="main-group">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="subgroup">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ipc-version-indicator">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="classification-level">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="symbol-position">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="classification-value">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="action-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="classification-status">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="classification-data-source">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="generating-office">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="classification-national">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country"/>
+				<xs:element ref="edition" minOccurs="0"/>
+				<xs:element ref="main-classification"/>
+				<xs:element ref="further-classification" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element ref="additional-info"/>
+					<xs:element ref="linked-indexing-code-group"/>
+					<xs:element ref="unlinked-indexing-code"/>
+				</xs:choice>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="classification-locarno">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="edition"/>
+				<xs:element ref="main-classification"/>
+				<xs:element ref="further-classification" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="classification-udc">
+		<xs:complexType mixed="true">
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="application-reference">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="appl-type" type="xs:anySimpleType"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="language-of-filing">
+		<xs:complexType mixed="true">
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="language-of-publication">
+		<xs:complexType mixed="true">
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="priority-claims">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="priority-claim" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="incorporation-by-reference" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="priority-claim">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country"/>
+				<xs:element ref="doc-number" minOccurs="0"/>
+				<xs:element ref="date"/>
+				<xs:element ref="office-of-filing" minOccurs="0"/>
+				<xs:choice minOccurs="0">
+					<xs:element ref="priority-doc-attached"/>
+					<xs:element ref="priority-doc-requested"/>
+				</xs:choice>
+				<xs:element ref="restore-rights" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="kind" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="international"/>
+						<xs:enumeration value="regional"/>
+						<xs:enumeration value="national"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="sequence" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="office-of-filing">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="country"/>
+				<xs:sequence>
+					<xs:element ref="region"/>
+					<xs:element ref="country" minOccurs="0"/>
+				</xs:sequence>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="region">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="priority-doc-requested">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="priority-doc-attached">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="restore-rights">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="incorporation-by-reference">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="parties">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="applicants" maxOccurs="unbounded"/>
+				<xs:element ref="inventors" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="correspondence-address" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="agents" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="applicants">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="applicant" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="transfer-of-rights">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="yes"/>
+						<xs:enumeration value="no"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="applicant">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="addressbook" maxOccurs="unbounded"/>
+				<xs:element ref="nationality"/>
+				<xs:element ref="residence"/>
+				<xs:element ref="us-rights" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="designated-states" minOccurs="0"/>
+				<xs:element ref="designated-states-as-inventor" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="app-type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="applicant"/>
+						<xs:enumeration value="proprietor"/>
+						<xs:enumeration value="applicant-inventor"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="designation" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="all"/>
+						<xs:enumeration value="us-only"/>
+						<xs:enumeration value="as-indicated"/>
+						<xs:enumeration value="all-except-us"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="sequence" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="addressbook">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:sequence>
+						<xs:choice>
+							<xs:element ref="name"/>
+							<xs:sequence>
+								<xs:element ref="prefix" minOccurs="0"/>
+								<xs:choice>
+									<xs:element ref="last-name"/>
+									<xs:element ref="orgname"/>
+								</xs:choice>
+								<xs:element ref="first-name" minOccurs="0"/>
+								<xs:element ref="middle-name" minOccurs="0"/>
+								<xs:element ref="first-last-name" minOccurs="0"/>
+								<xs:element ref="second-last-name" minOccurs="0"/>
+								<xs:element ref="suffix" minOccurs="0"/>
+								<xs:element ref="iid" minOccurs="0"/>
+								<xs:element ref="role" minOccurs="0"/>
+								<xs:element ref="orgname" minOccurs="0"/>
+								<xs:element ref="department" minOccurs="0"/>
+								<xs:element ref="synonym" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:choice>
+						<xs:element ref="registered-number" minOccurs="0"/>
+					</xs:sequence>
+					<xs:element ref="address"/>
+					<xs:element ref="phone" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="fax" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="email" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="url" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="ead" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="dtext" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="cdsid" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="prefix">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="last-name">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="orgname">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="first-name">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="middle-name">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="first-last-name">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="second-last-name">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="suffix">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="iid">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="role">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="department">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="synonym">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="registered-number">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="address">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:sequence>
+						<xs:element ref="address-1" minOccurs="0"/>
+						<xs:element ref="address-2" minOccurs="0"/>
+						<xs:element ref="address-3" minOccurs="0"/>
+						<xs:element ref="address-4" minOccurs="0"/>
+						<xs:element ref="address-5" minOccurs="0"/>
+						<xs:element ref="mailcode" minOccurs="0"/>
+						<xs:element ref="pobox" minOccurs="0"/>
+						<xs:element ref="room" minOccurs="0"/>
+						<xs:element ref="address-floor" minOccurs="0"/>
+						<xs:element ref="building" minOccurs="0"/>
+						<xs:element ref="street" minOccurs="0"/>
+						<xs:element ref="city" minOccurs="0"/>
+						<xs:element ref="county" minOccurs="0"/>
+						<xs:element ref="state" minOccurs="0"/>
+						<xs:element ref="postcode" minOccurs="0"/>
+						<xs:element ref="country"/>
+					</xs:sequence>
+					<xs:element ref="text"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="address-1">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="address-2">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="address-3">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="address-4">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="address-5">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="mailcode">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="pobox">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="room">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="address-floor">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="building">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="street">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="city">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="county">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="state">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="postcode">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="phone">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="fax">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="email">
+		<xs:complexType mixed="true">
+			<xs:attribute name="email-purpose">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="informal"/>
+						<xs:enumeration value="main"/>
+						<xs:enumeration value="advance"/>
+						<xs:enumeration value="general"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="url">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ead">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="dtext">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="nationality">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="residence">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="us-rights">
+		<xs:complexType mixed="true">
+			<xs:attribute name="kind" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="administratrix"/>
+						<xs:enumeration value="executrix"/>
+						<xs:enumeration value="estate"/>
+						<xs:enumeration value="legal-heirs"/>
+						<xs:enumeration value="heiress"/>
+						<xs:enumeration value="executors"/>
+						<xs:enumeration value="administrator"/>
+						<xs:enumeration value="heir"/>
+						<xs:enumeration value="heirs"/>
+						<xs:enumeration value="legal-representative"/>
+						<xs:enumeration value="legal-representatives"/>
+						<xs:enumeration value="executor"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="to-dead-inventor" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="designated-states">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:sequence minOccurs="0" maxOccurs="unbounded">
+					<xs:element ref="region"/>
+					<xs:element ref="country" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="designated-states-as-inventor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:sequence minOccurs="0" maxOccurs="unbounded">
+					<xs:element ref="region"/>
+					<xs:element ref="country" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="inventors">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="deceased-inventor"/>
+				<xs:element ref="inventor"/>
+			</xs:choice>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="inventor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="addressbook" maxOccurs="unbounded"/>
+				<xs:element ref="nationality" minOccurs="0"/>
+				<xs:element ref="residence" minOccurs="0"/>
+				<xs:element ref="designated-states" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="designation">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="all"/>
+						<xs:enumeration value="us-only"/>
+						<xs:enumeration value="as-indicated"/>
+						<xs:enumeration value="all-except-us"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="wishes-to-be-published">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="yes"/>
+						<xs:enumeration value="no"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="sequence" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="deceased-inventor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:sequence>
+					<xs:choice>
+						<xs:element ref="name"/>
+						<xs:sequence>
+							<xs:element ref="prefix" minOccurs="0"/>
+							<xs:choice>
+								<xs:element ref="last-name"/>
+								<xs:element ref="orgname"/>
+							</xs:choice>
+							<xs:element ref="first-name" minOccurs="0"/>
+							<xs:element ref="middle-name" minOccurs="0"/>
+							<xs:element ref="first-last-name" minOccurs="0"/>
+							<xs:element ref="second-last-name" minOccurs="0"/>
+							<xs:element ref="suffix" minOccurs="0"/>
+							<xs:element ref="iid" minOccurs="0"/>
+							<xs:element ref="role" minOccurs="0"/>
+							<xs:element ref="orgname" minOccurs="0"/>
+							<xs:element ref="department" minOccurs="0"/>
+							<xs:element ref="synonym" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:choice>
+					<xs:element ref="registered-number" minOccurs="0"/>
+				</xs:sequence>
+			</xs:sequence>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="sequence" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="correspondence-address">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="addressbook" maxOccurs="unbounded"/>
+				<xs:element ref="customer-number"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="customer-number">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="agents">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="agent" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="customer-number"/>
+			</xs:choice>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="agent">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="addressbook" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="rep-type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="attorney"/>
+						<xs:enumeration value="agent"/>
+						<xs:enumeration value="common-representative"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="sequence" type="xs:anySimpleType" use="required"/>
+			<xs:attribute name="et-al">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="yes"/>
+						<xs:enumeration value="no"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="designation-of-states">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="designation-pct"/>
+				<xs:sequence>
+					<xs:element ref="precautionary-designation-statement" minOccurs="0"/>
+					<xs:element ref="exclusion-from-designation" minOccurs="0"/>
+				</xs:sequence>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="designation-pct">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="regional" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="national" minOccurs="0"/>
+				<xs:element ref="new-designation-country" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="regional">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="region"/>
+				<xs:sequence maxOccurs="unbounded">
+					<xs:element ref="country"/>
+					<xs:element ref="protection-request" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:element ref="any-other-state" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="protection-request">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="kind-of-protection"/>
+				<xs:element ref="document-id" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="subset">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="yes"/>
+						<xs:enumeration value="no"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="kind-of-protection">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="national">
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element ref="country"/>
+				<xs:element ref="protection-request" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="new-designation-country">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="precautionary-designation-statement">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="exclusion-from-designation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="regional" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="national" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="invention-title">
+		<xs:complexType mixed="true">
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="assignees">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="assignee" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="assignee">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:choice>
+						<xs:element ref="name"/>
+						<xs:sequence>
+							<xs:element ref="prefix" minOccurs="0"/>
+							<xs:choice>
+								<xs:element ref="last-name"/>
+								<xs:element ref="orgname"/>
+							</xs:choice>
+							<xs:element ref="first-name" minOccurs="0"/>
+							<xs:element ref="middle-name" minOccurs="0"/>
+							<xs:element ref="first-last-name" minOccurs="0"/>
+							<xs:element ref="second-last-name" minOccurs="0"/>
+							<xs:element ref="suffix" minOccurs="0"/>
+							<xs:element ref="iid" minOccurs="0"/>
+							<xs:element ref="role" minOccurs="0"/>
+							<xs:element ref="orgname" minOccurs="0"/>
+							<xs:element ref="department" minOccurs="0"/>
+							<xs:element ref="synonym" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:choice>
+					<xs:element ref="registered-number" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="addressbook"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="licensee-data">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="licensee" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="licensee">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="addressbook" minOccurs="0"/>
+				<xs:element ref="attorney-or-agent" minOccurs="0"/>
+				<xs:element ref="effective-in" minOccurs="0"/>
+				<xs:element ref="date" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="type-license">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="right-in-rem"/>
+						<xs:enumeration value="exclusive"/>
+						<xs:enumeration value="not-exclusive"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="designation">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="all"/>
+						<xs:enumeration value="as-indicated"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="sequence" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="attorney-or-agent">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="addressbook" maxOccurs="unbounded"/>
+				<xs:element ref="range-of-authority" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="rep-type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="attorney"/>
+						<xs:enumeration value="agent"/>
+						<xs:enumeration value="common-representative"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="range-of-authority">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="effective-in">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-of-earliest-priority">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-complete-specification-filed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="dates-of-public-availability">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="gazette-reference" minOccurs="0"/>
+				<xs:element ref="unexamined-not-printed-without-grant" minOccurs="0"/>
+				<xs:element ref="examined-not-printed-without-grant" minOccurs="0"/>
+				<xs:element ref="unexamined-printed-without-grant" minOccurs="0"/>
+				<xs:element ref="examined-printed-without-grant" minOccurs="0"/>
+				<xs:element ref="claims-only-available" minOccurs="0"/>
+				<xs:element ref="not-printed-with-grant" minOccurs="0"/>
+				<xs:element ref="term-of-grant" minOccurs="0"/>
+				<xs:element ref="invalidation-of-patent" minOccurs="0"/>
+				<xs:element ref="printed-as-amended" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="gazette-reference">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="gazette-num"/>
+				<xs:element ref="date"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="country" type="xs:anySimpleType"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="gazette-num">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="unexamined-not-printed-without-grant">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="examined-not-printed-without-grant">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="unexamined-printed-without-grant">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="examined-printed-without-grant">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="claims-only-available">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="not-printed-with-grant">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="printed-as-amended">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="term-of-grant">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="disclaimer"/>
+				<xs:element ref="lapse-of-patent"/>
+				<xs:element ref="length-of-grant"/>
+				<xs:element ref="lapsed-in-country"/>
+				<xs:element ref="text"/>
+			</xs:choice>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="disclaimer">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date" minOccurs="0"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="length-of-grant">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="lapse-of-patent">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="lapsed-in-country">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country"/>
+				<xs:element ref="date"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="invalidation-of-patent">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="dates-rights-effective">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="date-entering-into-force"/>
+				<xs:element ref="first-examination-report-despatched"/>
+				<xs:element ref="notification-of-rights-after-appeal"/>
+				<xs:element ref="patent-maintained-as-amended"/>
+				<xs:element ref="proceedings-interrupted"/>
+				<xs:element ref="proceedings-resumed"/>
+				<xs:element ref="proceedings-stay"/>
+				<xs:element ref="request-for-conversion-to-national-application"/>
+				<xs:element ref="request-for-examination"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="request-for-examination">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="first-examination-report-despatched">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="patent-maintained-as-amended">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="request-for-conversion-to-national-application">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+				<xs:element ref="country"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="proceedings-stay">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+			<xs:attribute name="cause" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="proceedings-interrupted">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+			<xs:attribute name="cause" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="proceedings-resumed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="notification-of-rights-after-appeal">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-entering-into-force">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="patent-family">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="priority-application"/>
+				<xs:choice>
+					<xs:element ref="family-member" maxOccurs="unbounded"/>
+					<xs:element ref="text"/>
+				</xs:choice>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="priority-application">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="family-member">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="field-of-search">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="classification-ipc"/>
+				<xs:element ref="classification-national"/>
+				<xs:element ref="classifications-ipcr"/>
+			</xs:choice>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="figures">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="number-of-drawing-sheets" minOccurs="0"/>
+				<xs:element ref="number-of-figures" minOccurs="0"/>
+				<xs:element ref="figure-to-publish" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="number-of-drawing-sheets">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="number-of-figures">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="figure-to-publish">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="fig-number" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="fig-number">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="references-cited">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="citation" maxOccurs="unbounded"/>
+					<xs:element ref="date-search-completed" minOccurs="0"/>
+					<xs:element ref="date-search-report-mailed" minOccurs="0"/>
+					<xs:element ref="place-of-search" minOccurs="0"/>
+					<xs:element ref="search-report-publication" minOccurs="0"/>
+					<xs:element ref="searcher" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="citation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element ref="nplcit"/>
+					<xs:element ref="patcit"/>
+				</xs:choice>
+				<xs:sequence minOccurs="0" maxOccurs="unbounded">
+					<xs:element ref="rel-passage" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="category" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="rel-claims" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:element ref="corresponding-docs" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="classification-ipc" minOccurs="0"/>
+				<xs:element ref="classifications-ipcr" minOccurs="0"/>
+				<xs:element ref="classification-national" minOccurs="0"/>
+				<xs:element ref="doi" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="srep-phase" type="xs:anySimpleType"/>
+			<xs:attribute name="cited-phase">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="international-type-search-report"/>
+						<xs:enumeration value="limitation"/>
+						<xs:enumeration value="national-examination"/>
+						<xs:enumeration value="other"/>
+						<xs:enumeration value="supplementary-national-search-report"/>
+						<xs:enumeration value="international-examination"/>
+						<xs:enumeration value="opposition"/>
+						<xs:enumeration value="national-search-report"/>
+						<xs:enumeration value="description"/>
+						<xs:enumeration value="search"/>
+						<xs:enumeration value="international-search-report"/>
+						<xs:enumeration value="undefined"/>
+						<xs:enumeration value="supplementary-international-search-report"/>
+						<xs:enumeration value="examination"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="cited-by">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="opponent"/>
+						<xs:enumeration value="examiner"/>
+						<xs:enumeration value="applicant"/>
+						<xs:enumeration value="third-party"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="office" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="patcit">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="document-id" maxOccurs="unbounded"/>
+					<xs:element ref="rel-passage" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="text" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+			<xs:attribute name="dnum" type="xs:anySimpleType"/>
+			<xs:attribute name="dnum-type" type="xs:anySimpleType"/>
+			<xs:attribute name="file" type="xs:anySimpleType"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="num" type="xs:anySimpleType"/>
+			<xs:attribute name="url" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="rel-passage">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="passage" maxOccurs="unbounded"/>
+					<xs:sequence minOccurs="0" maxOccurs="unbounded">
+						<xs:element ref="category"/>
+						<xs:element ref="rel-claims" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="passage">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="category">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="rel-claims">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="nplcit">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element ref="article"/>
+					<xs:element ref="book"/>
+					<xs:element ref="online"/>
+					<xs:element ref="othercit"/>
+					<xs:element ref="text"/>
+				</xs:choice>
+				<xs:element ref="rel-passage" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="file" type="xs:anySimpleType"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="medium" type="xs:anySimpleType"/>
+			<xs:attribute name="npl-type" type="xs:anySimpleType"/>
+			<xs:attribute name="num" type="xs:anySimpleType"/>
+			<xs:attribute name="url" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="article">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="author" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="atl" minOccurs="0"/>
+					<xs:element ref="subname" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:choice>
+						<xs:element ref="book"/>
+						<xs:element ref="serial"/>
+					</xs:choice>
+					<xs:element ref="absno" minOccurs="0"/>
+					<xs:element ref="location" minOccurs="0"/>
+					<xs:element ref="class" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="keyword" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="cpyrt" minOccurs="0"/>
+					<xs:element ref="artid" minOccurs="0"/>
+					<xs:element ref="refno" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="author">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:choice>
+						<xs:element ref="name"/>
+						<xs:sequence>
+							<xs:element ref="prefix" minOccurs="0"/>
+							<xs:choice>
+								<xs:element ref="last-name"/>
+								<xs:element ref="orgname"/>
+							</xs:choice>
+							<xs:element ref="first-name" minOccurs="0"/>
+							<xs:element ref="middle-name" minOccurs="0"/>
+							<xs:element ref="first-last-name" minOccurs="0"/>
+							<xs:element ref="second-last-name" minOccurs="0"/>
+							<xs:element ref="suffix" minOccurs="0"/>
+							<xs:element ref="iid" minOccurs="0"/>
+							<xs:element ref="role" minOccurs="0"/>
+							<xs:element ref="orgname" minOccurs="0"/>
+							<xs:element ref="department" minOccurs="0"/>
+							<xs:element ref="synonym" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:choice>
+					<xs:element ref="registered-number" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="addressbook"/>
+			</xs:choice>
+			<xs:attribute name="id" type="xs:ID"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="atl">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="subname">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:choice>
+						<xs:element ref="name"/>
+						<xs:sequence>
+							<xs:element ref="prefix" minOccurs="0"/>
+							<xs:choice>
+								<xs:element ref="last-name"/>
+								<xs:element ref="orgname"/>
+							</xs:choice>
+							<xs:element ref="first-name" minOccurs="0"/>
+							<xs:element ref="middle-name" minOccurs="0"/>
+							<xs:element ref="first-last-name" minOccurs="0"/>
+							<xs:element ref="second-last-name" minOccurs="0"/>
+							<xs:element ref="suffix" minOccurs="0"/>
+							<xs:element ref="iid" minOccurs="0"/>
+							<xs:element ref="role" minOccurs="0"/>
+							<xs:element ref="orgname" minOccurs="0"/>
+							<xs:element ref="department" minOccurs="0"/>
+							<xs:element ref="synonym" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:choice>
+					<xs:element ref="registered-number" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="addressbook"/>
+			</xs:choice>
+			<xs:attribute name="subname-type" default="editor">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="editor"/>
+						<xs:enumeration value="other-subname-type"/>
+						<xs:enumeration value="translator"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="serial">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="sertitle"/>
+				<xs:element ref="alttitle" minOccurs="0"/>
+				<xs:element ref="subname" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="issue" minOccurs="0"/>
+				<xs:element ref="imprint" minOccurs="0"/>
+				<xs:element ref="pubdate" minOccurs="0"/>
+				<xs:element ref="descrip" minOccurs="0"/>
+				<xs:element ref="notes" minOccurs="0"/>
+				<xs:element ref="pubid" minOccurs="0"/>
+				<xs:element ref="vid" minOccurs="0"/>
+				<xs:element ref="ino" minOccurs="0"/>
+				<xs:element ref="doi" minOccurs="0"/>
+				<xs:element ref="issn" minOccurs="0"/>
+				<xs:element ref="isbn" minOccurs="0"/>
+				<xs:element ref="cpyrt" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="sertitle">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="alttitle">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="issue">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="imprint">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="address" minOccurs="0"/>
+					<xs:element ref="name"/>
+					<xs:element ref="pubdate" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pubdate">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="edate"/>
+				<xs:element ref="sdate"/>
+				<xs:element ref="time"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="sdate">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="edate">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="time">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="descrip">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="notes">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="pubid">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="vid">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ino">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="doi">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="issn">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="isbn">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="cpyrt">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="book">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="author" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:choice>
+						<xs:element ref="book-title" maxOccurs="unbounded"/>
+						<xs:element ref="conference"/>
+					</xs:choice>
+					<xs:sequence>
+						<xs:element ref="subtitle" minOccurs="0"/>
+						<xs:element ref="subname" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element ref="edition" minOccurs="0"/>
+						<xs:element ref="imprint" minOccurs="0"/>
+						<xs:element ref="vid" minOccurs="0"/>
+						<xs:element ref="ino" minOccurs="0"/>
+						<xs:element ref="descrip" minOccurs="0"/>
+						<xs:element ref="series" minOccurs="0"/>
+						<xs:element ref="notes" minOccurs="0"/>
+						<xs:element ref="absno" minOccurs="0"/>
+						<xs:element ref="location" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element ref="pubid" minOccurs="0"/>
+						<xs:element ref="bookno" minOccurs="0"/>
+						<xs:element ref="class" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element ref="keyword" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element ref="cpyrt" minOccurs="0"/>
+						<xs:element ref="doi" minOccurs="0"/>
+						<xs:element ref="issn" minOccurs="0"/>
+						<xs:element ref="isbn" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element ref="refno" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="book-title">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="conference">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="conftitle"/>
+					<xs:element ref="confdate" minOccurs="0"/>
+					<xs:element ref="confno" minOccurs="0"/>
+					<xs:element ref="confplace" minOccurs="0"/>
+					<xs:element ref="confsponsor" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="conftitle">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="confdate">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="date"/>
+				<xs:sequence>
+					<xs:element ref="sdate"/>
+					<xs:element ref="edate"/>
+				</xs:sequence>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="confno">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="confplace">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="address"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="confsponsor">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="addressbook"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="subtitle">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="series">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="mst"/>
+					<xs:element ref="msn" minOccurs="0"/>
+					<xs:element ref="issn" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="mst">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="msn">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="absno">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="location">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="serpart" minOccurs="0"/>
+					<xs:element ref="sersect" minOccurs="0"/>
+					<xs:element ref="chapter" minOccurs="0"/>
+					<xs:element ref="pp" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="column" minOccurs="0"/>
+					<xs:element ref="para" minOccurs="0"/>
+					<xs:element ref="line" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="serpart">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="sersect">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="chapter">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="pp">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="ppf"/>
+				<xs:element ref="ppl"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ppf">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ppl">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="column">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="colf"/>
+				<xs:element ref="coll"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="colf">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="coll">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="para">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="line">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="linef"/>
+				<xs:element ref="linel"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="linef">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="linel">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="bookno">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="keyword">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="refno">
+		<xs:complexType mixed="true">
+			<xs:attribute name="id" type="xs:ID"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="artid">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="online">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="author" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="online-title" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="hosttitle" minOccurs="0"/>
+					<xs:element ref="subname" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="edition" minOccurs="0"/>
+					<xs:choice minOccurs="0">
+						<xs:element ref="book"/>
+						<xs:element ref="serial"/>
+					</xs:choice>
+					<xs:element ref="imprint" minOccurs="0"/>
+					<xs:element ref="pubdate" minOccurs="0"/>
+					<xs:element ref="vid" minOccurs="0"/>
+					<xs:element ref="ino" minOccurs="0"/>
+					<xs:element ref="history" minOccurs="0"/>
+					<xs:element ref="series" minOccurs="0"/>
+					<xs:element ref="hostno" minOccurs="0"/>
+					<xs:element ref="absno" minOccurs="0"/>
+					<xs:element ref="location" minOccurs="0"/>
+					<xs:element ref="notes" minOccurs="0"/>
+					<xs:element ref="avail" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="class" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="keyword" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="cpyrt" minOccurs="0"/>
+					<xs:element ref="doi" minOccurs="0"/>
+					<xs:element ref="issn" minOccurs="0"/>
+					<xs:element ref="isbn" minOccurs="0"/>
+					<xs:element ref="datecit" minOccurs="0"/>
+					<xs:element ref="srchterm" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="srchdate" minOccurs="0"/>
+					<xs:element ref="refno" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="online-title">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="hosttitle">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="history">
+		<xs:complexType>
+			<xs:choice>
+				<xs:choice>
+					<xs:element ref="accepted"/>
+					<xs:element ref="misc"/>
+					<xs:element ref="received"/>
+					<xs:element ref="revised"/>
+				</xs:choice>
+				<xs:element ref="text"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="received">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="accepted">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="revised">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="misc">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="date"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="hostno">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="avail">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="datecit">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="srchterm">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="srchdate">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="othercit">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="corresponding-docs">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element ref="nplcit"/>
+					<xs:element ref="patcit"/>
+				</xs:choice>
+				<xs:sequence minOccurs="0" maxOccurs="unbounded">
+					<xs:element ref="rel-passage" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="category" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="rel-claims" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-search-completed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-search-report-mailed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="place-of-search">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="search-report-publication">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="searcher">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:choice>
+						<xs:element ref="name"/>
+						<xs:sequence>
+							<xs:element ref="prefix" minOccurs="0"/>
+							<xs:choice>
+								<xs:element ref="last-name"/>
+								<xs:element ref="orgname"/>
+							</xs:choice>
+							<xs:element ref="first-name" minOccurs="0"/>
+							<xs:element ref="middle-name" minOccurs="0"/>
+							<xs:element ref="first-last-name" minOccurs="0"/>
+							<xs:element ref="second-last-name" minOccurs="0"/>
+							<xs:element ref="suffix" minOccurs="0"/>
+							<xs:element ref="iid" minOccurs="0"/>
+							<xs:element ref="role" minOccurs="0"/>
+							<xs:element ref="orgname" minOccurs="0"/>
+							<xs:element ref="department" minOccurs="0"/>
+							<xs:element ref="synonym" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:choice>
+					<xs:element ref="registered-number" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="addressbook"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="examiners">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="primary-examiner" minOccurs="0"/>
+				<xs:element ref="assistant-examiner" minOccurs="0"/>
+				<xs:element ref="authorized-officer" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="primary-examiner">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:sequence>
+					<xs:choice>
+						<xs:element ref="name"/>
+						<xs:sequence>
+							<xs:element ref="prefix" minOccurs="0"/>
+							<xs:choice>
+								<xs:element ref="last-name"/>
+								<xs:element ref="orgname"/>
+							</xs:choice>
+							<xs:element ref="first-name" minOccurs="0"/>
+							<xs:element ref="middle-name" minOccurs="0"/>
+							<xs:element ref="first-last-name" minOccurs="0"/>
+							<xs:element ref="second-last-name" minOccurs="0"/>
+							<xs:element ref="suffix" minOccurs="0"/>
+							<xs:element ref="iid" minOccurs="0"/>
+							<xs:element ref="role" minOccurs="0"/>
+							<xs:element ref="orgname" minOccurs="0"/>
+							<xs:element ref="department" minOccurs="0"/>
+							<xs:element ref="synonym" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:choice>
+					<xs:element ref="registered-number" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="electronic-signature" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="electronic-signature">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="basic-signature"/>
+				<xs:element ref="enhanced-signature"/>
+			</xs:choice>
+			<xs:attribute name="date" type="xs:anySimpleType" use="required"/>
+			<xs:attribute name="place-signed" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="basic-signature">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="click-wrap"/>
+				<xs:element ref="fax-image"/>
+				<xs:element ref="text-string"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="fax-image">
+		<xs:complexType>
+			<xs:attribute name="file" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="text-string">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="click-wrap">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="enhanced-signature">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="pkcs7"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pkcs7">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="assistant-examiner">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:sequence>
+					<xs:choice>
+						<xs:element ref="name"/>
+						<xs:sequence>
+							<xs:element ref="prefix" minOccurs="0"/>
+							<xs:choice>
+								<xs:element ref="last-name"/>
+								<xs:element ref="orgname"/>
+							</xs:choice>
+							<xs:element ref="first-name" minOccurs="0"/>
+							<xs:element ref="middle-name" minOccurs="0"/>
+							<xs:element ref="first-last-name" minOccurs="0"/>
+							<xs:element ref="second-last-name" minOccurs="0"/>
+							<xs:element ref="suffix" minOccurs="0"/>
+							<xs:element ref="iid" minOccurs="0"/>
+							<xs:element ref="role" minOccurs="0"/>
+							<xs:element ref="orgname" minOccurs="0"/>
+							<xs:element ref="department" minOccurs="0"/>
+							<xs:element ref="synonym" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:choice>
+					<xs:element ref="registered-number" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="electronic-signature" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="authorized-officer">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:sequence>
+					<xs:choice>
+						<xs:element ref="name"/>
+						<xs:sequence>
+							<xs:element ref="prefix" minOccurs="0"/>
+							<xs:choice>
+								<xs:element ref="last-name"/>
+								<xs:element ref="orgname"/>
+							</xs:choice>
+							<xs:element ref="first-name" minOccurs="0"/>
+							<xs:element ref="middle-name" minOccurs="0"/>
+							<xs:element ref="first-last-name" minOccurs="0"/>
+							<xs:element ref="second-last-name" minOccurs="0"/>
+							<xs:element ref="suffix" minOccurs="0"/>
+							<xs:element ref="iid" minOccurs="0"/>
+							<xs:element ref="role" minOccurs="0"/>
+							<xs:element ref="orgname" minOccurs="0"/>
+							<xs:element ref="department" minOccurs="0"/>
+							<xs:element ref="synonym" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:choice>
+					<xs:element ref="registered-number" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="phone" minOccurs="0"/>
+				<xs:element ref="fax" minOccurs="0"/>
+				<xs:element ref="email" minOccurs="0"/>
+				<xs:element ref="electronic-signature" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="number-of-claims">
+		<xs:complexType mixed="true">
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="related-documents">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="addition"/>
+				<xs:element ref="continuation"/>
+				<xs:element ref="continuation-in-part"/>
+				<xs:element ref="continuing-reissue"/>
+				<xs:element ref="correction"/>
+				<xs:element ref="division"/>
+				<xs:element ref="previously-filed-application"/>
+				<xs:element ref="reexamination"/>
+				<xs:element ref="reissue"/>
+				<xs:element ref="related-publication"/>
+				<xs:element ref="substitution"/>
+				<xs:element ref="utility-model-basis"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="addition">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="relation"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="relation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="parent-doc"/>
+				<xs:element ref="child-doc"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="parent-doc">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="parent-status" minOccurs="0"/>
+				<xs:element ref="parent-grant-document" minOccurs="0"/>
+				<xs:element ref="parent-pct-document" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="parent-status">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="parent-grant-document">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="parent-pct-document">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="child-doc">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="child-status" minOccurs="0"/>
+				<xs:element ref="child-grant-document" minOccurs="0"/>
+				<xs:element ref="child-pct-document" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="child-status">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="child-grant-document">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="child-pct-document">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="division">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="relation"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="continuation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="relation"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="previously-filed-application">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="continuation-in-part">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="relation"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="continuing-reissue">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="relation"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="reissue">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="relation"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="reexamination">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="relation"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="substitution">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="relation"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="utility-model-basis">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="relation"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="correction">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-corrected"/>
+				<xs:element ref="type-of-correction" minOccurs="0"/>
+				<xs:element ref="gazette-reference" minOccurs="0"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="document-corrected">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="type-of-correction">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="related-publication">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="document-id"/>
+			</xs:choice>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="st50-republication">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="republication-code" minOccurs="0"/>
+				<xs:element ref="cancellation-date" minOccurs="0"/>
+				<xs:element ref="modifications" minOccurs="0"/>
+				<xs:element ref="republication-notes" minOccurs="0"/>
+				<xs:element ref="correction-notice"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="republication-code">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="cancellation-date">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="modifications">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="modified-bibliography" minOccurs="0"/>
+				<xs:element ref="modified-part" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="modified-bibliography">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="inid-code" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="inid-code">
+		<xs:complexType mixed="true">
+			<xs:attribute name="sequence" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="modified-part">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="modified-part-name"/>
+				<xs:element ref="modified-item" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="sequence" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="modified-part-name">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="modified-item">
+		<xs:complexType mixed="true">
+			<xs:attribute name="sequence" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="republication-notes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="republication-note" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="republication-note">
+		<xs:complexType mixed="true">
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="sequence" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="correction-notice">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+				<xs:element ref="gazette-reference"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-exhibition-filed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-pct-article-22-39-fulfilled">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pct-application-no-longer-effective">
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:choice>
+					<xs:element ref="country"/>
+					<xs:element ref="region"/>
+				</xs:choice>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="bio-deposit">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="depositary"/>
+				<xs:element ref="bio-accno"/>
+				<xs:element ref="date" minOccurs="0"/>
+				<xs:element ref="term" minOccurs="0"/>
+				<xs:element ref="dtext" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="dnum" type="xs:anySimpleType"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="num" type="xs:anySimpleType" use="required"/>
+			<xs:attribute name="url" type="xs:anySimpleType"/>
+			<xs:attribute name="access-limited-to-expert">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="yes"/>
+						<xs:enumeration value="no"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="depositary">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="address"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="bio-accno">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="term">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="pct-or-regional-filing-data">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="us-371c124-date" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="us-371c124-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pct-or-regional-publishing-data">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+				<xs:element ref="gazette-reference" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="defer-publication-of-search-report">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+				<xs:element ref="gazette-reference"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-application-refused">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-rights-reestablished">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-application-withdrawn-by-applicant">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-application-deemed-withdrawn">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-of-revocation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="cmea-havana-agreement">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="document-id" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-application-partially-withdrawn">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="reason" type="xs:anySimpleType"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="opposition-data">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="opponent"/>
+				<xs:element ref="date-rejected"/>
+				<xs:element ref="date-terminated"/>
+				<xs:element ref="opposition-not-filed"/>
+			</xs:choice>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="opponent">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="addressbook"/>
+				<xs:element ref="agent" minOccurs="0"/>
+				<xs:element ref="opponent-status" minOccurs="0"/>
+				<xs:element ref="date-opposition-filed" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="sequence" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="opponent-status">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="status" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-opposition-filed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-rejected">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-terminated">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="opposition-not-filed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="procedural-data">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="procedural-step" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="country" type="xs:anySimpleType"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="status" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="procedural-step">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="procedural-step-code"/>
+				<xs:element ref="procedural-step-text" maxOccurs="unbounded"/>
+				<xs:element ref="procedural-step-date" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="procedural-step-affected-states" minOccurs="0"/>
+				<xs:element ref="time-limit" minOccurs="0"/>
+				<xs:element ref="procedural-step-result" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="gazette-reference" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID" use="required"/>
+			<xs:attribute name="procedure-step-phase" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="petition-for-review-in-limitation"/>
+						<xs:enumeration value="revocation"/>
+						<xs:enumeration value="limitation"/>
+						<xs:enumeration value="petition-for-review-in-examination"/>
+						<xs:enumeration value="appeal-in-revocation"/>
+						<xs:enumeration value="appeal"/>
+						<xs:enumeration value="petition-for-review-in-opposition"/>
+						<xs:enumeration value="appeal-in-opposition"/>
+						<xs:enumeration value="entry-regional-phase"/>
+						<xs:enumeration value="appeal-in-examination"/>
+						<xs:enumeration value="petition-for-review-in-revocation"/>
+						<xs:enumeration value="appeal-in-limitation"/>
+						<xs:enumeration value="international-examination"/>
+						<xs:enumeration value="opposition"/>
+						<xs:enumeration value="fees"/>
+						<xs:enumeration value="international-search"/>
+						<xs:enumeration value="unitary-protection"/>
+						<xs:enumeration value="search"/>
+						<xs:enumeration value="undefined"/>
+						<xs:enumeration value="examination"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="procedural-step-forecast">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="yes"/>
+						<xs:enumeration value="no"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="related-dossier-events" type="xs:IDREFS"/>
+			<xs:attribute name="related-file-wrapper-documents" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="procedural-step-code">
+		<xs:complexType mixed="true">
+			<xs:attribute name="step-code-type" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="procedural-step-affected-states">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="country" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="procedural-step-text">
+		<xs:complexType mixed="true">
+			<xs:attribute name="step-text-type" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="procedural-step-result">
+		<xs:complexType mixed="true">
+			<xs:attribute name="step-result-type" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="procedural-step-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+			<xs:attribute name="step-date-type" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="time-limit">
+		<xs:complexType mixed="true">
+			<xs:attribute name="time-limit-unit" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="weeks"/>
+						<xs:enumeration value="months"/>
+						<xs:enumeration value="days"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="events-data">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="dossier-event" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="country" type="xs:anySimpleType"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="status" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="dossier-event">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="event-date"/>
+				<xs:element ref="event-code"/>
+				<xs:element ref="event-text" maxOccurs="unbounded"/>
+				<xs:element ref="gazette-reference" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID" use="required"/>
+			<xs:attribute name="event-type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="deletion"/>
+						<xs:enumeration value="new"/>
+						<xs:enumeration value="change"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="event-forecast">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="yes"/>
+						<xs:enumeration value="no"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="related-procedural-steps" type="xs:IDREFS"/>
+			<xs:attribute name="related-file-wrapper-documents" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="event-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="event-code">
+		<xs:complexType mixed="true">
+			<xs:attribute name="event-code-type" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="event-text">
+		<xs:complexType mixed="true">
+			<xs:attribute name="event-text-type" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="file-wrapper-data">
+		<xs:complexType>
+			<xs:attribute name="country" type="xs:anySimpleType"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="status" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="office-specific-bib-data">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-appeal-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="ep-revocation-procedure" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="ep-petition-review" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="ep-limitation-procedure" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="ep-public-notifications" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="file" type="xs:anySimpleType" use="required"/>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+			<xs:attribute name="office" type="xs:anySimpleType" use="required"/>
+			<xs:attribute name="office-dtd" type="xs:anySimpleType" use="required"/>
+			<xs:attribute name="status" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-appeal-data">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date" minOccurs="0"/>
+				<xs:element ref="ep-date-statement-of-grounds-filed" minOccurs="0"/>
+				<xs:element ref="ep-date-interlocutory-revision" minOccurs="0"/>
+				<xs:element ref="ep-appeal-result" minOccurs="0"/>
+				<xs:element ref="ep-date-payment-appeal-fee" minOccurs="0"/>
+				<xs:element ref="ep-date-dispatch-decision-boa" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="appeal-phase">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="revocation"/>
+						<xs:enumeration value="limitation"/>
+						<xs:enumeration value="opposition"/>
+						<xs:enumeration value="examination"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="appeal-num" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-date-statement-of-grounds-filed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-date-interlocutory-revision">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-appeal-result">
+		<xs:complexType mixed="true">
+			<xs:attribute name="date" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-date-payment-appeal-fee">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-date-dispatch-decision-boa">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-revocation-procedure">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-revocation-procedure-date" minOccurs="0"/>
+				<xs:element ref="ep-revocation-procedure-kind" minOccurs="0"/>
+				<xs:element ref="ep-revocation-procedure-decision" minOccurs="0"/>
+				<xs:element ref="ep-revocation-procedure-paid" minOccurs="0"/>
+				<xs:element ref="ep-revocation-date-dispatch" minOccurs="0"/>
+				<xs:element ref="ep-revocation-legal-effect" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-revocation-procedure-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-revocation-procedure-kind">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ep-revocation-procedure-decision">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ep-revocation-procedure-paid">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-revocation-date-dispatch">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-revocation-legal-effect">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-petition-review">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-petition-review-appeal-number" minOccurs="0"/>
+				<xs:element ref="ep-petition-review-date" minOccurs="0"/>
+				<xs:element ref="ep-petition-review-petitioner-code" minOccurs="0"/>
+				<xs:element ref="ep-petition-review-decision-date" minOccurs="0"/>
+				<xs:element ref="ep-petition-review-kind" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="petition-review-num" type="xs:anySimpleType"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-petition-review-appeal-number">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ep-petition-review-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-petition-review-petitioner-code">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ep-petition-review-decision-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-petition-review-kind">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ep-limitation-procedure">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-limitation-filing"/>
+				<xs:element ref="ep-limitation-rejection" minOccurs="0"/>
+				<xs:element ref="ep-limitation-allowed" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-limitation-filing">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-limitation-filing-date" minOccurs="0"/>
+				<xs:element ref="ep-limitation-filing-decision" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-limitation-filing-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-limitation-filing-decision">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date" minOccurs="0"/>
+				<xs:element ref="text" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-limitation-rejection">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-limitation-rejection-kind" minOccurs="0"/>
+				<xs:element ref="ep-limitation-rejection-dispatch-date" minOccurs="0"/>
+				<xs:element ref="ep-limitation-rejection-legal-date" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-limitation-rejection-kind">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ep-limitation-rejection-dispatch-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-limitation-rejection-legal-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-limitation-allowed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-limitation-request-dispatch-date" minOccurs="0"/>
+				<xs:element ref="ep-limitation-request-pay-date" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-limitation-request-dispatch-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-limitation-request-pay-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-public-notifications">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-public-notification" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-public-notification">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ep-puno-inspection-place" minOccurs="0"/>
+				<xs:element ref="ep-puno-requestor" minOccurs="0"/>
+				<xs:element ref="ep-puno-text" maxOccurs="unbounded"/>
+				<xs:element ref="gazette-reference"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="sequence" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-puno-inspection-place">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ep-puno-requestor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="addressbook" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="requestor-type">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="opponent"/>
+						<xs:enumeration value="applicant"/>
+						<xs:enumeration value="opponent-representative"/>
+						<xs:enumeration value="representative"/>
+						<xs:enumeration value="proprietor"/>
+						<xs:enumeration value="proprietor-representative"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ep-puno-text">
+		<xs:complexType mixed="true">
+			<xs:attribute name="lang" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="search-reports-information">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="search-report-information" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="search-report-information">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="srep-request-date" minOccurs="0"/>
+				<xs:element ref="application-reference" minOccurs="0"/>
+				<xs:element ref="srep-request-withdrawn" minOccurs="0"/>
+				<xs:element ref="sisr-receipt-of-translation" minOccurs="0"/>
+				<xs:element ref="date-search-completed" minOccurs="0"/>
+				<xs:element ref="date-search-report-mailed" minOccurs="0"/>
+				<xs:element ref="date-correction-mailed" minOccurs="0"/>
+				<xs:element ref="place-of-search" minOccurs="0"/>
+				<xs:element ref="search-report-publication" minOccurs="0"/>
+				<xs:element ref="searcher" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="office" type="xs:anySimpleType" use="required"/>
+			<xs:attribute name="search-type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="international-type"/>
+						<xs:enumeration value="isr"/>
+						<xs:enumeration value="national"/>
+						<xs:enumeration value="national-supplementary"/>
+						<xs:enumeration value="sis"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="declaration-of-no-search" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="yes"/>
+						<xs:enumeration value="no"/>
+						<xs:enumeration value="not-determined"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="status" type="xs:anySimpleType"/>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="sisr-receipt-of-translation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="srep-request-withdrawn">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="srep-request-date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="date-correction-mailed">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="unitary-patent">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="unitary-patent-statuses" minOccurs="0"/>
+				<xs:element ref="parties" minOccurs="0"/>
+				<xs:element ref="licensee-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="places-of-business" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="office-specific-bib-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="procedural-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="events-data" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="dates-rights-effective" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="unitary-patent-status" type="xs:anySimpleType"/>
+			<xs:attribute name="date-of-request" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="unitary-patent-statuses">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="unitary-patent-status" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="unitary-patent-status">
+		<xs:complexType mixed="true">
+			<xs:attribute name="change-date" type="xs:anySimpleType" use="required"/>
+			<xs:attribute name="status-code" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="places-of-business">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="place-of-business" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="change-date" type="xs:anySimpleType"/>
+			<xs:attribute name="change-gazette-num" type="xs:anySimpleType"/>
+			<xs:attribute name="value-valid-for-publications" type="xs:IDREFS"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="place-of-business">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="addressbook" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="sequence" type="xs:anySimpleType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="any-other-state"/>
+
+	<xs:element name="classifications-cset">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="classification-cset" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date"/>
+			<xs:attribute name="change-gazette-num"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="classifications-cpc">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="classification-cpc" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="change-date"/>
+			<xs:attribute name="change-gazette-num"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="classification-cset">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="classification-cpc" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="sequence"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="classification-cpc">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="cpc-version-indicator"/>
+					<xs:element ref="section"/>
+					<xs:element ref="class"/>
+					<xs:element ref="subclass"/>
+					<xs:element ref="main-group" minOccurs="0"/>
+					<xs:element ref="subgroup" minOccurs="0"/>
+					<xs:element ref="symbol-position" minOccurs="0"/>
+					<xs:element ref="classification-value" minOccurs="0"/>
+					<xs:element ref="action-date" minOccurs="0"/>
+					<xs:element ref="generating-office" minOccurs="0"/>
+					<xs:element ref="classification-status" minOccurs="0"/>
+					<xs:element ref="classification-data-source" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="text"/>
+			</xs:choice>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="sequence"/>
+			<xs:attribute name="scheme"/>
+			<xs:attribute name="status"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="cpc-version-indicator">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

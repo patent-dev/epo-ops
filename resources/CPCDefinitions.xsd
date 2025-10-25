@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.epo.org/cpcdefinition"
+	xmlns="http://www.epo.org/cpcdefinition"
+	elementFormDefault="qualified">
+	<xsd:annotation>
+		<xsd:documentation>     
+	* CPC Definitions Schema *
+	* *
+	* Definition of CPC Definitions Structure
+	* *
+	
+	* Author :  USPTO, EPO
+	* Version 1.0
+	* Last Update : 20/05/2016
+	* Contact: cpc@epo.org and/or at cpc@uspto.gov
+	* *
+	*================================================*
+	*Revision History*
+	
+  	*  CPC Definitions version v1.0 (20/05/2016)
+	
+	  - Added new element references,application-references,residual-references,moved limiting-references
+	    and informative-references to under references element. references element includes 
+		section-title, limiting-references,application-references, residual-references, informative-references
+		
+	  - Redefined synonyms-keywords element content model with section-title and a choice between 
+		section-body and group of elements abbreviations,synonyms,instead-of-words,special-meanings in that order.
+ 
+	  - Removed value "normal" from type attribute in paragraph-text element. added values "preamble" and "subheading".
+		The default value is set to "body"
+ 
+	  - Redefined class-ref as string with scheme attribute. The scheme attribute permitted values are "cpc" and "not-mapped" 
+		which is different than in CPC Scheme.
+		
+	  - Changed content model of definition-item from xsd:all to xsd:sequence.
+	
+	*  CPC Definitions version v0.9 (16/10/14)
+	  - Added sub/sup for subscript/superscript 
+	  - Added file-name attribute to media element
+
+	*  CPC Definitions version v0.8 (17/10/12)
+	  - Added optional preferredWidth and preferredHeight attributes to media element.
+	  - Added optional preferredWidth attribute to table-column element.
+	
+	* CPC Definitions version v0.7
+	  - Added optional attribute scheme='not-mapped' to classification-symbol and class-ref. 
+	  - Added alt attribute to media element.
+
+	*  CPC Definitions version v0.6 
+      - Added type attribute to paragraph-text element. 
+
+	*  CPC Definitions version v0.5 
+	  - Removed unused cpc-ref
+	  - Removed 'emf' from media as it's not a supported media format. 
+	
+</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="definitions" type="definitions-type">
+		<xsd:annotation>
+			<xsd:documentation>CPC definitions root element</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:complexType name="classification-symbol-type">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="scheme" type="cpc-scheme-category-type">
+					<xsd:annotation>
+						<xsd:documentation>Used to indicate whether the referenced symbol is present in the CPC scheme or is not mapped</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="class-ref-type">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="scheme" type="cpc-scheme-category-type" use="required">
+					<xsd:annotation>
+						<xsd:documentation>Used to indicate whether the referenced symbol is present in the CPC scheme or is not mapped</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:simpleType name="cpc-scheme-category-type">
+		<xsd:annotation>
+			<xsd:documentation>
+				Simple type describing a list of schemes
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="cpc"/>
+			<xsd:enumeration value="not-mapped"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="definition-item-type">
+		<xsd:sequence>
+			<xsd:element name="classification-symbol" type="classification-symbol-type"/>
+			<xsd:element name="definition-title" type="definition-title-type" minOccurs="0"/>
+			<xsd:element name="definition-statement" type="section-type" minOccurs="0"/>
+			<xsd:element name="relationship" type="section-type" minOccurs="0"/>
+			<xsd:element name="references" type="references-type" minOccurs="0"/>
+			<xsd:element name="special-rules" type="section-type" minOccurs="0"/>
+			<xsd:element name="glossary-of-terms" type="section-type" minOccurs="0"/>
+			<xsd:element name="synonyms-keywords" type="synonyms-keywords-type" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="date-revised" type="xsd:date">
+			<xsd:annotation>
+				<xsd:documentation>Last revised date</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="definitions-type">
+		<xsd:sequence>
+			<xsd:element name="definition-item" type="definition-item-type" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="publication-date" type="xsd:date" use="required">
+			<xsd:annotation>
+				<xsd:documentation>Publication date</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="publication-type" type="publication-category-type" use="required">
+			<xsd:annotation>
+				<xsd:documentation>Official or test publications</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="definition-title-type" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="class-ref" type="class-ref-type"/>
+			<xsd:element name="media" type="media-type"/>
+			<xsd:element name="sub" type="xsd:string"/>
+			<xsd:element name="sup" type="xsd:string"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="list-item-type">
+		<xsd:sequence>
+			<xsd:element name="paragraph-text" type="paragraph-text-type"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="list-type">
+		<xsd:sequence>
+			<xsd:element name="list-item" type="list-item-type" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="media-extension-category-type">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="gif"/>
+			<xsd:enumeration value="jpeg"/>
+			<xsd:enumeration value="tif"/>
+			<xsd:enumeration value="bmp"/>
+			<xsd:enumeration value="png"/>
+			<xsd:enumeration value="wav"/>
+			<xsd:enumeration value="wma"/>
+			<xsd:enumeration value="wmv"/>
+			<xsd:enumeration value="mp3"/>
+			<xsd:enumeration value="unknown"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="media-type">
+		<xsd:attribute name="id" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation>Image id number. Image id's are unique to the file, not the instance of the image within the definition</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="file-name" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>Image file name</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="type" type="media-extension-category-type" use="required"/>
+		<xsd:attribute name="alt" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>Alternate text for an image</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attributeGroup ref="preferred-width"/>
+		<xsd:attribute name="preferred-height" type="preferred-height-width-type">
+			<xsd:annotation>
+				<xsd:documentation>Preferred height for image. Used for scaling images in the publication.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:simpleType name="paragraph-text-category-type">
+		<xsd:annotation>
+			<xsd:documentation>Distinguishes between regular paragraph text (including text in tables or lists), and text considered to be preambles or subheadings. Subheadings group together common subject matter following the subheading text. They are given emphasis through formatting in the publication. Preamble text appear in the beginning of the definition sections/subsections and contain standardized language. They are formatted in the publication using italics. Only regular paragraph text and subheading text are user-defined.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="body"/>
+			<xsd:enumeration value="preamble"/>
+			<xsd:enumeration value="subheading"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="paragraph-text-type" mixed="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="class-ref" type="class-ref-type"/>
+			<xsd:element name="media" type="media-type"/>
+			<xsd:element name="sub" type="xsd:string"/>
+			<xsd:element name="sup" type="xsd:string"/>
+		</xsd:choice>
+		<xsd:attribute name="type" type="paragraph-text-category-type" default="body"/>
+	</xsd:complexType>
+	<xsd:simpleType name="preferred-height-width-type">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d+(\.?\d+)?(cm|px|%)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:attributeGroup name="preferred-width">
+		<xsd:attribute name="preferred-width" type="preferred-height-width-type">
+			<xsd:annotation>
+				<xsd:documentation>Preferred width for image or table. Used for scaling images in the publication.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:attributeGroup>
+	<xsd:simpleType name="publication-category-type">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="official"/>
+			<xsd:enumeration value="test"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="references-type">
+		<xsd:sequence>
+			<xsd:element name="section-title" type="xsd:string"/>
+			<xsd:element name="limiting-references" type="section-type" minOccurs="0"/>
+			<xsd:element name="application-references" type="section-type" minOccurs="0"/>
+			<xsd:element name="residual-references" type="section-type" minOccurs="0"/>
+			<xsd:element name="informative-references" type="section-type" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="section-body-type">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="paragraph-text" type="paragraph-text-type"/>
+			<xsd:element name="list" type="list-type"/>
+			<xsd:element name="table" type="table-type"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="section-type">
+		<xsd:sequence>
+			<xsd:element name="section-title" type="xsd:string"/>
+			<xsd:element name="section-body" type="section-body-type"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="synonyms-keywords-type">
+		<xsd:sequence>
+			<xsd:element name="section-title" type="xsd:string"/>
+			<xsd:choice>
+				<xsd:element name="section-body" type="section-body-type"/>
+				<xsd:sequence>
+					<xsd:element name="abbreviations" type="section-body-type" minOccurs="0"/>
+					<xsd:element name="synonyms" type="section-body-type" minOccurs="0"/>
+					<xsd:element name="instead-of-words" type="section-body-type" minOccurs="0"/>
+					<xsd:element name="special-meanings" type="section-body-type" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:simpleType name="table-category-type">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="limiting-references-table"/>
+			<xsd:enumeration value="informative-references-table"/>
+			<xsd:enumeration value="glossary-table"/>
+			<xsd:enumeration value="synonyms-table"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="table-column-type">
+		<xsd:sequence>
+			<xsd:element name="paragraph-text" type="paragraph-text-type"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="preferred-width"/>
+	</xsd:complexType>
+	<xsd:complexType name="table-row-type">
+		<xsd:sequence>
+			<xsd:element name="table-column" type="table-column-type" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="table-type">
+		<xsd:sequence>
+			<xsd:element name="table-row" type="table-row-type" maxOccurs="unbounded" />
+			<xsd:element name="caption" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="table-category-type"/>
+	</xsd:complexType>
+</xsd:schema>

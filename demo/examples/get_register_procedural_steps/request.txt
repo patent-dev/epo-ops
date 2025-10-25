@@ -1,0 +1,6 @@
+Method: GetRegisterProceduralSteps
+
+Parameters:
+  refType: publication
+  format: epodoc
+  number: EP.2400812.A1

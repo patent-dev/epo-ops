@@ -1,0 +1,5 @@
+Method: SearchRegister
+
+Parameters:
+  query: ti=battery
+  range: 1-5

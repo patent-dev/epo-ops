@@ -1,0 +1,6 @@
+Method: GetClaimsMultiple
+
+Parameters:
+  numbers: bulk test patents from CSV
+  refType: publication
+  format: docdb

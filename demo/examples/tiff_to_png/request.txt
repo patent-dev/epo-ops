@@ -1,0 +1,5 @@
+Method: TIFFToPNG
+
+Parameters:
+  input: TIFF from GetImage
+  output: PNG

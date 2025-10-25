@@ -1,0 +1,23 @@
+Image Inquiry for EP.2400812.A1
+Document Instances: 3
+
+Instance 1:
+  Type: 
+  Description: Drawing
+  Link: published-data/images/EP/2400812/A1/thumbnail
+  Pages: 3
+  Formats: [application/pdf application/tiff]
+
+Instance 2:
+  Type: 
+  Description: FullDocument
+  Link: published-data/images/EP/2400812/A1/fullimage
+  Pages: 18
+  Formats: [application/pdf application/tiff]
+
+Instance 3:
+  Type: 
+  Description: FirstPageClipping
+  Link: published-data/images/EP/2400812/PA/firstpage
+  Pages: 1
+  Formats: [application/pdf application/tiff image/jpeg image/png]

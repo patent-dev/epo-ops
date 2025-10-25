@@ -1,0 +1,5 @@
+Method: GetImagePOST
+
+Parameters:
+  page: 1
+  identifier: EP/2400812/A1/fullimage

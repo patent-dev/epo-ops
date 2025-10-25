@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="../../../../style/exchange.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <exchange-documents>
+        <exchange-document system="ops.epo.org" family-id="43088294" country="EP" doc-number="2400812" kind="A1">
+            <bibliographic-data>
+                <publication-reference>
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>2400812</doc-number>
+                        <kind>A1</kind>
+                        <date>20111228</date>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>EP2400812</doc-number>
+                        <date>20111228</date>
+                    </document-id>
+                </publication-reference>
+                <classifications-ipcr>
+                    <classification-ipcr sequence="1">
+                        <text>H04W  84/    20            A I                    </text>
+                    </classification-ipcr>
+                </classifications-ipcr>
+                <patent-classifications>
+                    <patent-classification sequence="1">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>84</main-group>
+                        <subgroup>20</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>US</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="2">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>84</main-group>
+                        <subgroup>20</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="3">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>88</main-group>
+                        <subgroup>04</subgroup>
+                        <classification-value>A</classification-value>
+                        <generating-office>US</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="4">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>88</main-group>
+                        <subgroup>04</subgroup>
+                        <classification-value>A</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                </patent-classifications>
+                <application-reference doc-id="316859723">
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>10167109</doc-number>
+                        <kind>A</kind>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>EP20100167109</doc-number>
+                        <date>20100624</date>
+                    </document-id>
+                    <document-id document-id-type="original">
+                        <doc-number>10167109</doc-number>
+                    </document-id>
+                </application-reference>
+                <priority-claims>
+                    <priority-claim sequence="1" kind="regional">
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP20100167109</doc-number>
+                            <date>20100624</date>
+                        </document-id>
+                    </priority-claim>
+                </priority-claims>
+                <parties>
+                    <applicants>
+                        <applicant sequence="1" data-format="epodoc">
+                            <applicant-name>
+                                <name>9SOLUTIONS OY [FI]</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="1" data-format="original">
+                            <applicant-name>
+                                <name>9SOLUTIONS OY, </name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="2" data-format="original">
+                            <applicant-name>
+                                <name>9Solutions Oy</name>
+                            </applicant-name>
+                        </applicant>
+                    </applicants>
+                    <inventors>
+                        <inventor sequence="1" data-format="epodoc">
+                            <inventor-name>
+                                <name>HERRALA SAMI [FI]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="2" data-format="epodoc">
+                            <inventor-name>
+                                <name> KYLMAENEN JARI [FI]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="3" data-format="epodoc">
+                            <inventor-name>
+                                <name> NIEMI JAAKKO [FI]
+</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="1" data-format="original">
+                            <inventor-name>
+                                <name>HERRALA, SAMI, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="2" data-format="original">
+                            <inventor-name>
+                                <name>KYLMAENEN, JARI, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="3" data-format="original">
+                            <inventor-name>
+                                <name>NIEMI, JAAKKO, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="4" data-format="original">
+                            <inventor-name>
+                                <name>Herrala, Sami, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="5" data-format="original">
+                            <inventor-name>
+                                <name>Kylmänen, Jari, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="6" data-format="original">
+                            <inventor-name>
+                                <name>Niemi, Jaakko</name>
+                            </inventor-name>
+                        </inventor>
+                    </inventors>
+                </parties>
+                <invention-title lang="de">BLUETOOTH-VERNETZUNG</invention-title>
+                <invention-title lang="fr">MISE EN RÉSEAU BLUETOOTH</invention-title>
+                <invention-title lang="en">BLUETOOTH NETWORKING</invention-title>
+                <references-cited>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="1">
+                        <patcit dnum-type="publication number" num="1">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO02054790</doc-number>
+                                <name>IBM [US], et al</name>
+                                <date>20020711</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>WO</country>
+                                <doc-number>02054790</doc-number>
+                                <kind>A2</kind>
+                                <name>IBM [US], et al</name>
+                                <date>20020711</date>
+                            </document-id>
+                        </patcit>
+                        <category>A</category>
+                        <rel-claims>1-15</rel-claims>
+                        <rel-passage>
+                            <passage>* page  1, line  1  - page  3, line  7 *</passage>
+                            <passage>* page  7, line  7  - page  8, line  4 *</passage>
+                            <passage>* page  15, lines  3-12 *</passage>
+                            <passage>* page  16, line  13  - page  17, line  6 *</passage>
+                            <passage>* claims 1-20 *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="2">
+                        <patcit dnum-type="publication number" num="2">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US2003060222</doc-number>
+                                <name>RUNE JOHAN [SE]</name>
+                                <date>20030327</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>2003060222</doc-number>
+                                <kind>A1</kind>
+                                <name>RUNE JOHAN [SE]</name>
+                                <date>20030327</date>
+                            </document-id>
+                        </patcit>
+                        <category>A</category>
+                        <rel-claims>1-15</rel-claims>
+                        <rel-passage>
+                            <passage>* figure 3 *</passage>
+                            <passage>* paragraphs  [0004] - [0006] - [0014] , [0027] - [0034] ** claims 1-20 *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="3">
+                        <patcit dnum-type="publication number" num="3">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO03067954</doc-number>
+                                <name>NOKIA CORP [FI], et al</name>
+                                <date>20030821</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>WO</country>
+                                <doc-number>03067954</doc-number>
+                                <kind>A2</kind>
+                                <name>NOKIA CORP [FI], et al</name>
+                                <date>20030821</date>
+                            </document-id>
+                        </patcit>
+                        <category>A</category>
+                        <rel-claims>1-15</rel-claims>
+                        <rel-passage>
+                            <passage>* the whole document *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="4">
+                        <patcit dnum-type="publication number" num="4">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US2004097263</doc-number>
+                                <name>KATAYAMA MUTSUMI [JP], et al</name>
+                                <date>20040520</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>2004097263</doc-number>
+                                <kind>A1</kind>
+                                <name>KATAYAMA MUTSUMI [JP], et al</name>
+                                <date>20040520</date>
+                            </document-id>
+                        </patcit>
+                        <category>A</category>
+                        <rel-claims>1-15</rel-claims>
+                        <rel-passage>
+                            <passage>* abstract *</passage>
+                            <passage>* figures 1,3 *</passage>
+                            <passage>* paragraphs  [0005] , [0009] , [0010] , [0027] , [0042] , [0043] , [0047] - [0050] *</passage>
+                            <passage>* claims 1-26 *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="5">
+                        <patcit dnum-type="publication number" num="5">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US2004136338</doc-number>
+                                <name>LIN TING-YU [TW], et al</name>
+                                <date>20040715</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>2004136338</doc-number>
+                                <kind>A1</kind>
+                                <name>LIN TING-YU [TW], et al</name>
+                                <date>20040715</date>
+                            </document-id>
+                        </patcit>
+                        <category>Y</category>
+                        <rel-claims>1-12,15</rel-claims>
+                        <category>A</category>
+                        <rel-claims>13,14</rel-claims>
+                        <rel-passage>
+                            <passage>* abstract *</passage>
+                            <passage>* figures 2,7b,9a-10b *</passage>
+                            <passage>* paragraphs  [0002] - [0005] - [0013] , [0017] - [0020] - [0038] - [0040] - [0053] - [0055] - [0057] *</passage>
+                            <passage>* paragraphs  [0087] , [0090] , [0093] , [0095] , [0099] , [0100] , [0103] , [0105] , [0106] *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="6">
+                        <patcit dnum-type="publication number" num="6">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>EP1542377</doc-number>
+                                <name>TDK SYSTEMS EUROP LTD [GB]</name>
+                                <date>20050615</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>EP</country>
+                                <doc-number>1542377</doc-number>
+                                <kind>A2</kind>
+                                <name>TDK SYSTEMS EUROP LTD [GB]</name>
+                                <date>20050615</date>
+                            </document-id>
+                        </patcit>
+                        <category>Y</category>
+                        <rel-claims>1-12,15</rel-claims>
+                        <category>A</category>
+                        <rel-claims>13,14</rel-claims>
+                        <rel-passage>
+                            <passage>* the whole document *</passage>
+                        </rel-passage>
+                    </citation>
+                </references-cited>
+            </bibliographic-data>
+            <abstract lang="en">
+                <p>An apparatus enabling establishment of a Bluetooth mesh network comprises at least two Bluetooth transceiver circuitries and an internal connection between the at least two Bluetooth transceiver circuitries. The Bluetooth transceiver circuitries are simultaneously connected to different Bluetooth piconets, and the apparatus operates as a bridge between the piconets. Concatenation of such apparatuses enables construction of a Bluetooth mesh network where the bridge devices may be simultaneously connected to multiple Bluetooth piconets.</p>
+            </abstract>
+        </exchange-document>
+        <exchange-document system="ops.epo.org" family-id="44533794" country="EP" doc-number="2533477" kind="A1">
+            <bibliographic-data>
+                <publication-reference>
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>2533477</doc-number>
+                        <kind>A1</kind>
+                        <date>20121212</date>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>EP2533477</doc-number>
+                        <date>20121212</date>
+                    </document-id>
+                </publication-reference>
+                <classifications-ipcr>
+                    <classification-ipcr sequence="1">
+                        <text>H04L  12/   715            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="2">
+                        <text>H04W  40/    32            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="3">
+                        <text>H04W  72/    04            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="4">
+                        <text>H04W  88/    04            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="5">
+                        <text>H04W  88/    06            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="6">
+                        <text>H04W  84/    18            A N                    </text>
+                    </classification-ipcr>
+                </classifications-ipcr>
+                <patent-classifications>
+                    <patent-classification sequence="1">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>L</subclass>
+                        <main-group>45</main-group>
+                        <subgroup>04</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>US</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="2">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>L</subclass>
+                        <main-group>45</main-group>
+                        <subgroup>04</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="3">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>40</main-group>
+                        <subgroup>32</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>US</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="4">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>40</main-group>
+                        <subgroup>32</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="5">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>84</main-group>
+                        <subgroup>18</subgroup>
+                        <classification-value>A</classification-value>
+                        <generating-office>US</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="6">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>84</main-group>
+                        <subgroup>18</subgroup>
+                        <classification-value>A</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                </patent-classifications>
+                <application-reference doc-id="334545187">
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>11169280</doc-number>
+                        <kind>A</kind>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>EP20110169280</doc-number>
+                        <date>20110609</date>
+                    </document-id>
+                    <document-id document-id-type="original">
+                        <doc-number>11169280</doc-number>
+                    </document-id>
+                </application-reference>
+                <priority-claims>
+                    <priority-claim sequence="1" kind="regional">
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP20110169280</doc-number>
+                            <date>20110609</date>
+                        </document-id>
+                    </priority-claim>
+                </priority-claims>
+                <parties>
+                    <applicants>
+                        <applicant sequence="1" data-format="epodoc">
+                            <applicant-name>
+                                <name>9SOLUTIONS OY [FI]</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="1" data-format="original">
+                            <applicant-name>
+                                <name>9SOLUTIONS OY</name>
+                            </applicant-name>
+                        </applicant>
+                    </applicants>
+                    <inventors>
+                        <inventor sequence="1" data-format="epodoc">
+                            <inventor-name>
+                                <name>PESONEN ARTO TAPIO [FI]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="1" data-format="original">
+                            <inventor-name>
+                                <name>PESONEN, ARTO TAPIO</name>
+                            </inventor-name>
+                        </inventor>
+                    </inventors>
+                </parties>
+                <invention-title lang="de">Bluetooth-Netzwerkkonfiguration</invention-title>
+                <invention-title lang="fr">Configuration de réseau Bluetooth</invention-title>
+                <invention-title lang="en">Bluetooth network configuration</invention-title>
+                <references-cited>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="1">
+                        <nplcit num="1">
+                            <text>- SEWOOK JUNG ET AL, "Performance comparison of overlaid bluetooth piconets (OBP) and bluetooth scatternet", WIRELESS COMMUNICATIONS AND NETWORKING CONFERENCE, 2006. WCNC 2006. IE EE LAS VEGAS, NV, USA 3-6 APRIL 2006, PISCATAWAY, NJ, USA,IEEE, PISCATAWAY, NJ, USA, (20060403), doi:10.1109/WCNC.2006.1683515, ISBN 978-1-4244-0269-4, pages 505 - 510, XP031331350</text>
+                        </nplcit>
+                        <category>X</category>
+                        <rel-claims>1,2,4-13</rel-claims>
+                        <category>I</category>
+                        <rel-claims>3</rel-claims>
+                        <rel-passage>
+                            <passage>* the whole document *</passage>
+                        </rel-passage>
+                    </citation>
+                </references-cited>
+            </bibliographic-data>
+            <abstract lang="en">
+                <p>A method, apparatus, and computer program for operating a Bluetooth network is presented. The method comprises providing a Bluetooth system comprising a plurality of Bluetooth devices forming Bluetooth piconets disconnected from each other; and providing a route for a data packet between two remote Bluetooth devices through the Bluetooth system by sequentially changing structures of the Bluetooth piconets, wherein at least some of the plurality of Bluetooth devices sequentially create and terminate connections with different Bluetooth devices as a result of the sequential change of the structures of the Bluetooth piconets.</p>
+            </abstract>
+        </exchange-document>
+        <exchange-document system="ops.epo.org" family-id="44533794" country="EP" doc-number="2533477" kind="B1">
+            <bibliographic-data>
+                <publication-reference>
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>2533477</doc-number>
+                        <kind>B1</kind>
+                        <date>20140305</date>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>EP2533477</doc-number>
+                        <date>20140305</date>
+                    </document-id>
+                </publication-reference>
+                <classifications-ipcr>
+                    <classification-ipcr sequence="1">
+                        <text>H04L  12/   715            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="2">
+                        <text>H04W  40/    32            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="3">
+                        <text>H04W  72/    04            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="4">
+                        <text>H04W  88/    04            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="5">
+                        <text>H04W  88/    06            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="6">
+                        <text>H04W  84/    18            A N                    </text>
+                    </classification-ipcr>
+                </classifications-ipcr>
+                <patent-classifications>
+                    <patent-classification sequence="1">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>L</subclass>
+                        <main-group>45</main-group>
+                        <subgroup>04</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>US</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="2">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>L</subclass>
+                        <main-group>45</main-group>
+                        <subgroup>04</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="3">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>40</main-group>
+                        <subgroup>32</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>US</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="4">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>40</main-group>
+                        <subgroup>32</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="5">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>84</main-group>
+                        <subgroup>18</subgroup>
+                        <classification-value>A</classification-value>
+                        <generating-office>US</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="6">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>H</section>
+                        <class>04</class>
+                        <subclass>W</subclass>
+                        <main-group>84</main-group>
+                        <subgroup>18</subgroup>
+                        <classification-value>A</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                </patent-classifications>
+                <application-reference doc-id="334545187">
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>11169280</doc-number>
+                        <kind>A</kind>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>EP20110169280</doc-number>
+                        <date>20110609</date>
+                    </document-id>
+                    <document-id document-id-type="original">
+                        <doc-number>11169280</doc-number>
+                    </document-id>
+                </application-reference>
+                <priority-claims>
+                    <priority-claim sequence="1" kind="regional">
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP20110169280</doc-number>
+                            <date>20110609</date>
+                        </document-id>
+                    </priority-claim>
+                </priority-claims>
+                <parties>
+                    <applicants>
+                        <applicant sequence="1" data-format="epodoc">
+                            <applicant-name>
+                                <name>9SOLUTIONS OY [FI]</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="1" data-format="original">
+                            <applicant-name>
+                                <name>9SOLUTIONS OY</name>
+                            </applicant-name>
+                        </applicant>
+                    </applicants>
+                    <inventors>
+                        <inventor sequence="1" data-format="epodoc">
+                            <inventor-name>
+                                <name>PESONEN ARTO TAPIO [FI]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="1" data-format="original">
+                            <inventor-name>
+                                <name>PESONEN, ARTO TAPIO</name>
+                            </inventor-name>
+                        </inventor>
+                    </inventors>
+                </parties>
+                <invention-title lang="de">Bluetooth-Netzwerkkonfiguration</invention-title>
+                <invention-title lang="fr">Configuration de réseau Bluetooth</invention-title>
+                <invention-title lang="en">Bluetooth network configuration</invention-title>
+            </bibliographic-data>
+        </exchange-document>
+    </exchange-documents>
+</ops:world-patent-data>

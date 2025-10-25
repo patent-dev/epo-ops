@@ -1,0 +1,2954 @@
+openapi: 3.0.0
+info:
+  title: Open Patent Services API
+  description: Open Patent Services (OPS) is a web service which provides access to
+    the EPO's raw data via a standardised interface.
+  version: '3.2'
+  termsOfService: http://www.epo.org/searching-for-patents/data/web-services/ops.html#tab-1
+  contact:
+    name: OPS Support
+    url: https://forms.epo.org/service-support/contact-us/contact0-form.html?topic=OnlineServices&subject=OPS
+    email: patentdata@epo.org
+  license:
+    name: Fair use charter
+    url: http://www.epo.org/service-support/ordering/fair-use.html
+paths:
+  /published-data/search:
+    get:
+      operationId: Published Data Keywords Search without Consituents
+      summary: Bibliographic data search service
+      description: Bibliographic data search service
+      tags:
+      - Published
+      parameters:
+      - name: Range
+        in: query
+        description: Range of elements were requested
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: string
+          format: string
+          default: 1-25
+      - name: q
+        in: query
+        description: Search query
+        required: true
+        schema:
+          type: string
+          format: string
+          default: ti=plastic
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/search/{constituent}:
+    get:
+      operationId: Published Data Keywords Search with Variable Constituents
+      summary: Bibliographic data search service
+      description: Bibliographic data search service
+      tags:
+      - Published
+      parameters:
+      - name: constituent
+        in: path
+        description: Constituent
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - biblio
+          - full-cycle
+          - abstract
+          default: biblio
+      - name: q
+        in: query
+        description: Search query
+        required: true
+        schema:
+          type: string
+          format: string
+          default: ti=plastic
+      - name: Range
+        in: query
+        description: Range of elements were requested
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: string
+          format: string
+          default: 1-25
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/{number}/biblio:
+    get:
+      operationId: Published Data Retrieval
+      summary: Bibliographic data retrieval service
+      description: Bibliographic data retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/biblio:
+    post:
+      operationId: Published Data Retrieval (POST)
+      summary: Bibliographic data retrieval service
+      description: Bibliographic data retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/{number}/abstract:
+    get:
+      operationId: Published Data Abstract Service
+      summary: Publications abstract service
+      description: Publications abstract service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/abstract:
+    post:
+      operationId: Published Data Abstract Service (POST)
+      summary: Publications abstract service
+      description: Publications abstract service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/{number}/full-cycle:
+    get:
+      operationId: Published Data Full Cycle Service
+      summary: Publications full cycle service
+      description: Publications full cycle service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/full-cycle:
+    post:
+      operationId: Published Data Full Cycle Service (POST)
+      summary: Publications full cycle service
+      description: Publications full cycle service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/{number}/fulltext:
+    get:
+      operationId: Published Data Fulltext Inquiry Service
+      summary: Fulltext inquiry service
+      description: Fulltext inquiry service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/fulltext:
+    post:
+      operationId: Published Data Fulltext Inquiry Service (POST)
+      summary: Fulltext inquiry service
+      description: Fulltext inquiry service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/{number}/description:
+    get:
+      operationId: Published Data Description Retrieval Service
+      summary: Description retrieval service
+      description: Description retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/description:
+    post:
+      operationId: Published Data Description Retrieval Service (POST)
+      summary: Description retrieval service
+      description: Description retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/{number}/claims:
+    get:
+      operationId: Published Data Claims Retrieval Service
+      summary: Claims retrieval service
+      description: Claims retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/claims:
+    post:
+      operationId: Published Claims Retrieval Service (POST)
+      summary: Claims retrieval service
+      description: Claims retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/{number}/equivalents:
+    get:
+      operationId: Published Equivalents Retrieval Service
+      summary: Equivalents retrieval service
+      description: Equivalents retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/equivalents:
+    post:
+      operationId: Published Equivalents Retrieval Service (POST)
+      description: Equivalents retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/{number}/images:
+    get:
+      operationId: Published Images Inquiry Service
+      description: Images inquiry service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: docdb
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP.1000000.A1
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/{type}/{format}/images:
+    post:
+      operationId: Published Images Inqury Service (POST)
+      summary: Images inquiry service
+      description: Images inquiry service
+      tags:
+      - Published
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: docdb
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/images/{image-country}/{image-number}/{image-kind}/{image-type}:
+    get:
+      operationId: Published Images Retrieval Service
+      summary: Images retrieval service
+      description: Images retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: image-country
+        in: path
+        description: Image Id country code part
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP
+      - name: image-number
+        in: path
+        description: Image Id number part
+        required: true
+        schema:
+          type: string
+          format: string
+          default: 1000000
+      - name: image-kind
+        in: path
+        description: Image Id kind part
+        required: true
+        schema:
+          type: string
+          format: string
+          default: A1
+      - name: image-type
+        in: path
+        description: Image Id document type part
+        required: true
+        schema:
+          type: string
+          format: string
+          default: fullimage
+      - name: Range
+        in: query
+        description: Page number
+        required: true
+        schema:
+          type: integer
+          format: string
+          default: 1
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/pdf:
+              schema:
+                type: string
+            application/tiff:
+              schema:
+                type: string
+            image/png:
+              schema:
+                type: string
+            image/tiff:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/tiff:
+              schema:
+                $ref: '#/components/schemas/Error'
+            image/png:
+              schema:
+                $ref: '#/components/schemas/Error'
+            image/tiff:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /published-data/images:
+    post:
+      operationId: Published Images Retrieval Service (POST)
+      description: Images retrieval service
+      tags:
+      - Published
+      parameters:
+      - name: Range
+        in: query
+        description: Page number
+        required: true
+        schema:
+          type: integer
+          format: string
+          default: 1
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/pdf:
+              schema:
+                type: string
+            application/tiff:
+              schema:
+                type: string
+            image/png:
+              schema:
+                type: string
+            image/tiff:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/tiff:
+              schema:
+                $ref: '#/components/schemas/Error'
+            image/png:
+              schema:
+                $ref: '#/components/schemas/Error'
+            image/tiff:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /family/{type}/{format}/{number}:
+    get:
+      operationId: INPADOC Family Retrieval Service
+      summary: Family retrieval service
+      description: Family retrieval service
+      tags:
+      - Family
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /family/{type}/{format}:
+    post:
+      operationId: INPADOC Family Retrieval Service (POST)
+      summary: Family retrieval service
+      description: Family retrieval service
+      tags:
+      - Family
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /family/{type}/{format}/{number}/biblio:
+    get:
+      operationId: INPADOC Family Retrieval Service with Biblio
+      summary: Family + biblio retrieval service
+      description: Family + biblio retrieval service
+      tags:
+      - Family
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /family/{type}/{format}/biblio:
+    post:
+      operationId: INPADOC Family Retrieval Service with Biblio  (POST)
+      summary: Family + biblio retrieval service
+      description: Family + biblio retrieval service
+      tags:
+      - Family
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /family/{type}/{format}/{number}/legal:
+    get:
+      operationId: INPADOC Family Retrieval Service with Legal
+      summary: Family + legal data retrieval service
+      description: Family + legal data retrieval service
+      tags:
+      - Family
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /family/{type}/{format}/legal:
+    post:
+      operationId: INPADOC Family Retrieval Service with Legal (POST)
+      summary: Family + legal data retrieval service
+      description: Family + legal data retrieval service
+      tags:
+      - Family
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /legal/{type}/{format}/{number}:
+    get:
+      operationId: Legal Data Retrieval Service
+      summary: Legal data retrieval service
+      description: Legal data retrieval service
+      tags:
+      - Legal
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /legal/{type}/{format}:
+    post:
+      operationId: Legal Data Retrieval Service (POST)
+      summary: Legal data retrieval service
+      description: Legal data retrieval service
+      tags:
+      - Legal
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/search:
+    get:
+      operationId: Register Search Service without Constituents
+      summary: Register data search service
+      description: Register data search service
+      tags:
+      - Register
+      parameters:
+      - name: Range
+        in: query
+        description: Range of elements were requested, e.g. 1-20
+        required: false
+        schema:
+          type: string
+          format: string
+          default: 1-25
+      - name: q
+        in: query
+        description: Search query
+        required: true
+        schema:
+          type: string
+          format: string
+          default: ti=plastic
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/search/{constituent}:
+    get:
+      operationId: Register Search Service with Variable Constituents
+      summary: Register data search service
+      description: Register data search service
+      tags:
+      - Register
+      parameters:
+      - name: constituent
+        in: path
+        description: Constituent
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - biblio
+          - events
+          - procedural-steps
+          - upp
+          default: biblio
+      - name: q
+        in: query
+        description: Search query
+        required: true
+        schema:
+          type: string
+          format: string
+          default: ti=plastic
+      - name: Range
+        in: query
+        description: Range of elements were requested, e.g. 1-20
+        required: false
+        schema:
+          type: string
+          format: string
+          default: 1-25
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/{type}/{format}/{number}/biblio:
+    get:
+      operationId: Register Retrieval Service
+      summary: Register data retrieval service
+      description: Register data retrieval service
+      tags:
+      - Register
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/{type}/{format}/biblio:
+    post:
+      operationId: Register Retrieval Service (POST)
+      summary: Register data retrieval service
+      description: Register data retrieval service
+      tags:
+      - Register
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/{type}/{format}/{number}/events:
+    get:
+      operationId: Register Events Service
+      summary: Register events service
+      description: Register events service
+      tags:
+      - Register
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/{type}/{format}/events:
+    post:
+      operationId: Register Events Service (POST)
+      summary: Register events service
+      description: Register events service
+      tags:
+      - Register
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/{type}/{format}/{number}/procedural-steps:
+    get:
+      operationId: Register Procedural Steps Service
+      summary: Register procedural steps service
+      description: Register procedural steps service
+      tags:
+      - Register
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/{type}/{format}/procedural-steps:
+    post:
+      operationId: Register Procedural Steps Service (POST)
+      summary: Register procedural steps service
+      description: Register procedural steps service
+      tags:
+      - Register
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/{type}/{format}/{number}/upp:
+    get:
+      operationId: Register UNIP Service
+      summary: Register unitary patent service
+      description: Register unitary patent service
+      tags:
+      - Register
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - epodoc
+          default: epodoc
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: EP1000000
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /register/{type}/{format}/upp:
+    post:
+      operationId: Register UNIP Service (POST)
+      summary: Register unitary patent service
+      description: Register unitary patent service
+      tags:
+      - Register
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - publication
+          default: publication
+      - name: format
+        in: path
+        description: Reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - epodoc
+          default: epodoc
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /classification/cpc/{class}:
+    get:
+      operationId: Classification Schema Service
+      summary: Classification schema service
+      description: Classification schema service
+      tags:
+      - Classification
+      parameters:
+      - name: class
+        in: path
+        description: CPC class name
+        required: true
+        schema:
+          type: string
+          format: string
+          default: A01B
+      - name: ancestors
+        in: query
+        description: Ancestors flag
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: boolean
+          enum:
+          - false
+          - true
+      - name: navigation
+        in: query
+        description: Navigation flag
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: boolean
+          enum:
+          - false
+          - true
+      - name: depth
+        in: query
+        description: Classification tree traversing depth
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - all
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /classification/cpc/{class}/{subclass}:
+    get:
+      operationId: Classification Schema Subclass Service
+      summary: Classification schema service
+      description: Classification schema service
+      tags:
+      - Classification
+      parameters:
+      - name: class
+        in: path
+        description: CPC class name
+        required: true
+        schema:
+          type: string
+          format: string
+          default: A01B1
+      - name: subclass
+        in: path
+        description: CPC subclass name
+        required: true
+        schema:
+          type: string
+          format: string
+          default: '00'
+      - name: ancestors
+        in: query
+        description: Ancestors flag
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: boolean
+          enum:
+          - false
+          - true
+      - name: navigation
+        in: query
+        description: Navigation flag
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: boolean
+          enum:
+          - false
+          - true
+      - name: depth
+        in: query
+        description: Classification tree traversing depth
+        required: false
+        allowEmptyValue: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - all
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /classification/cpc:
+    post:
+      operationId: Classification Schema Service (POST)
+      summary: Classification schema service
+      description: Classification schema service
+      tags:
+      - Classification
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /classification/cpc/media/{media-name}:
+    get:
+      operationId: Classification Media Service
+      summary: Classification media retrieval service
+      description: Classification media retrieval service
+      tags:
+      - Classification
+      parameters:
+      - name: media-name
+        in: path
+        description: CPC media resource name
+        required: true
+        schema:
+          type: string
+          format: string
+          default: 1000.gif
+      - name: attachment
+        in: query
+        description: Attachment/inline content disposition indicator. Inline is a
+          default value.
+        required: false
+        schema:
+          type: boolean
+          enum:
+          - false
+          - true
+      responses:
+        '200':
+          description: Valid
+          content:
+            image/gif:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            image/gif:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /classification/cpc/search:
+    get:
+      operationId: Classification Statistics Service
+      summary: Classification statistics search service
+      description: Classification statistics search service
+      tags:
+      - Classification
+      parameters:
+      - name: q
+        in: query
+        description: Search query
+        required: true
+        schema:
+          type: string
+          format: string
+          default: plastic
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /classification/map/{input-format}/{class}/{subclass}/{output-format}:
+    get:
+      operationId: Classification Mapping Service
+      summary: Classification mapping service
+      description: Classification mapping service
+      tags:
+      - Classification
+      parameters:
+      - name: input-format
+        in: path
+        description: Input classification conversion format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - cpc
+          - ecla
+          default: ecla
+      - name: class
+        in: path
+        description: Valid
+        required: true
+        schema:
+          type: string
+          format: string
+          default: A01D2085
+      - name: subclass
+        in: path
+        description: Valid
+        required: true
+        schema:
+          type: string
+          format: string
+          default: 8
+      - name: output-format
+        in: path
+        description: Output classification conversion format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - cpc
+          - ecla
+          - ipc
+          default: cpc
+      - name: additional
+        in: query
+        description: Invention/Additional resolution indicator. Invention is default
+          value.
+        required: true
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /number-service/{type}/{input-format}/{number}/{output-format}:
+    get:
+      operationId: Number Service
+      summary: Number service
+      description: Number service
+      tags:
+      - Number
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: application
+      - name: input-format
+        in: path
+        description: Input reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - original
+          default: original
+      - name: number
+        in: path
+        description: Reference number
+        required: true
+        schema:
+          type: string
+          format: string
+          default: US.(05/948,554).19781004
+      - name: output-format
+        in: path
+        description: Output reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          - original
+          default: docdb
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /number-service/{type}/{input-format}/{output-format}:
+    post:
+      operationId: Number Service (POST)
+      summary: Number service
+      description: Number service
+      tags:
+      - Number
+      parameters:
+      - name: type
+        in: path
+        description: Reference type
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - application
+          - priority
+          - publication
+          default: application
+      - name: input-format
+        in: path
+        description: Input reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          - original
+          default: original
+      - name: output-format
+        in: path
+        description: Output reference format
+        required: true
+        schema:
+          type: string
+          format: string
+          enum:
+          - docdb
+          - epodoc
+          - original
+          default: docdb
+      requestBody:
+        $ref: '#/components/requestBodies/Body'
+      responses:
+        '200':
+          description: Valid
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            application/javascript:
+              schema:
+                type: string
+        default:
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+  /../developers/me/stats/usage:
+    get:
+      operationId: Get Usage Statistics
+      summary: Data usage statistics API
+      description: 'Retrieve data usage statistics for a given date or date range.
+        Note: Calls to this API do not contribute to quota usage.'
+      tags:
+      - Usage
+      parameters:
+      - name: timeRange
+        in: query
+        description: Single date or date range in dd/mm/yyyy or dd/mm/yyyy~dd/mm/yyyy
+          format
+        required: true
+        schema:
+          type: string
+          format: string
+          default: 01/01/2024~31/01/2024
+      responses:
+        '200':
+          description: Valid usage statistics response
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Usage statistics with metrics including total_response_size
+                  (bytes) and message_count
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - client-credentials: []
+servers:
+- url: http://ops.epo.org/3.2/rest-services
+- url: https://ops.epo.org/3.2/rest-services
+components:
+  requestBodies:
+    Body:
+      content:
+        text/plain:
+          schema:
+            $ref: '#/components/schemas/Body'
+      description: Request payload
+      required: true
+  securitySchemes:
+    client-credentials:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://ops.epo.org/3.2/auth/accesstoken
+  schemas:
+    Body:
+      type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      xml:
+        name: fault

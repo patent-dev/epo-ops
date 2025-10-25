@@ -1,0 +1,8 @@
+Method: GetImage
+
+Parameters:
+  imageType: thumbnail
+  page: 1
+  country: EP
+  number: 2400812
+  kind: A1

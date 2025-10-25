@@ -1,0 +1,6 @@
+Method: GetLegal
+
+Parameters:
+  number: EP.2400812.A1
+  refType: publication
+  format: docdb

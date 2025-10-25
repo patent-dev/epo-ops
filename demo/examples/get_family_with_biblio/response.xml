@@ -1,0 +1,2256 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="../../../../../style/family-biblio.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ops:patent-family legal="false" total-result-count="5">
+        <ops:publication-reference>
+            <document-id document-id-type="docdb">
+                <country>EP</country>
+                <doc-number>2400812</doc-number>
+                <kind>A1</kind>
+            </document-id>
+        </ops:publication-reference>
+        <ops:family-member family-id="43088294">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>2400812</doc-number>
+                    <kind>A1</kind>
+                    <date>20111228</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>EP2400812</doc-number>
+                    <date>20111228</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="316859723" is-representative="YES">
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>10167109</doc-number>
+                    <kind>A</kind>
+                    <date>20100624</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="regional">
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>10167109</doc-number>
+                    <kind>A</kind>
+                    <date>20100624</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="43088294" country="EP" doc-number="2400812" kind="A1">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>EP</country>
+                            <doc-number>2400812</doc-number>
+                            <kind>A1</kind>
+                            <date>20111228</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP2400812</doc-number>
+                            <date>20111228</date>
+                        </document-id>
+                    </publication-reference>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>H04W  84/    20            A I                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="316859723">
+                        <document-id document-id-type="docdb">
+                            <country>EP</country>
+                            <doc-number>10167109</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP20100167109</doc-number>
+                            <date>20100624</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>10167109</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="regional">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>EP20100167109</doc-number>
+                                <date>20100624</date>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties>
+                        <applicants>
+                            <applicant sequence="1" data-format="epodoc">
+                                <applicant-name>
+                                    <name>9SOLUTIONS OY [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="1" data-format="original">
+                                <applicant-name>
+                                    <name>9SOLUTIONS OY, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="2" data-format="original">
+                                <applicant-name>
+                                    <name>9Solutions Oy</name>
+                                </applicant-name>
+                            </applicant>
+                        </applicants>
+                        <inventors>
+                            <inventor sequence="1" data-format="epodoc">
+                                <inventor-name>
+                                    <name>HERRALA SAMI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="epodoc">
+                                <inventor-name>
+                                    <name> KYLMAENEN JARI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="epodoc">
+                                <inventor-name>
+                                    <name> NIEMI JAAKKO [FI]
+</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="1" data-format="original">
+                                <inventor-name>
+                                    <name>HERRALA, SAMI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="original">
+                                <inventor-name>
+                                    <name>KYLMAENEN, JARI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="original">
+                                <inventor-name>
+                                    <name>NIEMI, JAAKKO, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="4" data-format="original">
+                                <inventor-name>
+                                    <name>Herrala, Sami, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="5" data-format="original">
+                                <inventor-name>
+                                    <name>Kylmänen, Jari, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="6" data-format="original">
+                                <inventor-name>
+                                    <name>Niemi, Jaakko</name>
+                                </inventor-name>
+                            </inventor>
+                        </inventors>
+                    </parties>
+                    <invention-title lang="de">BLUETOOTH-VERNETZUNG</invention-title>
+                    <invention-title lang="fr">MISE EN RÉSEAU BLUETOOTH</invention-title>
+                    <invention-title lang="en">BLUETOOTH NETWORKING</invention-title>
+                    <references-cited>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="1">
+                            <patcit dnum-type="publication number" num="1">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>WO02054790</doc-number>
+                                    <name>IBM [US], et al</name>
+                                    <date>20020711</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>WO</country>
+                                    <doc-number>02054790</doc-number>
+                                    <kind>A2</kind>
+                                    <name>IBM [US], et al</name>
+                                    <date>20020711</date>
+                                </document-id>
+                            </patcit>
+                            <category>A</category>
+                            <rel-claims>1-15</rel-claims>
+                            <rel-passage>
+                                <passage>* page  1, line  1  - page  3, line  7 *</passage>
+                                <passage>* page  7, line  7  - page  8, line  4 *</passage>
+                                <passage>* page  15, lines  3-12 *</passage>
+                                <passage>* page  16, line  13  - page  17, line  6 *</passage>
+                                <passage>* claims 1-20 *</passage>
+                            </rel-passage>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="2">
+                            <patcit dnum-type="publication number" num="2">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2003060222</doc-number>
+                                    <name>RUNE JOHAN [SE]</name>
+                                    <date>20030327</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2003060222</doc-number>
+                                    <kind>A1</kind>
+                                    <name>RUNE JOHAN [SE]</name>
+                                    <date>20030327</date>
+                                </document-id>
+                            </patcit>
+                            <category>A</category>
+                            <rel-claims>1-15</rel-claims>
+                            <rel-passage>
+                                <passage>* figure 3 *</passage>
+                                <passage>* paragraphs  [0004] - [0006] - [0014] , [0027] - [0034] ** claims 1-20 *</passage>
+                            </rel-passage>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="3">
+                            <patcit dnum-type="publication number" num="3">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>WO03067954</doc-number>
+                                    <name>NOKIA CORP [FI], et al</name>
+                                    <date>20030821</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>WO</country>
+                                    <doc-number>03067954</doc-number>
+                                    <kind>A2</kind>
+                                    <name>NOKIA CORP [FI], et al</name>
+                                    <date>20030821</date>
+                                </document-id>
+                            </patcit>
+                            <category>A</category>
+                            <rel-claims>1-15</rel-claims>
+                            <rel-passage>
+                                <passage>* the whole document *</passage>
+                            </rel-passage>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="4">
+                            <patcit dnum-type="publication number" num="4">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004097263</doc-number>
+                                    <name>KATAYAMA MUTSUMI [JP], et al</name>
+                                    <date>20040520</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004097263</doc-number>
+                                    <kind>A1</kind>
+                                    <name>KATAYAMA MUTSUMI [JP], et al</name>
+                                    <date>20040520</date>
+                                </document-id>
+                            </patcit>
+                            <category>A</category>
+                            <rel-claims>1-15</rel-claims>
+                            <rel-passage>
+                                <passage>* abstract *</passage>
+                                <passage>* figures 1,3 *</passage>
+                                <passage>* paragraphs  [0005] , [0009] , [0010] , [0027] , [0042] , [0043] , [0047] - [0050] *</passage>
+                                <passage>* claims 1-26 *</passage>
+                            </rel-passage>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="5">
+                            <patcit dnum-type="publication number" num="5">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004136338</doc-number>
+                                    <name>LIN TING-YU [TW], et al</name>
+                                    <date>20040715</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004136338</doc-number>
+                                    <kind>A1</kind>
+                                    <name>LIN TING-YU [TW], et al</name>
+                                    <date>20040715</date>
+                                </document-id>
+                            </patcit>
+                            <category>Y</category>
+                            <rel-claims>1-12,15</rel-claims>
+                            <category>A</category>
+                            <rel-claims>13,14</rel-claims>
+                            <rel-passage>
+                                <passage>* abstract *</passage>
+                                <passage>* figures 2,7b,9a-10b *</passage>
+                                <passage>* paragraphs  [0002] - [0005] - [0013] , [0017] - [0020] - [0038] - [0040] - [0053] - [0055] - [0057] *</passage>
+                                <passage>* paragraphs  [0087] , [0090] , [0093] , [0095] , [0099] , [0100] , [0103] , [0105] , [0106] *</passage>
+                            </rel-passage>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="6">
+                            <patcit dnum-type="publication number" num="6">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>EP1542377</doc-number>
+                                    <name>TDK SYSTEMS EUROP LTD [GB]</name>
+                                    <date>20050615</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>EP</country>
+                                    <doc-number>1542377</doc-number>
+                                    <kind>A2</kind>
+                                    <name>TDK SYSTEMS EUROP LTD [GB]</name>
+                                    <date>20050615</date>
+                                </document-id>
+                            </patcit>
+                            <category>Y</category>
+                            <rel-claims>1-12,15</rel-claims>
+                            <category>A</category>
+                            <rel-claims>13,14</rel-claims>
+                            <rel-passage>
+                                <passage>* the whole document *</passage>
+                            </rel-passage>
+                        </citation>
+                    </references-cited>
+                </bibliographic-data>
+                <abstract lang="en">
+                    <p>An apparatus enabling establishment of a Bluetooth mesh network comprises at least two Bluetooth transceiver circuitries and an internal connection between the at least two Bluetooth transceiver circuitries. The Bluetooth transceiver circuitries are simultaneously connected to different Bluetooth piconets, and the apparatus operates as a bridge between the piconets. Concatenation of such apparatuses enables construction of a Bluetooth mesh network where the bridge devices may be simultaneously connected to multiple Bluetooth piconets.</p>
+                </abstract>
+            </exchange-document>
+        </ops:family-member>
+        <ops:family-member family-id="43088294">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>2400812</doc-number>
+                    <kind>B1</kind>
+                    <date>20191127</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>EP2400812</doc-number>
+                    <date>20191127</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="316859723" is-representative="YES">
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>10167109</doc-number>
+                    <kind>A</kind>
+                    <date>20100624</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="regional">
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>10167109</doc-number>
+                    <kind>A</kind>
+                    <date>20100624</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="43088294" country="EP" doc-number="2400812" kind="B1">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>EP</country>
+                            <doc-number>2400812</doc-number>
+                            <kind>B1</kind>
+                            <date>20191127</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP2400812</doc-number>
+                            <date>20191127</date>
+                        </document-id>
+                    </publication-reference>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>H04W  84/    20            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>H04W  88/    04            A N                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="316859723">
+                        <document-id document-id-type="docdb">
+                            <country>EP</country>
+                            <doc-number>10167109</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP20100167109</doc-number>
+                            <date>20100624</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>10167109</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="regional">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>EP20100167109</doc-number>
+                                <date>20100624</date>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties>
+                        <applicants>
+                            <applicant sequence="1" data-format="epodoc">
+                                <applicant-name>
+                                    <name>9SOLUTIONS OY [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="1" data-format="original">
+                                <applicant-name>
+                                    <name>9SOLUTIONS OY, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="2" data-format="original">
+                                <applicant-name>
+                                    <name>9Solutions Oy</name>
+                                </applicant-name>
+                            </applicant>
+                        </applicants>
+                        <inventors>
+                            <inventor sequence="1" data-format="epodoc">
+                                <inventor-name>
+                                    <name>HERRALA SAMI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="epodoc">
+                                <inventor-name>
+                                    <name> KYLMÄNEN JARI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="epodoc">
+                                <inventor-name>
+                                    <name> NIEMI JAAKKO [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="1" data-format="original">
+                                <inventor-name>
+                                    <name>HERRALA, SAMI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="original">
+                                <inventor-name>
+                                    <name>KYLMAENEN, JARI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="original">
+                                <inventor-name>
+                                    <name>NIEMI, JAAKKO, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="4" data-format="original">
+                                <inventor-name>
+                                    <name>Herrala, Sami, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="5" data-format="original">
+                                <inventor-name>
+                                    <name>Kylmänen, Jari, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="6" data-format="original">
+                                <inventor-name>
+                                    <name>Niemi, Jaakko</name>
+                                </inventor-name>
+                            </inventor>
+                        </inventors>
+                    </parties>
+                    <invention-title lang="de">BLUETOOTH-VERNETZUNG</invention-title>
+                    <invention-title lang="fr">MISE EN RÉSEAU BLUETOOTH</invention-title>
+                    <invention-title lang="en">BLUETOOTH NETWORKING</invention-title>
+                </bibliographic-data>
+            </exchange-document>
+        </ops:family-member>
+        <ops:family-member family-id="43088294">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>CA</country>
+                    <doc-number>2744162</doc-number>
+                    <kind>A1</kind>
+                    <date>20111224</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>CA2744162</doc-number>
+                    <date>20111224</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="340294235">
+                <document-id document-id-type="docdb">
+                    <country>CA</country>
+                    <doc-number>2744162</doc-number>
+                    <kind>A</kind>
+                    <date>20110623</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="regional">
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>10167109</doc-number>
+                    <kind>A</kind>
+                    <date>20100624</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="43088294" country="CA" doc-number="2744162" kind="A1">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>CA</country>
+                            <doc-number>2744162</doc-number>
+                            <kind>A1</kind>
+                            <date>20111224</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>CA2744162</doc-number>
+                            <date>20111224</date>
+                        </document-id>
+                    </publication-reference>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>H04W  84/    18            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>H04L  12/    56            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="3">
+                            <text>H04W  88/    16            A I                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="340294235">
+                        <document-id document-id-type="docdb">
+                            <country>CA</country>
+                            <doc-number>2744162</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>CA20112744162</doc-number>
+                            <date>20110623</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>2744162</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="regional">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>EP20100167109</doc-number>
+                                <date>20100624</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>10167109.7</doc-number>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties>
+                        <applicants>
+                            <applicant sequence="1" data-format="epodoc">
+                                <applicant-name>
+                                    <name>9SOLUTIONS OY [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="1" data-format="original">
+                                <applicant-name>
+                                    <name>9SOLUTIONS OY</name>
+                                </applicant-name>
+                            </applicant>
+                        </applicants>
+                        <inventors>
+                            <inventor sequence="1" data-format="epodoc">
+                                <inventor-name>
+                                    <name>HERRALA SAMI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="epodoc">
+                                <inventor-name>
+                                    <name> KYLMAENEN JARI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="epodoc">
+                                <inventor-name>
+                                    <name> NIEMI JAAKKO [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="1" data-format="original">
+                                <inventor-name>
+                                    <name>HERRALA, SAMI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="original">
+                                <inventor-name>
+                                    <name>KYLMAENEN, JARI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="original">
+                                <inventor-name>
+                                    <name>NIEMI, JAAKKO</name>
+                                </inventor-name>
+                            </inventor>
+                        </inventors>
+                    </parties>
+                    <invention-title lang="fr">RESEAUTAGE PAR LIEN BLUETOOTH</invention-title>
+                    <invention-title lang="en">BLUETOOTH NETWORKING</invention-title>
+                </bibliographic-data>
+                <abstract lang="en">
+                    <p>An apparatus enabling establishment of a Bluetooth mesh network comprises at least two Bluetooth transceiver circuitries and an internal connection between the at least two Bluetooth transceiver circuitries. The Bluetooth transceiver circuitries are simultaneously connected to different Bluetooth piconets, and the apparatus operates as a bridge between the piconets. Concatenation of such apparatuses enables construction of a Bluetooth mesh network where the bridge devices may be simultaneously connected to multiple Bluetooth piconets.</p>
+                </abstract>
+            </exchange-document>
+        </ops:family-member>
+        <ops:family-member family-id="43088294">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>2012057518</doc-number>
+                    <kind>A1</kind>
+                    <date>20120308</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>US2012057518</doc-number>
+                    <date>20120308</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="342104949">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>201113167395</doc-number>
+                    <kind>A</kind>
+                    <date>20110623</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="regional">
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>10167109</doc-number>
+                    <kind>A</kind>
+                    <date>20100624</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="43088294" country="US" doc-number="2012057518" kind="A1">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>US</country>
+                            <doc-number>2012057518</doc-number>
+                            <kind>A1</kind>
+                            <date>20120308</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>US2012057518</doc-number>
+                            <date>20120308</date>
+                        </document-id>
+                    </publication-reference>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>H04W  40/    00            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>H04B   7/    14            A I                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="US" scheme="UC"/>
+                            <classification-symbol>370/315</classification-symbol>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="342104949">
+                        <document-id document-id-type="docdb">
+                            <country>US</country>
+                            <doc-number>201113167395</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>US201113167395</doc-number>
+                            <date>20110623</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>13167395</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="regional">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>EP20100167109</doc-number>
+                                <date>20100624</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>10167109.7</doc-number>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>10167109</doc-number>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties>
+                        <applicants>
+                            <applicant sequence="1" data-format="epodoc">
+                                <applicant-name>
+                                    <name>HERRALA SAMI [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="2" data-format="epodoc">
+                                <applicant-name>
+                                    <name> KYLMAENEN JARI [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="3" data-format="epodoc">
+                                <applicant-name>
+                                    <name> NIEMI JAAKKO [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="4" data-format="epodoc">
+                                <applicant-name>
+                                    <name> 9SOLUTIONS OY [FI]
+</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="1" data-format="original">
+                                <applicant-name>
+                                    <name>HERRALA SAMI, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="2" data-format="original">
+                                <applicant-name>
+                                    <name>KYLMAENEN JARI, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="3" data-format="original">
+                                <applicant-name>
+                                    <name>NIEMI JAAKKO, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="4" data-format="original">
+                                <applicant-name>
+                                    <name>9SOLUTIONS OY, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="5" data-format="original">
+                                <applicant-name>
+                                    <name>Herrala Sami, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="6" data-format="original">
+                                <applicant-name>
+                                    <name>Kylmänen Jari, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="7" data-format="original">
+                                <applicant-name>
+                                    <name>Niemi Jaakko, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="8" data-format="original">
+                                <applicant-name>
+                                    <name>9Solutions Oy</name>
+                                </applicant-name>
+                            </applicant>
+                        </applicants>
+                        <inventors>
+                            <inventor sequence="1" data-format="epodoc">
+                                <inventor-name>
+                                    <name>HERRALA SAMI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="epodoc">
+                                <inventor-name>
+                                    <name> KYLMAENEN JARI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="epodoc">
+                                <inventor-name>
+                                    <name> NIEMI JAAKKO [FI]
+</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="1" data-format="original">
+                                <inventor-name>
+                                    <name>HERRALA SAMI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="original">
+                                <inventor-name>
+                                    <name>KYLMAENEN JARI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="original">
+                                <inventor-name>
+                                    <name>NIEMI JAAKKO, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="4" data-format="original">
+                                <inventor-name>
+                                    <name>Herrala Sami, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="5" data-format="original">
+                                <inventor-name>
+                                    <name>Kylmänen Jari, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="6" data-format="original">
+                                <inventor-name>
+                                    <name>Niemi Jaakko</name>
+                                </inventor-name>
+                            </inventor>
+                        </inventors>
+                    </parties>
+                    <invention-title lang="en">BLUETOOTH NETWORKING
+</invention-title>
+                    <references-cited>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="1">
+                            <patcit dnum-type="publication number" num="1">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2008232430</doc-number>
+                                    <name>BATEY CHARLES EDWARD [US], et al</name>
+                                    <date>20080925</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2008232430</doc-number>
+                                    <kind>A1</kind>
+                                    <name>BATEY CHARLES EDWARD [US], et al</name>
+                                    <date>20080925</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="2">
+                            <patcit dnum-type="publication number" num="2">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6968153</doc-number>
+                                    <name>HEINONEN TOMI [FI], et al</name>
+                                    <date>20051122</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6968153</doc-number>
+                                    <kind>B1</kind>
+                                    <name>HEINONEN TOMI [FI], et al</name>
+                                    <date>20051122</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="3">
+                            <patcit dnum-type="publication number" num="3">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2005186907</doc-number>
+                                    <name>TAILOR MAHENDRA J [GB]</name>
+                                    <date>20050825</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2005186907</doc-number>
+                                    <kind>A1</kind>
+                                    <name>TAILOR MAHENDRA J [GB]</name>
+                                    <date>20050825</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="4">
+                            <patcit dnum-type="publication number" num="4">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US7613425</doc-number>
+                                    <name>TAILOR MAHENDRA J [GB]</name>
+                                    <date>20091103</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>7613425</doc-number>
+                                    <kind>B2</kind>
+                                    <name>TAILOR MAHENDRA J [GB]</name>
+                                    <date>20091103</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="5">
+                            <patcit dnum-type="publication number" num="5">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004097263</doc-number>
+                                    <name>KATAYAMA MUTSUMI [JP], et al</name>
+                                    <date>20040520</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004097263</doc-number>
+                                    <kind>A1</kind>
+                                    <name>KATAYAMA MUTSUMI [JP], et al</name>
+                                    <date>20040520</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="6">
+                            <patcit dnum-type="publication number" num="6">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004136338</doc-number>
+                                    <name>LIN TING-YU [TW], et al</name>
+                                    <date>20040715</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004136338</doc-number>
+                                    <kind>A1</kind>
+                                    <name>LIN TING-YU [TW], et al</name>
+                                    <date>20040715</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="7">
+                            <patcit dnum-type="publication number" num="7">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US7831738</doc-number>
+                                    <name>ROFOUGARAN AHMADREZA REZA [US]</name>
+                                    <date>20101109</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>7831738</doc-number>
+                                    <kind>B2</kind>
+                                    <name>ROFOUGARAN AHMADREZA REZA [US]</name>
+                                    <date>20101109</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="8">
+                            <patcit dnum-type="publication number" num="8">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2008242229</doc-number>
+                                    <name>SHARMA SANANDAN [IN]</name>
+                                    <date>20081002</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2008242229</doc-number>
+                                    <kind>A1</kind>
+                                    <name>SHARMA SANANDAN [IN]</name>
+                                    <date>20081002</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="9">
+                            <patcit dnum-type="publication number" num="9">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6834192</doc-number>
+                                    <name>WATANABE FUJIO [FI], et al</name>
+                                    <date>20041221</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6834192</doc-number>
+                                    <kind>B1</kind>
+                                    <name>WATANABE FUJIO [FI], et al</name>
+                                    <date>20041221</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="10">
+                            <patcit dnum-type="publication number" num="10">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004156318</doc-number>
+                                    <name>RUNE JOHAN [SE], et al</name>
+                                    <date>20040812</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004156318</doc-number>
+                                    <kind>A1</kind>
+                                    <name>RUNE JOHAN [SE], et al</name>
+                                    <date>20040812</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="11">
+                            <patcit dnum-type="publication number" num="11">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2003060222</doc-number>
+                                    <name>RUNE JOHAN [SE]</name>
+                                    <date>20030327</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2003060222</doc-number>
+                                    <kind>A1</kind>
+                                    <name>RUNE JOHAN [SE]</name>
+                                    <date>20030327</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="12">
+                            <patcit dnum-type="publication number" num="12">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2007004466</doc-number>
+                                    <name>HAARTSEN JACOBUS C [NL]</name>
+                                    <date>20070104</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2007004466</doc-number>
+                                    <kind>A1</kind>
+                                    <name>HAARTSEN JACOBUS C [NL]</name>
+                                    <date>20070104</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="13">
+                            <patcit dnum-type="publication number" num="13">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2011319022</doc-number>
+                                    <name>ARAD ELIAHU [IL], et al</name>
+                                    <date>20111229</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2011319022</doc-number>
+                                    <kind>A1</kind>
+                                    <name>ARAD ELIAHU [IL], et al</name>
+                                    <date>20111229</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="14">
+                            <patcit dnum-type="publication number" num="14">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2007206521</doc-number>
+                                    <name>OSAJE EMEKE E [GB]</name>
+                                    <date>20070906</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2007206521</doc-number>
+                                    <kind>A1</kind>
+                                    <name>OSAJE EMEKE E [GB]</name>
+                                    <date>20070906</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="15">
+                            <patcit dnum-type="publication number" num="15">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2005073968</doc-number>
+                                    <name>PERLMAN STEPHEN G [US]</name>
+                                    <date>20050407</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2005073968</doc-number>
+                                    <kind>A1</kind>
+                                    <name>PERLMAN STEPHEN G [US]</name>
+                                    <date>20050407</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="16">
+                            <patcit dnum-type="publication number" num="16">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2002037716</doc-number>
+                                    <name>MCKENNA DANIEL B [US], et al</name>
+                                    <date>20020328</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2002037716</doc-number>
+                                    <kind>A1</kind>
+                                    <name>MCKENNA DANIEL B [US], et al</name>
+                                    <date>20020328</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="17">
+                            <patcit dnum-type="publication number" num="17">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2010061299</doc-number>
+                                    <name>KENNEDY ROBERT A [US], et al</name>
+                                    <date>20100311</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2010061299</doc-number>
+                                    <kind>A1</kind>
+                                    <name>KENNEDY ROBERT A [US], et al</name>
+                                    <date>20100311</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="18">
+                            <patcit dnum-type="publication number" num="18">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004167988</doc-number>
+                                    <name>RUNE JOHAN [SE], et al</name>
+                                    <date>20040826</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004167988</doc-number>
+                                    <kind>A1</kind>
+                                    <name>RUNE JOHAN [SE], et al</name>
+                                    <date>20040826</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="19">
+                            <patcit dnum-type="publication number" num="19">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2002012381</doc-number>
+                                    <name>MATTISSON SVEN [SE], et al</name>
+                                    <date>20020131</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2002012381</doc-number>
+                                    <kind>A1</kind>
+                                    <name>MATTISSON SVEN [SE], et al</name>
+                                    <date>20020131</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="20">
+                            <patcit dnum-type="publication number" num="20">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2012315886</doc-number>
+                                    <name>LIN BEN [TW]</name>
+                                    <date>20121213</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2012315886</doc-number>
+                                    <kind>A1</kind>
+                                    <name>LIN BEN [TW]</name>
+                                    <date>20121213</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="21">
+                            <patcit dnum-type="publication number" num="21">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2003002504</doc-number>
+                                    <name>FORSTADIUS ANTTI [FI]</name>
+                                    <date>20030102</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2003002504</doc-number>
+                                    <kind>A1</kind>
+                                    <name>FORSTADIUS ANTTI [FI]</name>
+                                    <date>20030102</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="22">
+                            <patcit dnum-type="publication number" num="22">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2007060132</doc-number>
+                                    <name>WILHELMSSON LEIF [SE], et al</name>
+                                    <date>20070315</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2007060132</doc-number>
+                                    <kind>A1</kind>
+                                    <name>WILHELMSSON LEIF [SE], et al</name>
+                                    <date>20070315</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="23">
+                            <patcit dnum-type="publication number" num="23">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2009017756</doc-number>
+                                    <name>TSFATY YOSSI [IL], et al</name>
+                                    <date>20090115</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2009017756</doc-number>
+                                    <kind>A1</kind>
+                                    <name>TSFATY YOSSI [IL], et al</name>
+                                    <date>20090115</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="24">
+                            <patcit dnum-type="publication number" num="24">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6754250</doc-number>
+                                    <name>HAARTSEN JACOBUS CORNELIS [NL]</name>
+                                    <date>20040622</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6754250</doc-number>
+                                    <kind>B2</kind>
+                                    <name>HAARTSEN JACOBUS CORNELIS [NL]</name>
+                                    <date>20040622</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="25">
+                            <patcit dnum-type="publication number" num="25">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2002075940</doc-number>
+                                    <name>HAARTSEN JACOBUS CORNELIS [NL]</name>
+                                    <date>20020620</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2002075940</doc-number>
+                                    <kind>A1</kind>
+                                    <name>HAARTSEN JACOBUS CORNELIS [NL]</name>
+                                    <date>20020620</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="26">
+                            <patcit dnum-type="publication number" num="26">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6278723</doc-number>
+                                    <name>MEIHOFER ERIC F [US], et al</name>
+                                    <date>20010821</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6278723</doc-number>
+                                    <kind>B1</kind>
+                                    <name>MEIHOFER ERIC F [US], et al</name>
+                                    <date>20010821</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="27">
+                            <patcit dnum-type="publication number" num="27">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2005226198</doc-number>
+                                    <name>BARAK ILAN S [IL], et al</name>
+                                    <date>20051013</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2005226198</doc-number>
+                                    <kind>A1</kind>
+                                    <name>BARAK ILAN S [IL], et al</name>
+                                    <date>20051013</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="28">
+                            <patcit dnum-type="publication number" num="28">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2006211372</doc-number>
+                                    <name>SHELLHAMMER STEPHEN J [US], et al</name>
+                                    <date>20060921</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2006211372</doc-number>
+                                    <kind>A1</kind>
+                                    <name>SHELLHAMMER STEPHEN J [US], et al</name>
+                                    <date>20060921</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="29">
+                            <patcit dnum-type="publication number" num="29">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2010316025</doc-number>
+                                    <name>BRANDT SEEMAL NAPHADE [GB], et al</name>
+                                    <date>20101216</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2010316025</doc-number>
+                                    <kind>A1</kind>
+                                    <name>BRANDT SEEMAL NAPHADE [GB], et al</name>
+                                    <date>20101216</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                    </references-cited>
+                </bibliographic-data>
+                <abstract lang="en">
+                    <p>An apparatus enabling establishment of a Bluetooth mesh network comprises at least two Bluetooth transceiver circuitries and an internal connection between the at least two Bluetooth transceiver circuitries. The Bluetooth transceiver circuitries are simultaneously connected to different Bluetooth piconets, and the apparatus operates as a bridge between the piconets. Concatenation of such apparatuses enables construction of a Bluetooth mesh network where the bridge devices may be simultaneously connected to multiple Bluetooth piconets.</p>
+                </abstract>
+            </exchange-document>
+        </ops:family-member>
+        <ops:family-member family-id="43088294">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>9648662</doc-number>
+                    <kind>B2</kind>
+                    <date>20170509</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>US9648662</doc-number>
+                    <date>20170509</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="342104949">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>201113167395</doc-number>
+                    <kind>A</kind>
+                    <date>20110623</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="regional">
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>10167109</doc-number>
+                    <kind>A</kind>
+                    <date>20100624</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="43088294" country="US" doc-number="9648662" kind="B2">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>US</country>
+                            <doc-number>9648662</doc-number>
+                            <kind>B2</kind>
+                            <date>20170509</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>US9648662</doc-number>
+                            <date>20170509</date>
+                        </document-id>
+                    </publication-reference>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>H04B   7/    14            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>H04W  84/    20            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="3">
+                            <text>H04W  88/    04            A N                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>84</main-group>
+                            <subgroup>20</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>H</section>
+                            <class>04</class>
+                            <subclass>W</subclass>
+                            <main-group>88</main-group>
+                            <subgroup>04</subgroup>
+                            <classification-value>A</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="US" scheme="UC"/>
+                            <classification-symbol>370/315</classification-symbol>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="342104949">
+                        <document-id document-id-type="docdb">
+                            <country>US</country>
+                            <doc-number>201113167395</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>US201113167395</doc-number>
+                            <date>20110623</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>13167395</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="regional">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>EP20100167109</doc-number>
+                                <date>20100624</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>10167109.7</doc-number>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>10167109</doc-number>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties>
+                        <applicants>
+                            <applicant sequence="1" data-format="epodoc">
+                                <applicant-name>
+                                    <name>HERRALA SAMI [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="2" data-format="epodoc">
+                                <applicant-name>
+                                    <name> KYLMÄNEN JARI [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="3" data-format="epodoc">
+                                <applicant-name>
+                                    <name> NIEMI JAAKKO [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="4" data-format="epodoc">
+                                <applicant-name>
+                                    <name> 9SOLUTIONS OY [FI]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="1" data-format="original">
+                                <applicant-name>
+                                    <name>HERRALA SAMI, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="2" data-format="original">
+                                <applicant-name>
+                                    <name>KYLMAENEN JARI, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="3" data-format="original">
+                                <applicant-name>
+                                    <name>NIEMI JAAKKO, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="4" data-format="original">
+                                <applicant-name>
+                                    <name>9SOLUTIONS OY, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="5" data-format="original">
+                                <applicant-name>
+                                    <name>Herrala Sami, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="6" data-format="original">
+                                <applicant-name>
+                                    <name>Kylmänen Jari, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="7" data-format="original">
+                                <applicant-name>
+                                    <name>Niemi Jaakko, </name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="8" data-format="original">
+                                <applicant-name>
+                                    <name>9Solutions Oy</name>
+                                </applicant-name>
+                            </applicant>
+                        </applicants>
+                        <inventors>
+                            <inventor sequence="1" data-format="epodoc">
+                                <inventor-name>
+                                    <name>HERRALA SAMI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="epodoc">
+                                <inventor-name>
+                                    <name> KYLMÄNEN JARI [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="epodoc">
+                                <inventor-name>
+                                    <name> NIEMI JAAKKO [FI]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="1" data-format="original">
+                                <inventor-name>
+                                    <name>HERRALA SAMI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="original">
+                                <inventor-name>
+                                    <name>KYLMAENEN JARI, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="original">
+                                <inventor-name>
+                                    <name>NIEMI JAAKKO, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="4" data-format="original">
+                                <inventor-name>
+                                    <name>Herrala Sami, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="5" data-format="original">
+                                <inventor-name>
+                                    <name>Kylmänen Jari, </name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="6" data-format="original">
+                                <inventor-name>
+                                    <name>Niemi Jaakko</name>
+                                </inventor-name>
+                            </inventor>
+                        </inventors>
+                    </parties>
+                    <invention-title lang="en">Bluetooth networking</invention-title>
+                    <references-cited>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="1">
+                            <patcit dnum-type="publication number" num="1">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>EP1542377</doc-number>
+                                    <date>20050615</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>EP</country>
+                                    <doc-number>1542377</doc-number>
+                                    <kind>A2</kind>
+                                    <date>20050615</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="2">
+                            <patcit dnum-type="publication number" num="2">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>WO02054790</doc-number>
+                                    <date>20020711</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>WO</country>
+                                    <doc-number>02054790</doc-number>
+                                    <kind>A2</kind>
+                                    <date>20020711</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="3">
+                            <patcit dnum-type="publication number" num="3">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>WO03067954</doc-number>
+                                    <date>20030821</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>WO</country>
+                                    <doc-number>03067954</doc-number>
+                                    <kind>A2</kind>
+                                    <date>20030821</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="1">
+                            <patcit dnum-type="publication number" num="1">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6278723</doc-number>
+                                    <name>MEIHOFER ERIC F [US], et al</name>
+                                    <date>20010821</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6278723</doc-number>
+                                    <kind>B1</kind>
+                                    <name>MEIHOFER ERIC F [US], et al</name>
+                                    <date>20010821</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="2">
+                            <patcit dnum-type="publication number" num="2">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6754250</doc-number>
+                                    <name>HAARTSEN JACOBUS CORNELIS [NL]</name>
+                                    <date>20040622</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6754250</doc-number>
+                                    <kind>B2</kind>
+                                    <name>HAARTSEN JACOBUS CORNELIS [NL]</name>
+                                    <date>20040622</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="3">
+                            <patcit dnum-type="publication number" num="3">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6834192</doc-number>
+                                    <name>WATANABE FUJIO [FI], et al</name>
+                                    <date>20041221</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6834192</doc-number>
+                                    <kind>B1</kind>
+                                    <name>WATANABE FUJIO [FI], et al</name>
+                                    <date>20041221</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="4">
+                            <patcit dnum-type="publication number" num="4">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6968153</doc-number>
+                                    <name>HEINONEN TOMI [FI], et al</name>
+                                    <date>20051122</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6968153</doc-number>
+                                    <kind>B1</kind>
+                                    <name>HEINONEN TOMI [FI], et al</name>
+                                    <date>20051122</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="5">
+                            <patcit dnum-type="publication number" num="5">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US7613425</doc-number>
+                                    <name>TAILOR MAHENDRA J [GB]</name>
+                                    <date>20091103</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>7613425</doc-number>
+                                    <kind>B2</kind>
+                                    <name>TAILOR MAHENDRA J [GB]</name>
+                                    <date>20091103</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="6">
+                            <patcit dnum-type="publication number" num="6">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US7831738</doc-number>
+                                    <name>ROFOUGARAN AHMADREZA REZA [US]</name>
+                                    <date>20101109</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>7831738</doc-number>
+                                    <kind>B2</kind>
+                                    <name>ROFOUGARAN AHMADREZA REZA [US]</name>
+                                    <date>20101109</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="7">
+                            <patcit dnum-type="publication number" num="7">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2001010689</doc-number>
+                                    <name>AWATER GEERT ARNOUT [NL], et al</name>
+                                    <date>20010802</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2001010689</doc-number>
+                                    <kind>A1</kind>
+                                    <name>AWATER GEERT ARNOUT [NL], et al</name>
+                                    <date>20010802</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="8">
+                            <patcit dnum-type="publication number" num="8">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2002012381</doc-number>
+                                    <name>MATTISSON SVEN [SE], et al</name>
+                                    <date>20020131</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2002012381</doc-number>
+                                    <kind>A1</kind>
+                                    <name>MATTISSON SVEN [SE], et al</name>
+                                    <date>20020131</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="9">
+                            <patcit dnum-type="publication number" num="9">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2002037716</doc-number>
+                                    <name>MCKENNA DANIEL B [US], et al</name>
+                                    <date>20020328</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2002037716</doc-number>
+                                    <kind>A1</kind>
+                                    <name>MCKENNA DANIEL B [US], et al</name>
+                                    <date>20020328</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="10">
+                            <patcit dnum-type="publication number" num="10">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2002044549</doc-number>
+                                    <name>JOHANSSON PER [SE], et al</name>
+                                    <date>20020418</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2002044549</doc-number>
+                                    <kind>A1</kind>
+                                    <name>JOHANSSON PER [SE], et al</name>
+                                    <date>20020418</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="11">
+                            <patcit dnum-type="publication number" num="11">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2002075940</doc-number>
+                                    <name>HAARTSEN JACOBUS CORNELIS [NL]</name>
+                                    <date>20020620</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2002075940</doc-number>
+                                    <kind>A1</kind>
+                                    <name>HAARTSEN JACOBUS CORNELIS [NL]</name>
+                                    <date>20020620</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="12">
+                            <patcit dnum-type="publication number" num="12">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2003002504</doc-number>
+                                    <name>FORSTADIUS ANTTI [FI]</name>
+                                    <date>20030102</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2003002504</doc-number>
+                                    <kind>A1</kind>
+                                    <name>FORSTADIUS ANTTI [FI]</name>
+                                    <date>20030102</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="13">
+                            <patcit dnum-type="publication number" num="13">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2003060222</doc-number>
+                                    <name>RUNE JOHAN [SE]</name>
+                                    <date>20030327</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2003060222</doc-number>
+                                    <kind>A1</kind>
+                                    <name>RUNE JOHAN [SE]</name>
+                                    <date>20030327</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="14">
+                            <patcit dnum-type="publication number" num="14">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004097263</doc-number>
+                                    <name>KATAYAMA MUTSUMI [JP], et al</name>
+                                    <date>20040520</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004097263</doc-number>
+                                    <kind>A1</kind>
+                                    <name>KATAYAMA MUTSUMI [JP], et al</name>
+                                    <date>20040520</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="15">
+                            <patcit dnum-type="publication number" num="15">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004136338</doc-number>
+                                    <name>LIN TING-YU [TW], et al</name>
+                                    <date>20040715</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004136338</doc-number>
+                                    <kind>A1</kind>
+                                    <name>LIN TING-YU [TW], et al</name>
+                                    <date>20040715</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="16">
+                            <patcit dnum-type="publication number" num="16">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004156318</doc-number>
+                                    <name>RUNE JOHAN [SE], et al</name>
+                                    <date>20040812</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004156318</doc-number>
+                                    <kind>A1</kind>
+                                    <name>RUNE JOHAN [SE], et al</name>
+                                    <date>20040812</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="17">
+                            <patcit dnum-type="publication number" num="17">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004160986</doc-number>
+                                    <name>PERLMAN STEPHEN G [US]</name>
+                                    <date>20040819</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004160986</doc-number>
+                                    <kind>A1</kind>
+                                    <name>PERLMAN STEPHEN G [US]</name>
+                                    <date>20040819</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="18">
+                            <patcit dnum-type="publication number" num="18">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004162106</doc-number>
+                                    <name>MONROE ROBERT L [US], et al</name>
+                                    <date>20040819</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004162106</doc-number>
+                                    <kind>A1</kind>
+                                    <name>MONROE ROBERT L [US], et al</name>
+                                    <date>20040819</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="19">
+                            <patcit dnum-type="publication number" num="19">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2004167988</doc-number>
+                                    <name>RUNE JOHAN [SE], et al</name>
+                                    <date>20040826</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2004167988</doc-number>
+                                    <kind>A1</kind>
+                                    <name>RUNE JOHAN [SE], et al</name>
+                                    <date>20040826</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="20">
+                            <patcit dnum-type="publication number" num="20">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2005073968</doc-number>
+                                    <name>PERLMAN STEPHEN G [US]</name>
+                                    <date>20050407</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2005073968</doc-number>
+                                    <kind>A1</kind>
+                                    <name>PERLMAN STEPHEN G [US]</name>
+                                    <date>20050407</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="21">
+                            <patcit dnum-type="publication number" num="21">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2005186907</doc-number>
+                                    <name>TAILOR MAHENDRA J [GB]</name>
+                                    <date>20050825</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2005186907</doc-number>
+                                    <kind>A1</kind>
+                                    <name>TAILOR MAHENDRA J [GB]</name>
+                                    <date>20050825</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="22">
+                            <patcit dnum-type="publication number" num="22">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2005226198</doc-number>
+                                    <name>BARAK ILAN S [IL], et al</name>
+                                    <date>20051013</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2005226198</doc-number>
+                                    <kind>A1</kind>
+                                    <name>BARAK ILAN S [IL], et al</name>
+                                    <date>20051013</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="23">
+                            <patcit dnum-type="publication number" num="23">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2006211372</doc-number>
+                                    <name>SHELLHAMMER STEPHEN J [US], et al</name>
+                                    <date>20060921</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2006211372</doc-number>
+                                    <kind>A1</kind>
+                                    <name>SHELLHAMMER STEPHEN J [US], et al</name>
+                                    <date>20060921</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="24">
+                            <patcit dnum-type="publication number" num="24">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2007004466</doc-number>
+                                    <name>HAARTSEN JACOBUS C [NL]</name>
+                                    <date>20070104</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2007004466</doc-number>
+                                    <kind>A1</kind>
+                                    <name>HAARTSEN JACOBUS C [NL]</name>
+                                    <date>20070104</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="25">
+                            <patcit dnum-type="publication number" num="25">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2007060132</doc-number>
+                                    <name>WILHELMSSON LEIF [SE], et al</name>
+                                    <date>20070315</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2007060132</doc-number>
+                                    <kind>A1</kind>
+                                    <name>WILHELMSSON LEIF [SE], et al</name>
+                                    <date>20070315</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="26">
+                            <patcit dnum-type="publication number" num="26">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2007206521</doc-number>
+                                    <name>OSAJE EMEKE E [GB]</name>
+                                    <date>20070906</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2007206521</doc-number>
+                                    <kind>A1</kind>
+                                    <name>OSAJE EMEKE E [GB]</name>
+                                    <date>20070906</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="27">
+                            <patcit dnum-type="publication number" num="27">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2007264968</doc-number>
+                                    <name>FRANK SCOTT [US], et al</name>
+                                    <date>20071115</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2007264968</doc-number>
+                                    <kind>A1</kind>
+                                    <name>FRANK SCOTT [US], et al</name>
+                                    <date>20071115</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="28">
+                            <patcit dnum-type="publication number" num="28">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2008232430</doc-number>
+                                    <name>BATEY CHARLES EDWARD [US], et al</name>
+                                    <date>20080925</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2008232430</doc-number>
+                                    <kind>A1</kind>
+                                    <name>BATEY CHARLES EDWARD [US], et al</name>
+                                    <date>20080925</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="29">
+                            <patcit dnum-type="publication number" num="29">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2008242229</doc-number>
+                                    <name>SHARMA SANANDAN [IN]</name>
+                                    <date>20081002</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2008242229</doc-number>
+                                    <kind>A1</kind>
+                                    <name>SHARMA SANANDAN [IN]</name>
+                                    <date>20081002</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="30">
+                            <patcit dnum-type="publication number" num="30">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2009017756</doc-number>
+                                    <name>TSFATY YOSSI [IL], et al</name>
+                                    <date>20090115</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2009017756</doc-number>
+                                    <kind>A1</kind>
+                                    <name>TSFATY YOSSI [IL], et al</name>
+                                    <date>20090115</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="31">
+                            <patcit dnum-type="publication number" num="31">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2010061299</doc-number>
+                                    <name>KENNEDY ROBERT A [US], et al</name>
+                                    <date>20100311</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2010061299</doc-number>
+                                    <kind>A1</kind>
+                                    <name>KENNEDY ROBERT A [US], et al</name>
+                                    <date>20100311</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="32">
+                            <patcit dnum-type="publication number" num="32">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2010316025</doc-number>
+                                    <name>BRANDT SEEMAL NAPHADE [GB], et al</name>
+                                    <date>20101216</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2010316025</doc-number>
+                                    <kind>A1</kind>
+                                    <name>BRANDT SEEMAL NAPHADE [GB], et al</name>
+                                    <date>20101216</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="33">
+                            <patcit dnum-type="publication number" num="33">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2011319022</doc-number>
+                                    <name>ARAD ELIAHU [IL], et al</name>
+                                    <date>20111229</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2011319022</doc-number>
+                                    <kind>A1</kind>
+                                    <name>ARAD ELIAHU [IL], et al</name>
+                                    <date>20111229</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="34">
+                            <patcit dnum-type="publication number" num="34">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US2012315886</doc-number>
+                                    <name>LIN BEN [TW]</name>
+                                    <date>20121213</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>2012315886</doc-number>
+                                    <kind>A1</kind>
+                                    <name>LIN BEN [TW]</name>
+                                    <date>20121213</date>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                    </references-cited>
+                </bibliographic-data>
+                <abstract lang="en">
+                    <p>An apparatus enabling establishment of a Bluetooth mesh network comprises at least two Bluetooth transceiver circuitries and an internal connection between the at least two Bluetooth transceiver circuitries. The Bluetooth transceiver circuitries are simultaneously connected to different Bluetooth piconets, and the apparatus operates as a bridge between the piconets. Concatenation of such apparatuses enables construction of a Bluetooth mesh network where the bridge devices may be simultaneously connected to multiple Bluetooth piconets.</p>
+                </abstract>
+            </exchange-document>
+        </ops:family-member>
+    </ops:patent-family>
+</ops:world-patent-data>

@@ -1,0 +1,6 @@
+Method: GetRegisterEventsMultiple
+
+Parameters:
+  refType: publication
+  format: epodoc
+  numbers: bulk test patents from CSV

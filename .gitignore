@@ -1,0 +1,17 @@
+.DS_Store
+
+# Demo downloads
+demo/*.zip
+demo/*.tar.gz
+demo/*.tiff
+demo/*.png
+demo/downloads/
+epo-ops-demo
+
+# Test coverage
+*.out
+coverage.html
+
+# IDE
+.idea/
+.vscode/

@@ -1,0 +1,7 @@
+Method: ConvertPatentNumberMultiple
+
+Parameters:
+  refType: publication
+  inputFormat: docdb
+  numbers: bulk test patents from CSV
+  outputFormat: epodoc

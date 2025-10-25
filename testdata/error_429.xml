@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fault xmlns="http://ops.epo.org">
+  <code>429</code>
+  <message>Fair use limit exceeded</message>
+  <description>The request cannot be processed because the fair use limit has been reached</description>
+</fault>

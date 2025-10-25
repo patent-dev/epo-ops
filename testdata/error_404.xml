@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fault xmlns="http://ops.epo.org">
+  <code>404</code>
+  <message>Document not found</message>
+  <description>No published document found for the specified input</description>
+</fault>

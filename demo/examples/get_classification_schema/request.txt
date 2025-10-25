@@ -1,0 +1,6 @@
+Method: GetClassificationSchema
+
+Parameters:
+  class: H04W
+  ancestors: false
+  navigation: false

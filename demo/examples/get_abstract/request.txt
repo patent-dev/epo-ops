@@ -1,0 +1,6 @@
+Method: GetAbstractRaw
+
+Parameters:
+  refType: publication
+  format: docdb
+  number: EP.2400812.A1

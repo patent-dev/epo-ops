@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="../../style/exchange.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ops:biblio-search total-result-count="10000" publications-count="5">
+        <ops:query syntax="CQL">ti = battery</ops:query>
+        <ops:range begin="1" end="5"/>
+        <ops:search-result>
+            <ops:publication-reference system="ops.epo.org" family-id="77199274">
+                <document-id document-id-type="docdb">
+                    <country>HR</country>
+                    <doc-number>P20251003</doc-number>
+                    <kind>T1</kind>
+                </document-id>
+            </ops:publication-reference>
+            <ops:publication-reference system="ops.epo.org" family-id="97382398">
+                <document-id document-id-type="docdb">
+                    <country>AU</country>
+                    <doc-number>2025202342</doc-number>
+                    <kind>A1</kind>
+                </document-id>
+            </ops:publication-reference>
+            <ops:publication-reference system="ops.epo.org" family-id="93255547">
+                <document-id document-id-type="docdb">
+                    <country>AU</country>
+                    <doc-number>2024264446</doc-number>
+                    <kind>A1</kind>
+                </document-id>
+            </ops:publication-reference>
+            <ops:publication-reference system="ops.epo.org" family-id="92802298">
+                <document-id document-id-type="docdb">
+                    <country>AU</country>
+                    <doc-number>2023437683</doc-number>
+                    <kind>A1</kind>
+                </document-id>
+            </ops:publication-reference>
+            <ops:publication-reference system="ops.epo.org" family-id="84338150">
+                <document-id document-id-type="docdb">
+                    <country>ES</country>
+                    <doc-number>3039456</doc-number>
+                    <kind>T3</kind>
+                </document-id>
+            </ops:publication-reference>
+        </ops:search-result>
+    </ops:biblio-search>
+</ops:world-patent-data>

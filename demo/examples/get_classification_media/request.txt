@@ -1,0 +1,5 @@
+Method: GetClassificationMedia
+
+Parameters:
+  mediaName: 1000.gif
+  asAttachment: false

@@ -1,0 +1,4 @@
+Method: GetClassificationSchemaMultiple
+
+Parameters:
+  classes: H04W, G06F, A01B

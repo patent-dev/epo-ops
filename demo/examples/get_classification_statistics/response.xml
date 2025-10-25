@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><?xml-stylesheet type='text/xsl' href='../../../style/cpc-search.xsl' ?>
+<ops:world-patent-data xmlns:ops="http://ops.epo.org" xmlns:reg="http://www.epo.org/register" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cpc="http://www.epo.org/cpcexport" xmlns:cpcdef="http://www.epo.org/cpcdefinition">
+    <ops:classification-search total-result-count="10" scheme-type="CPC">
+        <ops:query syntax="">H04W</ops:query>
+        <ops:search-result>
+            <ops:classification-statistics classification-symbol="H04W72/00" percentage="9.770115">
+                <cpc:class-title date-revised="2023-01-01">
+                    <cpc:title-part>
+                        <cpc:text>Local resource management</cpc:text>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+            <ops:classification-statistics classification-symbol="H04L5/00" percentage="8.429119">
+                <cpc:class-title date-revised="2021-01-01">
+                    <cpc:title-part>
+                        <cpc:text>Arrangements affording multiple use of the transmission path</cpc:text>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+            <ops:classification-statistics classification-symbol="H04W24/00" percentage="6.130268">
+                <cpc:class-title date-revised="2013-01-01">
+                    <cpc:title-part>
+                        <cpc:text>Supervisory, monitoring or testing arrangements</cpc:text>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+            <ops:classification-statistics classification-symbol="H04W76/00" percentage="4.789272">
+                <cpc:class-title date-revised="2018-02-01">
+                    <cpc:title-part>
+                        <cpc:text>Connection management</cpc:text>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+            <ops:classification-statistics classification-symbol="H04W84/00" percentage="4.4061303">
+                <cpc:class-title date-revised="2013-01-01">
+                    <cpc:title-part>
+                        <cpc:text>Network topologies</cpc:text>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+            <ops:classification-statistics classification-symbol="H04L1/00" percentage="3.6398468">
+                <cpc:class-title date-revised="2021-08-01">
+                    <cpc:title-part>
+                        <cpc:text>Arrangements for detecting or preventing errors in the information received </cpc:text>
+                        <cpc:comment>
+                            <cpc:explanation>
+<cpc:text>correcting synchronisation <cpc:class-ref scheme="cpc">H04L7/00</cpc:class-ref>
+</cpc:text>
+                            </cpc:explanation>
+                        </cpc:comment>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+            <ops:classification-statistics classification-symbol="H04W4/00" percentage="3.6398468">
+                <cpc:class-title date-revised="2018-02-01">
+                    <cpc:title-part>
+                        <cpc:text>Services specially adapted for wireless communication networks</cpc:text>
+                    </cpc:title-part>
+                    <cpc:title-part>
+                        <cpc:text>Facilities therefor</cpc:text>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+            <ops:classification-statistics classification-symbol="H04W74/00" percentage="3.4482758">
+                <cpc:class-title date-revised="2024-01-01">
+                    <cpc:title-part>
+                        <cpc:text>Wireless channel access</cpc:text>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+            <ops:classification-statistics classification-symbol="H04B7/00" percentage="3.256705">
+                <cpc:class-title date-revised="2013-01-01">
+                    <cpc:title-part>
+                        <cpc:text>Radio transmission systems, i.e. using radiation field </cpc:text>
+                        <cpc:explanation>
+                            <cpc:text>
+<cpc:class-ref scheme="cpc">H04B10/00</cpc:class-ref>, <cpc:class-ref scheme="cpc">H04B15/00</cpc:class-ref> take precedence</cpc:text>
+                        </cpc:explanation>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+            <ops:classification-statistics classification-symbol="H04W92/00" percentage="3.065134">
+                <cpc:class-title date-revised="2013-01-01">
+                    <cpc:title-part>
+                        <cpc:text>Interfaces specially adapted for wireless communication networks</cpc:text>
+                    </cpc:title-part>
+                </cpc:class-title>
+            </ops:classification-statistics>
+        </ops:search-result>
+    </ops:classification-search>
+</ops:world-patent-data>

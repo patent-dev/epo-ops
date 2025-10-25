@@ -1,0 +1,4 @@
+Method: GetClassificationStatistics
+
+Parameters:
+  query: H04W
