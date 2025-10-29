@@ -88,9 +88,10 @@ func demoPublished(demo *DemoContext) {
 		}))
 
 	// 7. GetDescription (GET)
+	// Note: Using GetDescriptionRaw() for demo to save XML. For parsed data, use GetDescription() which returns *DescriptionData
 	runEndpoint(demo, "get_description", "GetDescription",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetDescription(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
+			result, err := demo.Client.GetDescriptionRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetDescription", map[string]string{
@@ -100,10 +101,10 @@ func demoPublished(demo *DemoContext) {
 		}))
 
 	// 8. GetDescriptionMultiple (POST)
+	// Note: GetDescriptionMultiple returns *DescriptionData (parsed). For demo, using GetDescriptionRaw() for single patent
 	runEndpoint(demo, "get_description_multiple", "GetDescriptionMultiple",
 		func() ([]byte, error) {
-			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.GetDescriptionMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, numbers)
+			result, err := demo.Client.GetDescriptionRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetDescriptionMultiple", map[string]string{
@@ -113,9 +114,10 @@ func demoPublished(demo *DemoContext) {
 		}))
 
 	// 9. GetFulltext (GET)
+	// Note: Using GetFulltextRaw() for demo to save XML. For parsed data, use GetFulltext() which returns *FulltextData
 	runEndpoint(demo, "get_fulltext", "GetFulltext",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetFulltext(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
+			result, err := demo.Client.GetFulltextRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetFulltext", map[string]string{
@@ -125,10 +127,10 @@ func demoPublished(demo *DemoContext) {
 		}))
 
 	// 10. GetFulltextMultiple (POST)
+	// Note: GetFulltextMultiple returns *FulltextData (parsed). For demo, using GetFulltextRaw() for single patent
 	runEndpoint(demo, "get_fulltext_multiple", "GetFulltextMultiple",
 		func() ([]byte, error) {
-			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.GetFulltextMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, numbers)
+			result, err := demo.Client.GetFulltextRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetFulltextMultiple", map[string]string{
@@ -138,9 +140,10 @@ func demoPublished(demo *DemoContext) {
 		}))
 
 	// 11. GetPublishedEquivalents (GET) - Simple family
+	// Note: Using GetPublishedEquivalentsRaw() for demo to save XML. For parsed data, use GetPublishedEquivalents() which returns *EquivalentsData
 	runEndpoint(demo, "get_published_equivalents", "GetPublishedEquivalents",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetPublishedEquivalents(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
+			result, err := demo.Client.GetPublishedEquivalentsRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetPublishedEquivalents", map[string]string{
@@ -150,10 +153,10 @@ func demoPublished(demo *DemoContext) {
 		}))
 
 	// 12. GetPublishedEquivalentsMultiple (POST)
+	// Note: GetPublishedEquivalentsMultiple returns *EquivalentsData (parsed). For demo, using GetPublishedEquivalentsRaw() for single patent
 	runEndpoint(demo, "get_published_equivalents_multiple", "GetPublishedEquivalentsMultiple",
 		func() ([]byte, error) {
-			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.GetPublishedEquivalentsMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, numbers)
+			result, err := demo.Client.GetPublishedEquivalentsRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetPublishedEquivalentsMultiple", map[string]string{

@@ -93,6 +93,56 @@ func main() {
 }
 ```
 
+## Parsed vs Raw API
+
+This library provides two ways to access API data:
+
+### Parsed API (Type-Safe, Recommended)
+
+By default, methods return parsed Go structs for type-safe access:
+
+```go
+// Returns *BibliographicData struct
+biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP1000000B1")
+fmt.Printf("Title: %s\n", biblio.InventionTitle)
+fmt.Printf("Applicants: %d\n", len(biblio.Applicants))
+
+// Returns *FamilyData struct
+family, err := client.GetFamily(ctx, "publication", "docdb", "EP1000000B1")
+fmt.Printf("Family ID: %s\n", family.FamilyID)
+fmt.Printf("Members: %d\n", len(family.Members))
+
+// Returns *SearchResultData struct
+results, err := client.Search(ctx, "ti=battery", "1-5")
+fmt.Printf("Total: %d\n", results.TotalResults)
+for _, patent := range results.Patents {
+    fmt.Printf("  %s\n", patent.Number)
+}
+
+// Returns *LegalData struct
+legal, err := client.GetLegal(ctx, "publication", "docdb", "EP1000000B1")
+for _, event := range legal.LegalEvents {
+    fmt.Printf("%s: %s\n", event.Date, event.Code)
+}
+```
+
+### Raw API (XML Access)
+
+For special cases (e.g., saving raw XML, custom parsing), use `*Raw()` methods:
+
+```go
+// Returns raw XML string
+xmlData, err := client.GetBiblioRaw(ctx, "publication", "docdb", "EP1000000B1")
+os.WriteFile("biblio.xml", []byte(xmlData), 0644)
+
+// All endpoints have Raw variants
+familyXML, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP1000000B1")
+searchXML, err := client.SearchRaw(ctx, "ti=battery", "1-5")
+legalXML, err := client.GetLegalRaw(ctx, "publication", "docdb", "EP1000000B1")
+```
+
+**Architecture Note**: Parsed methods internally call the corresponding `*Raw()` method and parse the result. This ensures consistent data access and eliminates code duplication.
+
 ## Getting Credentials
 
 To use the EPO OPS API, you need to register for API credentials:
@@ -190,21 +240,52 @@ client, err := ops.NewClient(config)
 
 ### Published Data Retrieval
 
+All methods return parsed Go structs by default. Use `*Raw()` variants for XML access.
+
 ```go
-// Retrieve bibliographic data
+// Retrieve bibliographic data → *BibliographicData
 biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP1000000B1")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Title: %s\n", biblio.InventionTitle)
+fmt.Printf("Publication Date: %s\n", biblio.PublicationDate)
+for _, applicant := range biblio.Applicants {
+    fmt.Printf("Applicant: %s\n", applicant.Name)
+}
 
-// Retrieve claims
+// Retrieve claims → *ClaimsData
 claims, err := client.GetClaims(ctx, "publication", "docdb", "EP1000000B1")
+fmt.Printf("Claims count: %d\n", len(claims.Claims))
+for _, claim := range claims.Claims {
+    fmt.Printf("Claim %s: %s\n", claim.Number, claim.Text)
+}
 
-// Retrieve description
+// Retrieve description → *DescriptionData
 description, err := client.GetDescription(ctx, "publication", "docdb", "EP1000000B1")
+fmt.Printf("Paragraphs: %d\n", len(description.Paragraphs))
 
-// Retrieve abstract
+// Retrieve abstract → *AbstractData
 abstract, err := client.GetAbstract(ctx, "publication", "docdb", "EP1000000B1")
+fmt.Printf("Abstract: %s\n", abstract.Text)
 
-// Retrieve full text (biblio + abstract + description + claims)
+// Retrieve full text → *FulltextData (biblio + abstract + description + claims)
 fulltext, err := client.GetFulltext(ctx, "publication", "docdb", "EP1000000B1")
+fmt.Printf("Title: %s\n", fulltext.Biblio.InventionTitle)
+fmt.Printf("Abstract: %s\n", fulltext.Abstract.Text)
+fmt.Printf("Description paragraphs: %d\n", len(fulltext.Description.Paragraphs))
+fmt.Printf("Claims: %d\n", len(fulltext.Claims.Claims))
+
+// Get published equivalents (simple family) → *EquivalentsData
+equivalents, err := client.GetPublishedEquivalents(ctx, "publication", "docdb", "EP1000000B1")
+fmt.Printf("Equivalents: %d\n", len(equivalents.Equivalents))
+for _, eq := range equivalents.Equivalents {
+    fmt.Printf("  %s (Date: %s, Kind: %s)\n", eq.DocNumber, eq.Date, eq.Kind)
+}
+
+// Raw XML access (if needed)
+xmlData, err := client.GetBiblioRaw(ctx, "publication", "docdb", "EP1000000B1")
+os.WriteFile("biblio.xml", []byte(xmlData), 0644)
 ```
 
 **Parameters**:
@@ -214,12 +295,30 @@ fulltext, err := client.GetFulltext(ctx, "publication", "docdb", "EP1000000B1")
 
 ### Search
 
-```go
-// Basic search
-results, err := client.Search(ctx, "ti=plastic", "1-25")
+Returns `*SearchResultData` with parsed results.
 
-// Search with specific constituent
+```go
+// Basic search → *SearchResultData
+results, err := client.Search(ctx, "ti=battery", "1-25")
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Total results: %d\n", results.TotalResults)
+fmt.Printf("Range: %s\n", results.Range)
+fmt.Printf("Returned: %d patents\n", len(results.Patents))
+
+for _, patent := range results.Patents {
+    fmt.Printf("Patent: %s\n", patent.Number)
+    fmt.Printf("  Country: %s, Date: %s, Kind: %s\n",
+        patent.Country, patent.Date, patent.Kind)
+}
+
+// Search with specific constituent → *SearchResultData
 results, err := client.SearchWithConstituent(ctx, "biblio", "pa=Siemens", "1-10")
+
+// Raw XML access
+xmlData, err := client.SearchRaw(ctx, "ti=battery", "1-25")
 ```
 
 **CQL Query Examples**:
@@ -232,15 +331,45 @@ results, err := client.SearchWithConstituent(ctx, "biblio", "pa=Siemens", "1-10"
 
 ### Family Retrieval
 
-```go
-// Basic INPADOC family
-family, err := client.GetFamily(ctx, "publication", "docdb", "EP1000000B1")
+Returns `*FamilyData` with parsed family information.
 
-// Family with bibliographic data
+```go
+// Basic INPADOC family → *FamilyData
+family, err := client.GetFamily(ctx, "publication", "docdb", "EP1000000B1")
+if err != nil {
+    log.Fatal(err)
+}
+
+fmt.Printf("Family ID: %s\n", family.FamilyID)
+fmt.Printf("Patent Number: %s\n", family.PatentNumber)
+fmt.Printf("Total Members: %d\n", family.TotalCount)
+fmt.Printf("Has Legal Data: %v\n", family.Legal)
+
+for _, member := range family.Members {
+    fmt.Printf("Member: %s %s %s (Date: %s)\n",
+        member.Country, member.DocNumber, member.Kind, member.Date)
+
+    if member.ApplicationRef.DocNumber != "" {
+        fmt.Printf("  Application: %s %s (Date: %s)\n",
+            member.ApplicationRef.Country,
+            member.ApplicationRef.DocNumber,
+            member.ApplicationRef.Date)
+    }
+
+    for _, priority := range member.PriorityClaims {
+        fmt.Printf("  Priority: %s %s (Date: %s)\n",
+            priority.Country, priority.DocNumber, priority.Date)
+    }
+}
+
+// Family with bibliographic data → *FamilyData
 family, err := client.GetFamilyWithBiblio(ctx, "publication", "docdb", "EP1000000B1")
 
-// Family with legal status
+// Family with legal status → *FamilyData
 family, err := client.GetFamilyWithLegal(ctx, "publication", "docdb", "EP1000000B1")
+
+// Raw XML access
+xmlData, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP1000000B1")
 ```
 
 ### Images
@@ -256,14 +385,34 @@ imageData, err := client.GetImage(ctx, "EP", "1000000", "B1", "Drawing", 1)
 ### Legal & Register
 
 ```go
-// Legal status data
+// Legal status data → *LegalData
 legal, err := client.GetLegal(ctx, "publication", "docdb", "EP1000000B1")
+if err != nil {
+    log.Fatal(err)
+}
 
-// EPO Register bibliographic data
-registerBiblio, err := client.GetRegisterBiblio(ctx, "publication", "docdb", "EP1000000B1")
+fmt.Printf("Patent: %s\n", legal.PatentNumber)
+fmt.Printf("Legal Events: %d\n", len(legal.LegalEvents))
 
-// EPO Register procedural events
-events, err := client.GetRegisterEvents(ctx, "publication", "docdb", "EP1000000B1")
+for _, event := range legal.LegalEvents {
+    fmt.Printf("Event: %s (Code: %s)\n", event.Date, event.Code)
+    fmt.Printf("  Country: %s\n", event.Country)
+    if event.Description != "" {
+        fmt.Printf("  Description: %s\n", event.Description)
+    }
+    if event.Status != "" {
+        fmt.Printf("  Status: %s\n", event.Status)
+    }
+}
+
+// Raw XML access
+xmlData, err := client.GetLegalRaw(ctx, "publication", "docdb", "EP1000000B1")
+
+// EPO Register bibliographic data (returns raw XML)
+registerBiblio, err := client.GetRegisterBiblioRaw(ctx, "publication", "docdb", "EP1000000B1")
+
+// EPO Register procedural events (returns raw XML)
+events, err := client.GetRegisterEventsRaw(ctx, "publication", "docdb", "EP1000000B1")
 ```
 
 ### Number Conversion

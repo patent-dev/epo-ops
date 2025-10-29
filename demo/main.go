@@ -45,7 +45,7 @@ var (
 	consumerKey    = flag.String("key", os.Getenv("EPO_OPS_CONSUMER_KEY"), "EPO OPS consumer key")
 	consumerSecret = flag.String("secret", os.Getenv("EPO_OPS_CONSUMER_SECRET"), "EPO OPS consumer secret")
 	patentNumber   = flag.String("patent", "EP.2400812.A1", "Patent number to demonstrate")
-	serviceFilter  = flag.String("service", "", "Filter to specific service (published, search, family, legal, register, classification, number, usage, images)")
+	serviceFilter  = flag.String("service", "", "Filter to specific service (published, search, family, legal, register, classification, number, usage, images, parsed)")
 	endpointFilter = flag.String("endpoint", "", "Run specific endpoint only (use -list to see all endpoint names)")
 	listEndpoints  = flag.Bool("list", false, "List all 38 endpoint names and exit")
 	examplesDir    = flag.String("examples", "examples", "Directory to save examples")
@@ -151,6 +151,9 @@ func main() {
 	}
 	if *serviceFilter == "" || *serviceFilter == "images" {
 		demoImages(demo)
+	}
+	if *serviceFilter == "parsed" {
+		demoParsedAPI(demo)
 	}
 
 	// Print summary

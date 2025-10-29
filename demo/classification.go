@@ -13,7 +13,7 @@ func demoClassification(demo *DemoContext) {
 	// 1. GetClassificationSchema (GET)
 	runEndpoint(demo, "get_classification_schema", "GetClassificationSchema",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetClassificationSchema(demo.Ctx, "H04W", false, false)
+			result, err := demo.Client.GetClassificationSchemaRaw(demo.Ctx, "H04W", false, false)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetClassificationSchema", map[string]string{
@@ -22,27 +22,27 @@ func demoClassification(demo *DemoContext) {
 			"navigation": "false",
 		}))
 
-	// 2. GetClassificationSchemaSubclass (GET)
-	runEndpoint(demo, "get_classification_schema_subclass", "GetClassificationSchemaSubclass",
+	// 2. GetClassificationSchemaSubclassRaw (GET)
+	runEndpoint(demo, "get_classification_schema_subclass", "GetClassificationSchemaSubclassRaw",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetClassificationSchemaSubclass(demo.Ctx, "H04W4", "00", false, false)
+			result, err := demo.Client.GetClassificationSchemaSubclassRaw(demo.Ctx, "H04W4", "00", false, false)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetClassificationSchemaSubclass", map[string]string{
+		FormatRequestDescription("GetClassificationSchemaSubclassRaw", map[string]string{
 			"class":      "H04W4",
 			"subclass":   "00",
 			"ancestors":  "false",
 			"navigation": "false",
 		}))
 
-	// 3. GetClassificationSchemaMultiple (POST)
-	runEndpoint(demo, "get_classification_schema_multiple", "GetClassificationSchemaMultiple",
+	// 3. GetClassificationSchemaMultipleRaw (POST)
+	runEndpoint(demo, "get_classification_schema_multiple", "GetClassificationSchemaMultipleRaw",
 		func() ([]byte, error) {
 			classes := []string{"H04W", "G06F", "A01B"}
-			result, err := demo.Client.GetClassificationSchemaMultiple(demo.Ctx, classes)
+			result, err := demo.Client.GetClassificationSchemaMultipleRaw(demo.Ctx, classes)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetClassificationSchemaMultiple", map[string]string{
+		FormatRequestDescription("GetClassificationSchemaMultipleRaw", map[string]string{
 			"classes": "H04W, G06F, A01B",
 		}))
 
@@ -56,23 +56,23 @@ func demoClassification(demo *DemoContext) {
 			"asAttachment": "false",
 		}))
 
-	// 5. GetClassificationStatistics (GET)
-	runEndpoint(demo, "get_classification_statistics", "GetClassificationStatistics",
+	// 5. GetClassificationStatisticsRaw (GET)
+	runEndpoint(demo, "get_classification_statistics", "GetClassificationStatisticsRaw",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetClassificationStatistics(demo.Ctx, "H04W")
+			result, err := demo.Client.GetClassificationStatisticsRaw(demo.Ctx, "H04W")
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetClassificationStatistics", map[string]string{
+		FormatRequestDescription("GetClassificationStatisticsRaw", map[string]string{
 			"query": "H04W",
 		}))
 
-	// 6. GetClassificationMapping (GET) - ECLA <-> CPC conversion
-	runEndpoint(demo, "get_classification_mapping", "GetClassificationMapping",
+	// 6. GetClassificationMappingRaw (GET) - ECLA <-> CPC conversion
+	runEndpoint(demo, "get_classification_mapping", "GetClassificationMappingRaw",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetClassificationMapping(demo.Ctx, "cpc", "H04W84", "18", "ecla", false)
+			result, err := demo.Client.GetClassificationMappingRaw(demo.Ctx, "cpc", "H04W84", "18", "ecla", false)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetClassificationMapping", map[string]string{
+		FormatRequestDescription("GetClassificationMappingRaw", map[string]string{
 			"inputFormat":  "cpc",
 			"class":        "H04W84",
 			"subclass":     "18",

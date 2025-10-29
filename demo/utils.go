@@ -36,13 +36,13 @@ func NewExampleSaver(baseDir string) *ExampleSaver {
 func (s *ExampleSaver) SaveExample(endpointName string, requestDesc string, response []byte, format FileFormat) error {
 	// Create endpoint directory
 	dir := filepath.Join(s.baseDir, endpointName)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0750); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
 	// Save request description
 	requestFile := filepath.Join(dir, "request.txt")
-	if err := os.WriteFile(requestFile, []byte(requestDesc), 0644); err != nil {
+	if err := os.WriteFile(requestFile, []byte(requestDesc), 0600); err != nil {
 		return fmt.Errorf("failed to save request: %w", err)
 	}
 
@@ -50,7 +50,7 @@ func (s *ExampleSaver) SaveExample(endpointName string, requestDesc string, resp
 	responseFile := filepath.Join(dir, fmt.Sprintf("response.%s", format))
 
 	// Save response
-	if err := os.WriteFile(responseFile, response, 0644); err != nil {
+	if err := os.WriteFile(responseFile, response, 0600); err != nil {
 		return fmt.Errorf("failed to save response: %w", err)
 	}
 

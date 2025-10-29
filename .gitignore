@@ -8,6 +8,9 @@ demo/*.png
 demo/downloads/
 epo-ops-demo
 
+# Binaries
+demo/demo
+
 # Test coverage
 *.out
 coverage.html

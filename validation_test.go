@@ -3,6 +3,7 @@ package epo_ops
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -571,4 +572,128 @@ func TestNormalizeToDocdb_EdgeCases(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestValidateBulkNumbers(t *testing.T) {
+	tests := []struct {
+		name      string
+		numbers   []string
+		format    string
+		wantError bool
+		errField  string // Expected error field name
+	}{
+		{
+			name:      "Valid single docdb number",
+			numbers:   []string{"EP.1000000.B1"},
+			format:    FormatDocDB,
+			wantError: false,
+		},
+		{
+			name:      "Valid multiple docdb numbers",
+			numbers:   []string{"EP.1000000.B1", "US.5551212.A", "WO.2023123456.A1"},
+			format:    FormatDocDB,
+			wantError: false,
+		},
+		{
+			name:      "Valid 100 numbers (max allowed)",
+			numbers:   make100ValidNumbers(),
+			format:    FormatDocDB,
+			wantError: false,
+		},
+		{
+			name:      "Empty numbers slice",
+			numbers:   []string{},
+			format:    FormatDocDB,
+			wantError: true,
+			errField:  "numbers",
+		},
+		{
+			name:      "Nil numbers slice",
+			numbers:   nil,
+			format:    FormatDocDB,
+			wantError: true,
+			errField:  "numbers",
+		},
+		{
+			name:      "Exceeds maximum of 100",
+			numbers:   make101Numbers(),
+			format:    FormatDocDB,
+			wantError: true,
+			errField:  "numbers",
+		},
+		{
+			name:      "Invalid format in first number",
+			numbers:   []string{"INVALID", "EP.1000001.B1"},
+			format:    FormatDocDB,
+			wantError: true,
+		},
+		{
+			name:      "Invalid format in middle number",
+			numbers:   []string{"EP.1000000.B1", "INVALID", "EP.1000002.B1"},
+			format:    FormatDocDB,
+			wantError: true,
+		},
+		{
+			name:      "Invalid format in last number",
+			numbers:   []string{"EP.1000000.B1", "EP.1000001.B1", "INVALID"},
+			format:    FormatDocDB,
+			wantError: true,
+		},
+		{
+			name:      "Valid epodoc numbers",
+			numbers:   []string{"EP1000000", "US5551212"},
+			format:    FormatEPODOC,
+			wantError: false,
+		},
+		{
+			name:      "Mixed valid and invalid formats",
+			numbers:   []string{"EP.1000000.B1", "EP1000001"}, // docdb then epodoc
+			format:    FormatDocDB,
+			wantError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateBulkNumbers(tt.numbers, tt.format)
+
+			if (err != nil) != tt.wantError {
+				t.Errorf("ValidateBulkNumbers() error = %v, wantError %v", err, tt.wantError)
+				return
+			}
+
+			if err != nil {
+				// Check error message contains expected field if specified
+				if tt.errField != "" && !strings.Contains(err.Error(), tt.errField) {
+					t.Errorf("Expected error to contain field %q, got: %v", tt.errField, err)
+				}
+
+				// Check that error is ValidationError type for our errors
+				var valErr *ValidationError
+				if errors.As(err, &valErr) {
+					if tt.errField != "" && valErr.Field != tt.errField {
+						t.Errorf("Expected error field %q, got %q", tt.errField, valErr.Field)
+					}
+				}
+			}
+		})
+	}
+}
+
+// Helper functions for test data generation
+
+func make100ValidNumbers() []string {
+	numbers := make([]string, 100)
+	for i := 0; i < 100; i++ {
+		numbers[i] = fmt.Sprintf("EP.%07d.B1", i+1000000)
+	}
+	return numbers
+}
+
+func make101Numbers() []string {
+	numbers := make([]string, 101)
+	for i := 0; i < 101; i++ {
+		numbers[i] = fmt.Sprintf("EP.%07d.B1", i+1000000)
+	}
+	return numbers
 }

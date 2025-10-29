@@ -1,6 +1,7 @@
 package epo_ops
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -280,4 +281,41 @@ func NormalizeToDocdb(number string) (string, error) {
 	}
 
 	return docdb, nil
+}
+
+// ValidateBulkNumbers validates a slice of patent numbers for bulk operations.
+// This helper reduces code duplication across GetXMultiple methods.
+//
+// Parameters:
+//   - numbers: Slice of patent numbers to validate
+//   - format: Number format (e.g., FormatDocDB, FormatEPODOC)
+//
+// Returns error if:
+//   - numbers slice is empty
+//   - numbers slice has more than 100 entries
+//   - any individual number fails format validation
+func ValidateBulkNumbers(numbers []string, format string) error {
+	if len(numbers) == 0 {
+		return &ValidationError{
+			Field:   "numbers",
+			Message: "at least one patent number required",
+		}
+	}
+
+	if len(numbers) > 100 {
+		return &ValidationError{
+			Field:   "numbers",
+			Value:   fmt.Sprintf("%d", len(numbers)),
+			Message: "maximum 100 patent numbers per request",
+		}
+	}
+
+	// Validate each patent number
+	for i, number := range numbers {
+		if err := ValidateFormat(format, number); err != nil {
+			return fmt.Errorf("numbers[%d]: %w", i, err)
+		}
+	}
+
+	return nil
 }

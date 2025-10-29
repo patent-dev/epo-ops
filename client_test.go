@@ -242,8 +242,11 @@ func TestGetDescription(t *testing.T) {
 		t.Fatalf("GetDescription failed: %v", err)
 	}
 
-	if !strings.Contains(desc, "description") {
-		t.Errorf("Expected description element in response")
+	if desc == nil {
+		t.Fatal("Expected parsed description data, got nil")
+	}
+	if len(desc.Paragraphs) == 0 {
+		t.Errorf("Expected paragraphs in description data")
 	}
 }
 
@@ -330,12 +333,14 @@ func TestSearch(t *testing.T) {
 		t.Fatalf("Search failed: %v", err)
 	}
 
-	if !strings.Contains(results, "biblio-search") {
-		t.Errorf("Expected biblio-search element in response")
+	if results == nil {
+		t.Fatal("Expected parsed search results, got nil")
 	}
-
-	if !strings.Contains(results, "2400812") {
-		t.Errorf("Expected search results to contain patent number")
+	if results.TotalCount == 0 {
+		t.Errorf("Expected non-zero total count in search results")
+	}
+	if len(results.Results) == 0 {
+		t.Errorf("Expected search results")
 	}
 }
 
@@ -374,13 +379,13 @@ func TestGetFamily(t *testing.T) {
 		t.Fatalf("GetFamily failed: %v", err)
 	}
 
-	if !strings.Contains(family, "patent-family") {
-		t.Errorf("Expected patent-family element in response")
+	if family == nil {
+		t.Fatal("Expected parsed family data, got nil")
 	}
-
-	if !strings.Contains(family, "family-member") {
-		t.Errorf("Expected family-member elements in response")
+	if len(family.Members) == 0 {
+		t.Errorf("Expected family members in family data")
 	}
+	// FamilyID is optional in the API response, so we don't assert on it
 }
 
 // Test image endpoints
@@ -466,8 +471,11 @@ func TestGetLegal(t *testing.T) {
 		t.Fatalf("GetLegal failed: %v", err)
 	}
 
-	if !strings.Contains(legal, "legal") {
-		t.Errorf("Expected legal element in response")
+	if legal == nil {
+		t.Fatal("Expected parsed legal data, got nil")
+	}
+	if len(legal.LegalEvents) == 0 {
+		t.Errorf("Expected legal events in legal data")
 	}
 }
 
@@ -636,6 +644,57 @@ func TestQuotaTracking(t *testing.T) {
 	usagePercent := quota.Individual.UsagePercent()
 	if usagePercent < 0.03 || usagePercent > 0.04 {
 		t.Errorf("Expected usage percent around 0.03%%, got: %.2f%%", usagePercent)
+	}
+}
+
+// Test GetUsageStats
+func TestGetUsageStats(t *testing.T) {
+	authServer := newMockAuthServer(t)
+	defer authServer.Close()
+
+	opsServer := newMockOPSServer(t, func(w http.ResponseWriter, r *http.Request) {
+		// Check that it's the usage stats endpoint
+		if !strings.Contains(r.URL.Path, "/stats/usage") {
+			t.Errorf("Unexpected path: %s", r.URL.Path)
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		// Return mock JSON usage stats
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{
+			"data": [
+				{"timestamp": 1640995200, "total_response_size": 1048576, "message_count": 10},
+				{"timestamp": 1641081600, "total_response_size": 2097152, "message_count": 20}
+			]
+		}`))
+	})
+	defer opsServer.Close()
+
+	config := DefaultConfig()
+	config.ConsumerKey = "test"
+	config.ConsumerSecret = "test"
+	config.BaseURL = opsServer.URL
+	config.AuthURL = authServer.URL + "/auth/accesstoken"
+
+	client, _ := NewClient(config)
+	ctx := context.Background()
+
+	stats, err := client.GetUsageStats(ctx, "01/01/2022")
+	if err != nil {
+		t.Fatalf("GetUsageStats failed: %v", err)
+	}
+
+	if stats == nil {
+		t.Fatal("Expected usage stats, got nil")
+	}
+
+	if len(stats.Entries) != 2 {
+		t.Errorf("Expected 2 usage entries, got: %d", len(stats.Entries))
+	}
+
+	if stats.Entries[0].TotalResponseSize != 1048576 {
+		t.Errorf("Expected first entry size 1048576, got: %d", stats.Entries[0].TotalResponseSize)
 	}
 }
 
@@ -1063,13 +1122,16 @@ func TestGetDescriptionMultiple(t *testing.T) {
 	client, _ := NewClient(config)
 	ctx := context.Background()
 
-	xml, err := client.GetDescriptionMultiple(ctx, RefTypePublication, FormatDocDB, []string{"EP.1000000.B1"})
+	data, err := client.GetDescriptionMultiple(ctx, RefTypePublication, FormatDocDB, []string{"EP.1000000.B1"})
 	if err != nil {
 		t.Fatalf("GetDescriptionMultiple failed: %v", err)
 	}
 
-	if !strings.Contains(xml, "description") {
-		t.Error("Expected description element in response")
+	if data == nil {
+		t.Fatal("Expected parsed description data, got nil")
+	}
+	if len(data.Paragraphs) == 0 {
+		t.Error("Expected paragraphs in description data")
 	}
 }
 
@@ -1134,7 +1196,10 @@ func TestGetFulltextMultiple(t *testing.T) {
 		t.Fatalf("GetFulltextMultiple failed: %v", err)
 	}
 
-	if len(xml) == 0 {
-		t.Error("Expected non-empty response")
+	if xml == nil {
+		t.Fatal("Expected parsed fulltext data, got nil")
+	}
+	if xml.Claims == nil || len(xml.Claims.Claims) == 0 {
+		t.Error("Expected claims in fulltext data")
 	}
 }

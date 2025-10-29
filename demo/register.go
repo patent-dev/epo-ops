@@ -12,26 +12,26 @@ func demoRegister(demo *DemoContext) {
 	fmt.Println("Register Services (10 endpoints)")
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
-	// 1. GetRegisterBiblio (GET) - Format param is "epodoc" but number must have dots (docdb)
-	runEndpoint(demo, "get_register_biblio", "GetRegisterBiblio",
+	// 1. GetRegisterBiblioRaw (GET) - Format param is "epodoc" but number must have dots (docdb)
+	runEndpoint(demo, "get_register_biblio", "GetRegisterBiblioRaw",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetRegisterBiblio(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, demo.Patent)
+			result, err := demo.Client.GetRegisterBiblioRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, demo.Patent)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetRegisterBiblio", map[string]string{
+		FormatRequestDescription("GetRegisterBiblioRaw", map[string]string{
 			"refType": ops.RefTypePublication,
 			"format":  ops.FormatEPODOC,
 			"number":  demo.Patent,
 		}))
 
-	// 2. GetRegisterBiblioMultiple (POST - bulk register biblio)
-	runEndpoint(demo, "get_register_biblio_multiple", "GetRegisterBiblioMultiple",
+	// 2. GetRegisterBiblioMultipleRaw (POST - bulk register biblio)
+	runEndpoint(demo, "get_register_biblio_multiple", "GetRegisterBiblioMultipleRaw",
 		func() ([]byte, error) {
 			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.GetRegisterBiblioMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, numbers)
+			result, err := demo.Client.GetRegisterBiblioMultipleRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, numbers)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetRegisterBiblioMultiple", map[string]string{
+		FormatRequestDescription("GetRegisterBiblioMultipleRaw", map[string]string{
 			"refType": ops.RefTypePublication,
 			"format":  ops.FormatEPODOC,
 			"numbers": "bulk test patents from CSV",
@@ -40,7 +40,7 @@ func demoRegister(demo *DemoContext) {
 	// 3. GetRegisterEvents (GET) - Uses epodoc format parameter but docdb number (with dots)
 	runEndpoint(demo, "get_register_events", "GetRegisterEvents",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetRegisterEvents(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, demo.Patent)
+			result, err := demo.Client.GetRegisterEventsRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetRegisterEvents", map[string]string{
@@ -49,64 +49,64 @@ func demoRegister(demo *DemoContext) {
 			"number":  demo.Patent,
 		}))
 
-	// 4. GetRegisterEventsMultiple (POST - bulk register events)
-	runEndpoint(demo, "get_register_events_multiple", "GetRegisterEventsMultiple",
+	// 4. GetRegisterEventsMultipleRaw (POST - bulk register events)
+	runEndpoint(demo, "get_register_events_multiple", "GetRegisterEventsMultipleRaw",
 		func() ([]byte, error) {
 			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.GetRegisterEventsMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, numbers)
+			result, err := demo.Client.GetRegisterEventsMultipleRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, numbers)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetRegisterEventsMultiple", map[string]string{
+		FormatRequestDescription("GetRegisterEventsMultipleRaw", map[string]string{
 			"refType": ops.RefTypePublication,
 			"format":  ops.FormatEPODOC,
 			"numbers": "bulk test patents from CSV",
 		}))
 
-	// 5. GetRegisterProceduralSteps (GET)
-	runEndpoint(demo, "get_register_procedural_steps", "GetRegisterProceduralSteps",
+	// 5. GetRegisterProceduralStepsRaw (GET)
+	runEndpoint(demo, "get_register_procedural_steps", "GetRegisterProceduralStepsRaw",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetRegisterProceduralSteps(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, demo.Patent)
+			result, err := demo.Client.GetRegisterProceduralStepsRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, demo.Patent)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetRegisterProceduralSteps", map[string]string{
+		FormatRequestDescription("GetRegisterProceduralStepsRaw", map[string]string{
 			"refType": ops.RefTypePublication,
 			"format":  ops.FormatEPODOC,
 			"number":  demo.Patent,
 		}))
 
-	// 6. GetRegisterProceduralStepsMultiple (POST)
-	runEndpoint(demo, "get_register_procedural_steps_multiple", "GetRegisterProceduralStepsMultiple",
+	// 6. GetRegisterProceduralStepsMultipleRaw (POST)
+	runEndpoint(demo, "get_register_procedural_steps_multiple", "GetRegisterProceduralStepsMultipleRaw",
 		func() ([]byte, error) {
 			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.GetRegisterProceduralStepsMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, numbers)
+			result, err := demo.Client.GetRegisterProceduralStepsMultipleRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, numbers)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetRegisterProceduralStepsMultiple", map[string]string{
+		FormatRequestDescription("GetRegisterProceduralStepsMultipleRaw", map[string]string{
 			"refType": ops.RefTypePublication,
 			"format":  ops.FormatEPODOC,
 			"numbers": "bulk test patents from CSV",
 		}))
 
-	// 7. GetRegisterUNIP (GET) - Unified Patent Package
-	runEndpoint(demo, "get_register_unip", "GetRegisterUNIP",
+	// 7. GetRegisterUNIPRaw (GET) - Unified Patent Package
+	runEndpoint(demo, "get_register_unip", "GetRegisterUNIPRaw",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetRegisterUNIP(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, demo.Patent)
+			result, err := demo.Client.GetRegisterUNIPRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, demo.Patent)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetRegisterUNIP", map[string]string{
+		FormatRequestDescription("GetRegisterUNIPRaw", map[string]string{
 			"refType": ops.RefTypePublication,
 			"format":  ops.FormatEPODOC,
 			"number":  demo.Patent,
 		}))
 
-	// 8. GetRegisterUNIPMultiple (POST)
-	runEndpoint(demo, "get_register_unip_multiple", "GetRegisterUNIPMultiple",
+	// 8. GetRegisterUNIPMultipleRaw (POST)
+	runEndpoint(demo, "get_register_unip_multiple", "GetRegisterUNIPMultipleRaw",
 		func() ([]byte, error) {
 			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.GetRegisterUNIPMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, numbers)
+			result, err := demo.Client.GetRegisterUNIPMultipleRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, numbers)
 			return []byte(result), err
 		},
-		FormatRequestDescription("GetRegisterUNIPMultiple", map[string]string{
+		FormatRequestDescription("GetRegisterUNIPMultipleRaw", map[string]string{
 			"refType": ops.RefTypePublication,
 			"format":  ops.FormatEPODOC,
 			"numbers": "bulk test patents from CSV",

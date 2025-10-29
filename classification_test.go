@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestGetClassificationSchema(t *testing.T) {
+func TestGetClassificationSchemaRaw(t *testing.T) {
 	// Skip if no credentials
 	if testing.Short() {
 		t.Skip("Skipping integration test in short mode")
@@ -53,26 +53,26 @@ func TestGetClassificationSchema(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			schema, err := client.GetClassificationSchema(ctx, tt.class, tt.ancestors, tt.navigation)
+			schema, err := client.GetClassificationSchemaRaw(ctx, tt.class, tt.ancestors, tt.navigation)
 
 			if tt.wantError {
 				if err == nil {
-					t.Errorf("GetClassificationSchema() expected error, got nil")
+					t.Errorf("GetClassificationSchemaRaw() expected error, got nil")
 				}
 				return
 			}
 
 			if err != nil {
-				t.Fatalf("GetClassificationSchema() unexpected error: %v", err)
+				t.Fatalf("GetClassificationSchemaRaw() unexpected error: %v", err)
 			}
 
 			if len(schema) == 0 {
-				t.Error("GetClassificationSchema() returned empty schema")
+				t.Error("GetClassificationSchemaRaw() returned empty schema")
 			}
 
 			// Verify it's XML
 			if !strings.Contains(schema, "<?xml") && !strings.Contains(schema, "<") {
-				t.Errorf("GetClassificationSchema() doesn't look like XML: %s", schema[:min(100, len(schema))])
+				t.Errorf("GetClassificationSchemaRaw() doesn't look like XML: %s", schema[:min(100, len(schema))])
 			}
 
 			t.Logf("Retrieved schema for class %s, length: %d bytes", tt.class, len(schema))
@@ -80,7 +80,7 @@ func TestGetClassificationSchema(t *testing.T) {
 	}
 }
 
-func TestGetClassificationSchemaSubclass(t *testing.T) {
+func TestGetClassificationSchemaSubclassRaw(t *testing.T) {
 	// Skip if no credentials
 	if testing.Short() {
 		t.Skip("Skipping integration test in short mode")
@@ -124,26 +124,26 @@ func TestGetClassificationSchemaSubclass(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			schema, err := client.GetClassificationSchemaSubclass(ctx, tt.class, tt.subclass, tt.ancestors, tt.navigation)
+			schema, err := client.GetClassificationSchemaSubclassRaw(ctx, tt.class, tt.subclass, tt.ancestors, tt.navigation)
 
 			if tt.wantError {
 				if err == nil {
-					t.Errorf("GetClassificationSchemaSubclass() expected error, got nil")
+					t.Errorf("GetClassificationSchemaSubclassRaw() expected error, got nil")
 				}
 				return
 			}
 
 			if err != nil {
-				t.Fatalf("GetClassificationSchemaSubclass() unexpected error: %v", err)
+				t.Fatalf("GetClassificationSchemaSubclassRaw() unexpected error: %v", err)
 			}
 
 			if len(schema) == 0 {
-				t.Error("GetClassificationSchemaSubclass() returned empty schema")
+				t.Error("GetClassificationSchemaSubclassRaw() returned empty schema")
 			}
 
 			// Verify it's XML
 			if !strings.Contains(schema, "<?xml") && !strings.Contains(schema, "<") {
-				t.Errorf("GetClassificationSchemaSubclass() doesn't look like XML")
+				t.Errorf("GetClassificationSchemaSubclassRaw() doesn't look like XML")
 			}
 
 			t.Logf("Retrieved subclass schema for %s/%s, length: %d bytes", tt.class, tt.subclass, len(schema))
@@ -151,7 +151,7 @@ func TestGetClassificationSchemaSubclass(t *testing.T) {
 	}
 }
 
-func TestGetClassificationSchemaMultiple(t *testing.T) {
+func TestGetClassificationSchemaMultipleRaw(t *testing.T) {
 	// Skip if no credentials
 	if testing.Short() {
 		t.Skip("Skipping integration test in short mode")
@@ -198,30 +198,30 @@ func TestGetClassificationSchemaMultiple(t *testing.T) {
 				}
 			}
 
-			schemas, err := client.GetClassificationSchemaMultiple(ctx, tt.classes)
+			schemas, err := client.GetClassificationSchemaMultipleRaw(ctx, tt.classes)
 
 			if tt.wantError {
 				if err == nil {
-					t.Errorf("GetClassificationSchemaMultiple() expected error, got nil")
+					t.Errorf("GetClassificationSchemaMultipleRaw() expected error, got nil")
 					return
 				}
 				if tt.errorMsg != "" && !strings.Contains(err.Error(), tt.errorMsg) {
-					t.Errorf("GetClassificationSchemaMultiple() error = %v, want error containing %q", err, tt.errorMsg)
+					t.Errorf("GetClassificationSchemaMultipleRaw() error = %v, want error containing %q", err, tt.errorMsg)
 				}
 				return
 			}
 
 			if err != nil {
-				t.Fatalf("GetClassificationSchemaMultiple() unexpected error: %v", err)
+				t.Fatalf("GetClassificationSchemaMultipleRaw() unexpected error: %v", err)
 			}
 
 			if len(schemas) == 0 {
-				t.Error("GetClassificationSchemaMultiple() returned empty schemas")
+				t.Error("GetClassificationSchemaMultipleRaw() returned empty schemas")
 			}
 
 			// Verify it's XML
 			if !strings.Contains(schemas, "<?xml") && !strings.Contains(schemas, "<") {
-				t.Errorf("GetClassificationSchemaMultiple() doesn't look like XML")
+				t.Errorf("GetClassificationSchemaMultipleRaw() doesn't look like XML")
 			}
 
 			t.Logf("Retrieved %d classification schemas, total length: %d bytes", len(tt.classes), len(schemas))
@@ -369,7 +369,7 @@ func isImageData(data []byte) bool {
 	return false
 }
 
-func TestGetClassificationStatistics(t *testing.T) {
+func TestGetClassificationStatisticsRaw(t *testing.T) {
 	// Skip if no credentials
 	if testing.Short() {
 		t.Skip("Skipping integration test in short mode")
@@ -408,32 +408,32 @@ func TestGetClassificationStatistics(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			stats, err := client.GetClassificationStatistics(ctx, tt.query)
+			stats, err := client.GetClassificationStatisticsRaw(ctx, tt.query)
 
 			if tt.wantError {
 				if err == nil {
-					t.Errorf("GetClassificationStatistics() expected error, got nil")
+					t.Errorf("GetClassificationStatisticsRaw() expected error, got nil")
 					return
 				}
 				if tt.errorMsg != "" && !strings.Contains(err.Error(), tt.errorMsg) {
-					t.Errorf("GetClassificationStatistics() error = %v, want error containing %q", err, tt.errorMsg)
+					t.Errorf("GetClassificationStatisticsRaw() error = %v, want error containing %q", err, tt.errorMsg)
 				}
 				return
 			}
 
 			if err != nil {
-				t.Fatalf("GetClassificationStatistics() unexpected error: %v", err)
+				t.Fatalf("GetClassificationStatisticsRaw() unexpected error: %v", err)
 			}
 
 			if len(stats) == 0 {
-				t.Error("GetClassificationStatistics() returned empty statistics")
+				t.Error("GetClassificationStatisticsRaw() returned empty statistics")
 			}
 
 			// Verify it's XML or JSON
 			isXML := strings.Contains(stats, "<?xml") || strings.Contains(stats, "<")
 			isJSON := strings.Contains(stats, "{") || strings.Contains(stats, "[")
 			if !isXML && !isJSON {
-				t.Errorf("GetClassificationStatistics() doesn't look like XML or JSON: %s", stats[:min(100, len(stats))])
+				t.Errorf("GetClassificationStatisticsRaw() doesn't look like XML or JSON: %s", stats[:min(100, len(stats))])
 			}
 
 			t.Logf("Retrieved statistics for query %q, length: %d bytes, format: %s",
@@ -442,7 +442,7 @@ func TestGetClassificationStatistics(t *testing.T) {
 	}
 }
 
-func TestGetClassificationMapping(t *testing.T) {
+func TestGetClassificationMappingRaw(t *testing.T) {
 	// Skip if no credentials
 	if testing.Short() {
 		t.Skip("Skipping integration test in short mode")
@@ -551,30 +551,30 @@ func TestGetClassificationMapping(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mapping, err := client.GetClassificationMapping(ctx, tt.inputFormat, tt.class, tt.subclass, tt.outputFormat, tt.additional)
+			mapping, err := client.GetClassificationMappingRaw(ctx, tt.inputFormat, tt.class, tt.subclass, tt.outputFormat, tt.additional)
 
 			if tt.wantError {
 				if err == nil {
-					t.Errorf("GetClassificationMapping() expected error, got nil")
+					t.Errorf("GetClassificationMappingRaw() expected error, got nil")
 					return
 				}
 				if tt.errorMsg != "" && !strings.Contains(err.Error(), tt.errorMsg) {
-					t.Errorf("GetClassificationMapping() error = %v, want error containing %q", err, tt.errorMsg)
+					t.Errorf("GetClassificationMappingRaw() error = %v, want error containing %q", err, tt.errorMsg)
 				}
 				return
 			}
 
 			if err != nil {
-				t.Fatalf("GetClassificationMapping() unexpected error: %v", err)
+				t.Fatalf("GetClassificationMappingRaw() unexpected error: %v", err)
 			}
 
 			if len(mapping) == 0 {
-				t.Error("GetClassificationMapping() returned empty mapping")
+				t.Error("GetClassificationMappingRaw() returned empty mapping")
 			}
 
 			// Verify it's XML
 			if !strings.Contains(mapping, "<?xml") && !strings.Contains(mapping, "<") {
-				t.Errorf("GetClassificationMapping() doesn't look like XML: %s", mapping[:min(100, len(mapping))])
+				t.Errorf("GetClassificationMappingRaw() doesn't look like XML: %s", mapping[:min(100, len(mapping))])
 			}
 
 			t.Logf("Mapped %s %s/%s to %s, length: %d bytes, additional: %v",

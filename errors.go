@@ -89,6 +89,54 @@ func (e *OPSError) Error() string {
 	return fmt.Sprintf("[%d] %s: %s", e.HTTPStatus, e.Code, e.Message)
 }
 
+// XMLParseError represents an error during XML parsing.
+// This error provides context about what failed during XML unmarshaling
+// including the parser name, problematic element, and a sample of the XML.
+type XMLParseError struct {
+	Parser    string // e.g., "ParseFamily", "ParseLegal"
+	Element   string // e.g., "family-member", "legal-event"
+	XMLSample string // First 200 chars of problematic XML
+	Cause     error  // Underlying error from xml.Unmarshal
+}
+
+func (e *XMLParseError) Error() string {
+	msg := fmt.Sprintf("XML parsing failed in %s", e.Parser)
+	if e.Element != "" {
+		msg += fmt.Sprintf(" (element: %s)", e.Element)
+	}
+	if e.Cause != nil {
+		msg += fmt.Sprintf(": %v", e.Cause)
+	}
+	if e.XMLSample != "" {
+		msg += fmt.Sprintf("\nXML sample: %s", e.XMLSample)
+	}
+	return msg
+}
+
+func (e *XMLParseError) Unwrap() error {
+	return e.Cause
+}
+
+// DataValidationError represents an error when parsed data is incomplete or invalid.
+// This occurs when XML unmarshaling succeeds but the resulting data structure
+// is missing required fields or contains invalid values.
+type DataValidationError struct {
+	Parser       string // e.g., "ParseFamily", "ParseLegal"
+	MissingField string // Name of the missing or invalid field
+	Message      string // Description of what's wrong
+}
+
+func (e *DataValidationError) Error() string {
+	msg := fmt.Sprintf("data validation failed in %s", e.Parser)
+	if e.MissingField != "" {
+		msg += fmt.Sprintf(" (field: %s)", e.MissingField)
+	}
+	if e.Message != "" {
+		msg += fmt.Sprintf(": %s", e.Message)
+	}
+	return msg
+}
+
 // parseErrorXML parses EPO OPS error response XML into an OPSError struct.
 // EPO error responses can have two formats:
 //

@@ -64,19 +64,16 @@ func TestGetPublishedEquivalents(t *testing.T) {
 				t.Fatalf("GetPublishedEquivalents() unexpected error: %v", err)
 			}
 
-			if len(equivalents) == 0 {
-				t.Error("GetPublishedEquivalents() returned empty equivalents")
+			if equivalents == nil {
+				t.Fatal("GetPublishedEquivalents() returned nil equivalents")
 			}
 
-			// Verify it's XML or JSON
-			isXML := strings.Contains(equivalents, "<?xml") || strings.Contains(equivalents, "<")
-			isJSON := strings.Contains(equivalents, "{") || strings.Contains(equivalents, "[")
-			if !isXML && !isJSON {
-				t.Errorf("GetPublishedEquivalents() doesn't look like XML or JSON: %s", equivalents[:min(100, len(equivalents))])
+			if len(equivalents.Equivalents) == 0 {
+				t.Error("GetPublishedEquivalents() returned empty equivalents list")
 			}
 
-			t.Logf("Retrieved equivalents for %s %s, length: %d bytes",
-				tt.refType, tt.number, len(equivalents))
+			t.Logf("Retrieved %d equivalents for %s %s",
+				len(equivalents.Equivalents), tt.refType, tt.number)
 		})
 	}
 }
@@ -155,19 +152,16 @@ func TestGetPublishedEquivalentsMultiple(t *testing.T) {
 				t.Fatalf("GetPublishedEquivalentsMultiple() unexpected error: %v", err)
 			}
 
-			if len(equivalents) == 0 {
-				t.Error("GetPublishedEquivalentsMultiple() returned empty equivalents")
+			if equivalents == nil {
+				t.Fatal("GetPublishedEquivalentsMultiple() returned nil equivalents")
 			}
 
-			// Verify it's XML or JSON
-			isXML := strings.Contains(equivalents, "<?xml") || strings.Contains(equivalents, "<")
-			isJSON := strings.Contains(equivalents, "{") || strings.Contains(equivalents, "[")
-			if !isXML && !isJSON {
-				t.Errorf("GetPublishedEquivalentsMultiple() doesn't look like XML or JSON")
+			if len(equivalents.Equivalents) == 0 {
+				t.Error("GetPublishedEquivalentsMultiple() returned empty equivalents list")
 			}
 
-			t.Logf("Retrieved equivalents for %d numbers, total length: %d bytes",
-				len(tt.numbers), len(equivalents))
+			t.Logf("Retrieved %d equivalents for %d numbers",
+				len(equivalents.Equivalents), len(tt.numbers))
 		})
 	}
 }

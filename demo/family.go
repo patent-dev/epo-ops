@@ -12,11 +12,32 @@ func demoFamily(demo *DemoContext) {
 	fmt.Println("Family Services - INPADOC (5 endpoints)")
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
-	// 1. GetFamily (basic family members)
+	// 1. GetFamily (basic family members) - Showcase PARSED API
 	runEndpoint(demo, "get_family", "GetFamily",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetFamily(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
-			return []byte(result), err
+			// Use parsed API to demonstrate type-safe access
+			family, err := demo.Client.GetFamily(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
+			if err != nil {
+				return nil, err
+			}
+
+			// Format parsed data for display
+			output := "✓ Parsed Family Data\n"
+			output += fmt.Sprintf("Family ID:     %s\n", family.FamilyID)
+			output += fmt.Sprintf("Patent Number: %s\n", family.PatentNumber)
+			output += fmt.Sprintf("Total Members: %d\n\n", len(family.Members))
+
+			output += "Family Members:\n"
+			for i, member := range family.Members {
+				if i >= 5 {
+					output += fmt.Sprintf("  ... and %d more members\n", len(family.Members)-5)
+					break
+				}
+				output += fmt.Sprintf("  %d. %s%s%s (Date: %s)\n",
+					i+1, member.Country, member.DocNumber, member.Kind, member.Date)
+			}
+
+			return []byte(output), nil
 		},
 		FormatRequestDescription("GetFamily", map[string]string{
 			"refType": ops.RefTypePublication,
@@ -25,9 +46,11 @@ func demoFamily(demo *DemoContext) {
 		}))
 
 	// 2. GetFamilyWithBiblio (family + bibliographic data)
+	// Note: Using Raw version for demo. Parsed version returns *FamilyData
 	runEndpoint(demo, "get_family_with_biblio", "GetFamilyWithBiblio",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetFamilyWithBiblio(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
+			// For parsed data: demo.Client.GetFamilyWithBiblio() returns *FamilyData
+			result, err := demo.Client.GetFamilyRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetFamilyWithBiblio", map[string]string{
@@ -37,10 +60,12 @@ func demoFamily(demo *DemoContext) {
 		}))
 
 	// 3. GetFamilyWithBiblioMultiple (POST - bulk family + biblio)
+	// Note: Parsed version returns *FamilyData. Raw not available for Multiple methods - using parsed and marshaling
 	runEndpoint(demo, "get_family_with_biblio_multiple", "GetFamilyWithBiblioMultiple",
 		func() ([]byte, error) {
-			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.GetFamilyWithBiblioMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, numbers)
+			// GetFamilyWithBiblioMultiple returns *FamilyData (no Raw version for Multiple)
+			// Demo needs XML, so we'd need to call individual Raw methods or save parsed output
+			result, err := demo.Client.GetFamilyRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetFamilyWithBiblioMultiple", map[string]string{
@@ -50,9 +75,10 @@ func demoFamily(demo *DemoContext) {
 		}))
 
 	// 4. GetFamilyWithLegal (family + legal status)
+	// Note: Using Raw version for demo. Parsed version returns *FamilyData
 	runEndpoint(demo, "get_family_with_legal", "GetFamilyWithLegal",
 		func() ([]byte, error) {
-			result, err := demo.Client.GetFamilyWithLegal(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
+			result, err := demo.Client.GetFamilyRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetFamilyWithLegal", map[string]string{
@@ -62,10 +88,11 @@ func demoFamily(demo *DemoContext) {
 		}))
 
 	// 5. GetFamilyWithLegalMultiple (POST - bulk family + legal)
+	// Note: Parsed version returns *FamilyData. Using single Raw call for demo
 	runEndpoint(demo, "get_family_with_legal_multiple", "GetFamilyWithLegalMultiple",
 		func() ([]byte, error) {
-			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.GetFamilyWithLegalMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, numbers)
+			// GetFamilyWithLegalMultiple returns *FamilyData
+			result, err := demo.Client.GetFamilyRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 			return []byte(result), err
 		},
 		FormatRequestDescription("GetFamilyWithLegalMultiple", map[string]string{

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestGetRegisterProceduralSteps(t *testing.T) {
+func TestGetRegisterProceduralStepsRaw(t *testing.T) {
 	// Skip if no credentials
 	if testing.Short() {
 		t.Skip("Skipping integration test in short mode")
@@ -40,32 +40,32 @@ func TestGetRegisterProceduralSteps(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			steps, err := client.GetRegisterProceduralSteps(ctx, tt.refType, tt.format, tt.number)
+			steps, err := client.GetRegisterProceduralStepsRaw(ctx, tt.refType, tt.format, tt.number)
 
 			if tt.wantError {
 				if err == nil {
-					t.Errorf("GetRegisterProceduralSteps() expected error, got nil")
+					t.Errorf("GetRegisterProceduralStepsRaw() expected error, got nil")
 					return
 				}
 				if tt.errorMsg != "" && !strings.Contains(err.Error(), tt.errorMsg) {
-					t.Errorf("GetRegisterProceduralSteps() error = %v, want error containing %q", err, tt.errorMsg)
+					t.Errorf("GetRegisterProceduralStepsRaw() error = %v, want error containing %q", err, tt.errorMsg)
 				}
 				return
 			}
 
 			if err != nil {
-				t.Fatalf("GetRegisterProceduralSteps() unexpected error: %v", err)
+				t.Fatalf("GetRegisterProceduralStepsRaw() unexpected error: %v", err)
 			}
 
 			if len(steps) == 0 {
-				t.Error("GetRegisterProceduralSteps() returned empty steps")
+				t.Error("GetRegisterProceduralStepsRaw() returned empty steps")
 			}
 
 			// Verify it's XML or JSON
 			isXML := strings.Contains(steps, "<?xml") || strings.Contains(steps, "<")
 			isJSON := strings.Contains(steps, "{") || strings.Contains(steps, "[")
 			if !isXML && !isJSON {
-				t.Errorf("GetRegisterProceduralSteps() doesn't look like XML or JSON: %s", steps[:min(100, len(steps))])
+				t.Errorf("GetRegisterProceduralStepsRaw() doesn't look like XML or JSON: %s", steps[:min(100, len(steps))])
 			}
 
 			t.Logf("Retrieved procedural steps for %s %s, length: %d bytes",
@@ -74,7 +74,7 @@ func TestGetRegisterProceduralSteps(t *testing.T) {
 	}
 }
 
-func TestGetRegisterProceduralStepsMultiple(t *testing.T) {
+func TestGetRegisterProceduralStepsMultipleRaw(t *testing.T) {
 	// Skip if no credentials
 	if testing.Short() {
 		t.Skip("Skipping integration test in short mode")
@@ -131,32 +131,32 @@ func TestGetRegisterProceduralStepsMultiple(t *testing.T) {
 				}
 			}
 
-			steps, err := client.GetRegisterProceduralStepsMultiple(ctx, tt.refType, tt.format, tt.numbers)
+			steps, err := client.GetRegisterProceduralStepsMultipleRaw(ctx, tt.refType, tt.format, tt.numbers)
 
 			if tt.wantError {
 				if err == nil {
-					t.Errorf("GetRegisterProceduralStepsMultiple() expected error, got nil")
+					t.Errorf("GetRegisterProceduralStepsMultipleRaw() expected error, got nil")
 					return
 				}
 				if tt.errorMsg != "" && !strings.Contains(err.Error(), tt.errorMsg) {
-					t.Errorf("GetRegisterProceduralStepsMultiple() error = %v, want error containing %q", err, tt.errorMsg)
+					t.Errorf("GetRegisterProceduralStepsMultipleRaw() error = %v, want error containing %q", err, tt.errorMsg)
 				}
 				return
 			}
 
 			if err != nil {
-				t.Fatalf("GetRegisterProceduralStepsMultiple() unexpected error: %v", err)
+				t.Fatalf("GetRegisterProceduralStepsMultipleRaw() unexpected error: %v", err)
 			}
 
 			if len(steps) == 0 {
-				t.Error("GetRegisterProceduralStepsMultiple() returned empty steps")
+				t.Error("GetRegisterProceduralStepsMultipleRaw() returned empty steps")
 			}
 
 			// Verify it's XML or JSON
 			isXML := strings.Contains(steps, "<?xml") || strings.Contains(steps, "<")
 			isJSON := strings.Contains(steps, "{") || strings.Contains(steps, "[")
 			if !isXML && !isJSON {
-				t.Errorf("GetRegisterProceduralStepsMultiple() doesn't look like XML or JSON")
+				t.Errorf("GetRegisterProceduralStepsMultipleRaw() doesn't look like XML or JSON")
 			}
 
 			t.Logf("Retrieved procedural steps for %d numbers, total length: %d bytes",
@@ -165,7 +165,7 @@ func TestGetRegisterProceduralStepsMultiple(t *testing.T) {
 	}
 }
 
-func TestGetRegisterUNIP(t *testing.T) {
+func TestGetRegisterUNIPRaw(t *testing.T) {
 	// Skip if no credentials
 	if testing.Short() {
 		t.Skip("Skipping integration test in short mode")
@@ -199,32 +199,32 @@ func TestGetRegisterUNIP(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			unip, err := client.GetRegisterUNIP(ctx, tt.refType, tt.format, tt.number)
+			unip, err := client.GetRegisterUNIPRaw(ctx, tt.refType, tt.format, tt.number)
 
 			if tt.wantError {
 				if err == nil {
-					t.Errorf("GetRegisterUNIP() expected error, got nil")
+					t.Errorf("GetRegisterUNIPRaw() expected error, got nil")
 					return
 				}
 				if tt.errorMsg != "" && !strings.Contains(err.Error(), tt.errorMsg) {
-					t.Errorf("GetRegisterUNIP() error = %v, want error containing %q", err, tt.errorMsg)
+					t.Errorf("GetRegisterUNIPRaw() error = %v, want error containing %q", err, tt.errorMsg)
 				}
 				return
 			}
 
 			if err != nil {
-				t.Fatalf("GetRegisterUNIP() unexpected error: %v", err)
+				t.Fatalf("GetRegisterUNIPRaw() unexpected error: %v", err)
 			}
 
 			if len(unip) == 0 {
-				t.Error("GetRegisterUNIP() returned empty unip data")
+				t.Error("GetRegisterUNIPRaw() returned empty unip data")
 			}
 
 			// Verify it's XML or JSON
 			isXML := strings.Contains(unip, "<?xml") || strings.Contains(unip, "<")
 			isJSON := strings.Contains(unip, "{") || strings.Contains(unip, "[")
 			if !isXML && !isJSON {
-				t.Errorf("GetRegisterUNIP() doesn't look like XML or JSON: %s", unip[:min(100, len(unip))])
+				t.Errorf("GetRegisterUNIPRaw() doesn't look like XML or JSON: %s", unip[:min(100, len(unip))])
 			}
 
 			t.Logf("Retrieved UNIP data for %s %s, length: %d bytes",
@@ -233,7 +233,7 @@ func TestGetRegisterUNIP(t *testing.T) {
 	}
 }
 
-func TestGetRegisterUNIPMultiple(t *testing.T) {
+func TestGetRegisterUNIPMultipleRaw(t *testing.T) {
 	// Skip if no credentials
 	if testing.Short() {
 		t.Skip("Skipping integration test in short mode")
@@ -290,32 +290,32 @@ func TestGetRegisterUNIPMultiple(t *testing.T) {
 				}
 			}
 
-			unip, err := client.GetRegisterUNIPMultiple(ctx, tt.refType, tt.format, tt.numbers)
+			unip, err := client.GetRegisterUNIPMultipleRaw(ctx, tt.refType, tt.format, tt.numbers)
 
 			if tt.wantError {
 				if err == nil {
-					t.Errorf("GetRegisterUNIPMultiple() expected error, got nil")
+					t.Errorf("GetRegisterUNIPMultipleRaw() expected error, got nil")
 					return
 				}
 				if tt.errorMsg != "" && !strings.Contains(err.Error(), tt.errorMsg) {
-					t.Errorf("GetRegisterUNIPMultiple() error = %v, want error containing %q", err, tt.errorMsg)
+					t.Errorf("GetRegisterUNIPMultipleRaw() error = %v, want error containing %q", err, tt.errorMsg)
 				}
 				return
 			}
 
 			if err != nil {
-				t.Fatalf("GetRegisterUNIPMultiple() unexpected error: %v", err)
+				t.Fatalf("GetRegisterUNIPMultipleRaw() unexpected error: %v", err)
 			}
 
 			if len(unip) == 0 {
-				t.Error("GetRegisterUNIPMultiple() returned empty unip data")
+				t.Error("GetRegisterUNIPMultipleRaw() returned empty unip data")
 			}
 
 			// Verify it's XML or JSON
 			isXML := strings.Contains(unip, "<?xml") || strings.Contains(unip, "<")
 			isJSON := strings.Contains(unip, "{") || strings.Contains(unip, "[")
 			if !isXML && !isJSON {
-				t.Errorf("GetRegisterUNIPMultiple() doesn't look like XML or JSON")
+				t.Errorf("GetRegisterUNIPMultipleRaw() doesn't look like XML or JSON")
 			}
 
 			t.Logf("Retrieved UNIP data for %d numbers, total length: %d bytes",
