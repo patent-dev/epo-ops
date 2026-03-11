@@ -220,6 +220,7 @@ type ClassificationData struct {
 	Level      int
 	SchemeType string
 	Children   []ClassificationChild
+	Ancestors  []ClassificationChild
 }
 
 // Paragraph represents a description paragraph
@@ -1574,7 +1575,28 @@ func ParseClassificationSchema(xmlData string) (*ClassificationData, error) {
 		}, nil
 	}
 
+	// When ancestors=true, the XML returns a nested hierarchy where ancestor items
+	// wrap the target symbol. Walk down the tree collecting ancestors until we reach
+	// the deepest item (the one the user requested).
+	// Heuristic: ancestor items have exactly 1 child (the next level in the linear chain).
+	// The target item has 0 children (leaf) or 2+ children (branching point).
+	// This works because the EPO API returns a single-path chain from root to target.
 	item := items[0]
+	var ancestors []ClassificationChild
+
+	for len(item.Children) == 1 {
+		ancestorTitle := ""
+		if len(item.Title.TitleParts) > 0 {
+			ancestorTitle = strings.TrimSpace(item.Title.TitleParts[0].Text)
+		}
+		ancestors = append(ancestors, ClassificationChild{
+			Symbol: strings.TrimSpace(item.Symbol),
+			Title:  ancestorTitle,
+			Level:  item.Level,
+		})
+		item = item.Children[0]
+	}
+
 	title := ""
 	if len(item.Title.TitleParts) > 0 {
 		title = strings.TrimSpace(item.Title.TitleParts[0].Text)
@@ -1599,5 +1621,6 @@ func ParseClassificationSchema(xmlData string) (*ClassificationData, error) {
 		Level:      item.Level,
 		SchemeType: strings.TrimSpace(scheme.SchemeType),
 		Children:   children,
+		Ancestors:  ancestors,
 	}, nil
 }
