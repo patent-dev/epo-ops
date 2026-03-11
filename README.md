@@ -22,9 +22,9 @@ This library provides an idiomatic Go interface to interact with the EPO's Open 
 - INPADOC family retrieval
 - CPC/ECLA classification services (schema, statistics, mapping, media)
 - Patent image retrieval with TIFF to PNG conversion
-- Legal status retrieval
+- Legal status retrieval with patent status derivation (active, expired, lapsed, withdrawn, revoked)
 - EPO Register access (biblio, events, procedural steps, unitary patent)
-- Patent number format conversion
+- Patent number format conversion and validation
 - Comprehensive error handling with custom error types
 - Automatic retry logic with exponential backoff
 - Quota tracking and fair use monitoring
@@ -63,26 +63,26 @@ func main() {
 
     ctx := context.Background()
 
-    // Retrieve bibliographic data
-    biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP1000000")
+    // Retrieve bibliographic data (returns *BiblioData)
+    biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Println("Biblio:", biblio)
+    fmt.Printf("Title: %v\n", biblio.Titles)
 
-    // Search patents
+    // Search patents (returns *SearchResultData)
     results, err := client.Search(ctx, "ti=plastic", "1-5")
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Println("Search results:", results)
+    fmt.Printf("Total results: %d\n", results.TotalResults)
 
-    // Get patent family
-    family, err := client.GetFamily(ctx, "publication", "docdb", "EP1000000B1")
+    // Get patent family (returns *FamilyData)
+    family, err := client.GetFamily(ctx, "publication", "docdb", "EP.1000000.B1")
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Println("Family:", family)
+    fmt.Printf("Family members: %d\n", len(family.Members))
 
     // Get patent image (first page of drawings)
     imageData, err := client.GetImage(ctx, "EP", "1000000", "B1", "Drawing", 1)
@@ -102,13 +102,14 @@ This library provides two ways to access API data:
 By default, methods return parsed Go structs for type-safe access:
 
 ```go
-// Returns *BibliographicData struct
-biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP1000000B1")
-fmt.Printf("Title: %s\n", biblio.InventionTitle)
+// Returns *BiblioData struct
+biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
+fmt.Printf("Title: %s\n", biblio.Titles["en"])
+fmt.Printf("Country: %s, Doc: %s, Kind: %s\n", biblio.Country, biblio.DocNumber, biblio.Kind)
 fmt.Printf("Applicants: %d\n", len(biblio.Applicants))
 
 // Returns *FamilyData struct
-family, err := client.GetFamily(ctx, "publication", "docdb", "EP1000000B1")
+family, err := client.GetFamily(ctx, "publication", "docdb", "EP.1000000.B1")
 fmt.Printf("Family ID: %s\n", family.FamilyID)
 fmt.Printf("Members: %d\n", len(family.Members))
 
@@ -120,7 +121,7 @@ for _, patent := range results.Patents {
 }
 
 // Returns *LegalData struct
-legal, err := client.GetLegal(ctx, "publication", "docdb", "EP1000000B1")
+legal, err := client.GetLegal(ctx, "publication", "docdb", "EP.1000000.B1")
 for _, event := range legal.LegalEvents {
     fmt.Printf("%s: %s\n", event.Date, event.Code)
 }
@@ -132,13 +133,13 @@ For special cases (e.g., saving raw XML, custom parsing), use `*Raw()` methods:
 
 ```go
 // Returns raw XML string
-xmlData, err := client.GetBiblioRaw(ctx, "publication", "docdb", "EP1000000B1")
+xmlData, err := client.GetBiblioRaw(ctx, "publication", "docdb", "EP.1000000.B1")
 os.WriteFile("biblio.xml", []byte(xmlData), 0644)
 
 // All endpoints have Raw variants
-familyXML, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP1000000B1")
+familyXML, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP.1000000.B1")
 searchXML, err := client.SearchRaw(ctx, "ti=battery", "1-5")
-legalXML, err := client.GetLegalRaw(ctx, "publication", "docdb", "EP1000000B1")
+legalXML, err := client.GetLegalRaw(ctx, "publication", "docdb", "EP.1000000.B1")
 ```
 
 **Architecture Note**: Parsed methods internally call the corresponding `*Raw()` method and parse the result. This ensures consistent data access and eliminates code duplication.
@@ -163,7 +164,7 @@ This client automatically tracks quota usage from API responses:
 
 ```go
 // Make API calls
-client.GetBiblio(ctx, "publication", "docdb", "EP1000000")
+client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
 
 // Check quota status
 quota := client.GetLastQuota()
@@ -243,55 +244,56 @@ client, err := ops.NewClient(config)
 All methods return parsed Go structs by default. Use `*Raw()` variants for XML access.
 
 ```go
-// Retrieve bibliographic data → *BibliographicData
-biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP1000000B1")
+// Retrieve bibliographic data → *BiblioData
+biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
 if err != nil {
     log.Fatal(err)
 }
-fmt.Printf("Title: %s\n", biblio.InventionTitle)
+fmt.Printf("Title: %s\n", biblio.Titles["en"])
 fmt.Printf("Publication Date: %s\n", biblio.PublicationDate)
+fmt.Printf("IPC: %v\n", biblio.IPCClasses)
 for _, applicant := range biblio.Applicants {
-    fmt.Printf("Applicant: %s\n", applicant.Name)
+    fmt.Printf("Applicant: %s (%s)\n", applicant.Name, applicant.Country)
 }
 
 // Retrieve claims → *ClaimsData
-claims, err := client.GetClaims(ctx, "publication", "docdb", "EP1000000B1")
+claims, err := client.GetClaims(ctx, "publication", "docdb", "EP.1000000.B1")
 fmt.Printf("Claims count: %d\n", len(claims.Claims))
 for _, claim := range claims.Claims {
     fmt.Printf("Claim %s: %s\n", claim.Number, claim.Text)
 }
 
 // Retrieve description → *DescriptionData
-description, err := client.GetDescription(ctx, "publication", "docdb", "EP1000000B1")
+description, err := client.GetDescription(ctx, "publication", "docdb", "EP.1000000.B1")
 fmt.Printf("Paragraphs: %d\n", len(description.Paragraphs))
 
 // Retrieve abstract → *AbstractData
-abstract, err := client.GetAbstract(ctx, "publication", "docdb", "EP1000000B1")
+abstract, err := client.GetAbstract(ctx, "publication", "docdb", "EP.1000000.B1")
 fmt.Printf("Abstract: %s\n", abstract.Text)
 
 // Retrieve full text → *FulltextData (biblio + abstract + description + claims)
-fulltext, err := client.GetFulltext(ctx, "publication", "docdb", "EP1000000B1")
-fmt.Printf("Title: %s\n", fulltext.Biblio.InventionTitle)
+fulltext, err := client.GetFulltext(ctx, "publication", "docdb", "EP.1000000.B1")
+fmt.Printf("Title: %s\n", fulltext.Biblio.Titles["en"])
 fmt.Printf("Abstract: %s\n", fulltext.Abstract.Text)
 fmt.Printf("Description paragraphs: %d\n", len(fulltext.Description.Paragraphs))
 fmt.Printf("Claims: %d\n", len(fulltext.Claims.Claims))
 
 // Get published equivalents (simple family) → *EquivalentsData
-equivalents, err := client.GetPublishedEquivalents(ctx, "publication", "docdb", "EP1000000B1")
+equivalents, err := client.GetPublishedEquivalents(ctx, "publication", "docdb", "EP.1000000.B1")
 fmt.Printf("Equivalents: %d\n", len(equivalents.Equivalents))
 for _, eq := range equivalents.Equivalents {
     fmt.Printf("  %s (Date: %s, Kind: %s)\n", eq.DocNumber, eq.Date, eq.Kind)
 }
 
 // Raw XML access (if needed)
-xmlData, err := client.GetBiblioRaw(ctx, "publication", "docdb", "EP1000000B1")
+xmlData, err := client.GetBiblioRaw(ctx, "publication", "docdb", "EP.1000000.B1")
 os.WriteFile("biblio.xml", []byte(xmlData), 0644)
 ```
 
 **Parameters**:
 - `refType`: Reference type - `"publication"`, `"application"`, or `"priority"`
 - `format`: Number format - `"docdb"` or `"epodoc"`
-- `number`: Patent number (e.g., `"EP1000000B1"`)
+- `number`: Patent number — docdb format: `"EP.1000000.B1"`, epodoc format: `"EP1000000"`
 
 ### Search
 
@@ -335,7 +337,7 @@ Returns `*FamilyData` with parsed family information.
 
 ```go
 // Basic INPADOC family → *FamilyData
-family, err := client.GetFamily(ctx, "publication", "docdb", "EP1000000B1")
+family, err := client.GetFamily(ctx, "publication", "docdb", "EP.1000000.B1")
 if err != nil {
     log.Fatal(err)
 }
@@ -363,13 +365,13 @@ for _, member := range family.Members {
 }
 
 // Family with bibliographic data → *FamilyData
-family, err := client.GetFamilyWithBiblio(ctx, "publication", "docdb", "EP1000000B1")
+family, err := client.GetFamilyWithBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
 
 // Family with legal status → *FamilyData
-family, err := client.GetFamilyWithLegal(ctx, "publication", "docdb", "EP1000000B1")
+family, err := client.GetFamilyWithLegal(ctx, "publication", "docdb", "EP.1000000.B1")
 
 // Raw XML access
-xmlData, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP1000000B1")
+xmlData, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP.1000000.B1")
 ```
 
 ### Images
@@ -382,11 +384,11 @@ imageData, err := client.GetImage(ctx, "EP", "1000000", "B1", "Drawing", 1)
 // Page: 1-based page number
 ```
 
-### Legal & Register
+### Legal Status & Register
 
 ```go
 // Legal status data → *LegalData
-legal, err := client.GetLegal(ctx, "publication", "docdb", "EP1000000B1")
+legal, err := client.GetLegal(ctx, "publication", "docdb", "EP.1000000.B1")
 if err != nil {
     log.Fatal(err)
 }
@@ -395,31 +397,42 @@ fmt.Printf("Patent: %s\n", legal.PatentNumber)
 fmt.Printf("Legal Events: %d\n", len(legal.LegalEvents))
 
 for _, event := range legal.LegalEvents {
-    fmt.Printf("Event: %s (Code: %s)\n", event.Date, event.Code)
-    fmt.Printf("  Country: %s\n", event.Country)
+    fmt.Printf("Event: %s (Code: %s, Country: %s)\n", event.Date, event.EventCode, event.Country)
     if event.Description != "" {
         fmt.Printf("  Description: %s\n", event.Description)
     }
-    if event.Status != "" {
-        fmt.Printf("  Status: %s\n", event.Status)
-    }
 }
 
+// Derive overall patent status from legal events
+status := ops.DeriveOverallStatus(legal.LegalEvents)
+fmt.Printf("Overall Status: %s\n", status) // "active", "expired", "lapsed", etc.
+
+// Derive per-country status (e.g., is the patent still active in Germany?)
+deStatus := ops.DerivePatentStatus(legal.LegalEvents, "DE")
+fmt.Printf("Status in DE: %s\n", deStatus)
+
 // Raw XML access
-xmlData, err := client.GetLegalRaw(ctx, "publication", "docdb", "EP1000000B1")
+xmlData, err := client.GetLegalRaw(ctx, "publication", "docdb", "EP.1000000.B1")
+
+// Register events → *RegisterEventsData
+regEvents, err := client.GetRegisterEvents(ctx, "publication", "epodoc", "EP1000000")
+for _, event := range regEvents.Events {
+    fmt.Printf("%s: %s (%s)\n", event.Date, event.Description, event.Category)
+}
 
 // EPO Register bibliographic data (returns raw XML)
-registerBiblio, err := client.GetRegisterBiblioRaw(ctx, "publication", "docdb", "EP1000000B1")
-
-// EPO Register procedural events (returns raw XML)
-events, err := client.GetRegisterEventsRaw(ctx, "publication", "docdb", "EP1000000B1")
+registerBiblio, err := client.GetRegisterBiblioRaw(ctx, "publication", "epodoc", "EP1000000")
 ```
+
+**Status Values**: `active`, `expired`, `lapsed`, `withdrawn`, `revoked`, `pending`, `unknown`
+
+**Note**: `DeriveOverallStatus` skips per-country lapse events (PG25, PG2D) and returns the overall patent status. Use `DerivePatentStatus` with a target country for country-specific status.
 
 ### Number Conversion
 
 ```go
 // Convert patent number formats
-converted, err := client.ConvertPatentNumber(ctx, "publication", "docdb", "EP1000000B1", "epodoc")
+converted, err := client.ConvertPatentNumber(ctx, "publication", "docdb", "EP.1000000.B1", "epodoc")
 ```
 
 **Formats**:
@@ -454,7 +467,7 @@ if quota != nil {
 The library provides custom error types for different failure scenarios:
 
 ```go
-biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP1000000B1")
+biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
 if err != nil {
     switch e := err.(type) {
     case *ops.AuthError:
@@ -532,10 +545,14 @@ This library uses an OpenAPI 3.0 specification that was:
 
 The specification is maintained in [openapi.yaml](openapi.yaml) and used to generate strongly-typed client code.
 
-## Similar Projects
+## Related Projects
 
-- [epo-bdds](https://github.com/patent-dev/epo-bdds) - EPO Bulk Data Download Service client
-- [uspto-odp](https://github.com/patent-dev/uspto-odp) - USPTO Open Data Portal client
+Part of the [patent.dev](https://patent.dev) open-source patent data ecosystem:
+
+- [uspto-odp](https://github.com/patent-dev/uspto-odp) — USPTO Open Data Portal client (search, PTAB, XML full text)
+- [dpma-connect-plus](https://github.com/patent-dev/dpma-connect-plus) — DPMA Connect Plus client (patents, designs, trademarks)
+- [epo-bdds](https://github.com/patent-dev/epo-bdds) — EPO Bulk Data Distribution Service client
+- [bulk-file-loader](https://github.com/patent-dev/bulk-file-loader) — Automated bulk patent data download manager
 
 ## License
 
