@@ -293,7 +293,7 @@ os.WriteFile("biblio.xml", []byte(xmlData), 0644)
 **Parameters**:
 - `refType`: Reference type - `"publication"`, `"application"`, or `"priority"`
 - `format`: Number format - `"docdb"` or `"epodoc"`
-- `number`: Patent number — docdb format: `"EP.1000000.B1"`, epodoc format: `"EP1000000"`
+- `number`: Patent number - docdb format: `"EP.1000000.B1"`, epodoc format: `"EP1000000"`
 
 ### Search
 
@@ -549,10 +549,11 @@ The specification is maintained in [openapi.yaml](openapi.yaml) and used to gene
 
 Part of the [patent.dev](https://patent.dev) open-source patent data ecosystem:
 
-- [uspto-odp](https://github.com/patent-dev/uspto-odp) — USPTO Open Data Portal client (search, PTAB, XML full text)
-- [dpma-connect-plus](https://github.com/patent-dev/dpma-connect-plus) — DPMA Connect Plus client (patents, designs, trademarks)
-- [epo-bdds](https://github.com/patent-dev/epo-bdds) — EPO Bulk Data Distribution Service client
-- [bulk-file-loader](https://github.com/patent-dev/bulk-file-loader) — Automated bulk patent data download manager
+- [uspto-odp](https://github.com/patent-dev/uspto-odp) - USPTO Open Data Portal client (search, PTAB, XML full text)
+- [epo-bdds](https://github.com/patent-dev/epo-bdds) - EPO Bulk Data Distribution Service client
+- [dpma-connect-plus](https://github.com/patent-dev/dpma-connect-plus) - DPMA Connect Plus client (patents, designs, trademarks)
+
+The [bulk-file-loader](https://github.com/patent-dev/bulk-file-loader) uses these libraries for automated patent data downloads.
 
 ## License
 
