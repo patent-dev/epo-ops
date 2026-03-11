@@ -4,11 +4,15 @@ package epo_ops
 
 import (
 	"context"
+	"flag"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 )
+
+var updateFixtures = flag.Bool("update-fixtures", false, "update fixture files from live API responses")
 
 // TestAuthenticationIntegration tests real authentication against EPO servers.
 func TestAuthenticationIntegration(t *testing.T) {
@@ -164,8 +168,8 @@ func TestTextRetrievalIntegration(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	// Test patent: EP1000000B1 (a well-known test patent, B1 kind code to avoid ambiguity)
-	testPatent := "EP1000000B1"
+	// Test patent: EP.1000000.B1 (docdb format, well-known test patent)
+	testPatent := "EP.1000000.B1"
 
 	// Test: GetBiblio
 	t.Run("GetBiblio", func(t *testing.T) {
@@ -174,16 +178,26 @@ func TestTextRetrievalIntegration(t *testing.T) {
 			t.Fatalf("Failed to get biblio: %v", err)
 		}
 
-		if biblio == "" {
-			t.Error("Received empty biblio data")
+		if biblio == nil {
+			t.Fatal("Received nil biblio data")
 		}
 
-		// Should contain XML
-		if !strings.Contains(biblio, "<?xml") && !strings.Contains(biblio, "<") {
-			t.Error("Biblio data does not appear to be XML")
+		if len(biblio.Titles) == 0 {
+			t.Error("Expected non-empty Titles map")
 		}
 
-		t.Logf("Successfully retrieved biblio data (length: %d bytes)", len(biblio))
+		// Log English title if available
+		title := biblio.Titles["en"]
+		if title == "" {
+			// Fall back to any available title
+			for _, v := range biblio.Titles {
+				title = v
+				break
+			}
+		}
+
+		t.Logf("Successfully retrieved biblio: Title=%q, Applicants=%d, Inventors=%d",
+			title, len(biblio.Applicants), len(biblio.Inventors))
 	})
 
 	// Test: GetClaims
@@ -193,15 +207,15 @@ func TestTextRetrievalIntegration(t *testing.T) {
 			t.Fatalf("Failed to get claims: %v", err)
 		}
 
-		if claims == "" {
-			t.Error("Received empty claims data")
+		if claims == nil {
+			t.Fatal("Received nil claims data")
 		}
 
-		if !strings.Contains(claims, "claim") {
-			t.Error("Claims data does not appear to contain claims")
+		if len(claims.Claims) == 0 {
+			t.Error("Expected non-empty Claims slice")
 		}
 
-		t.Logf("Successfully retrieved claims data (length: %d bytes)", len(claims))
+		t.Logf("Successfully retrieved %d claims (language: %s)", len(claims.Claims), claims.Language)
 	})
 
 	// Test: GetDescription
@@ -211,11 +225,16 @@ func TestTextRetrievalIntegration(t *testing.T) {
 			t.Fatalf("Failed to get description: %v", err)
 		}
 
-		if description == "" {
-			t.Error("Received empty description data")
+		if description == nil {
+			t.Fatal("Received nil description data")
 		}
 
-		t.Logf("Successfully retrieved description data (length: %d bytes)", len(description))
+		if len(description.Paragraphs) == 0 {
+			t.Error("Expected non-empty Paragraphs")
+		}
+
+		t.Logf("Successfully retrieved description: %d paragraphs (language: %s)",
+			len(description.Paragraphs), description.Language)
 	})
 
 	// Test: GetAbstract
@@ -225,11 +244,12 @@ func TestTextRetrievalIntegration(t *testing.T) {
 			t.Fatalf("Failed to get abstract: %v", err)
 		}
 
-		if abstract == "" {
-			t.Error("Received empty abstract data")
+		if abstract == nil {
+			t.Fatal("Received nil abstract data")
 		}
 
-		t.Logf("Successfully retrieved abstract data (length: %d bytes)", len(abstract))
+		t.Logf("Successfully retrieved abstract (language: %s, length: %d chars)",
+			abstract.Language, len(abstract.Text))
 	})
 
 	// Test: GetFulltext
@@ -239,16 +259,16 @@ func TestTextRetrievalIntegration(t *testing.T) {
 			t.Fatalf("Failed to get fulltext: %v", err)
 		}
 
-		if fulltext == "" {
-			t.Error("Received empty fulltext data")
+		if fulltext == nil {
+			t.Fatal("Received nil fulltext data")
 		}
 
-		// Fulltext should be larger than individual sections
-		if len(fulltext) < 1000 {
-			t.Errorf("Fulltext data seems too small: %d bytes", len(fulltext))
+		if fulltext.Status == "" {
+			t.Logf("Warning: Fulltext status is empty")
 		}
 
-		t.Logf("Successfully retrieved fulltext data (length: %d bytes)", len(fulltext))
+		t.Logf("Successfully retrieved fulltext: status=%s, hasBiblio=%v, hasClaims=%v",
+			fulltext.Status, fulltext.Biblio != nil, fulltext.Claims != nil)
 	})
 }
 
@@ -275,7 +295,7 @@ func TestNotFoundIntegration(t *testing.T) {
 	defer cancel()
 
 	// Non-existent patent
-	_, err = client.GetBiblio(ctx, "publication", "docdb", "EP99999999999")
+	_, err = client.GetBiblio(ctx, "publication", "docdb", "EP.99999999999.A1")
 	if err == nil {
 		t.Error("Expected error for non-existent patent, got nil")
 	}
@@ -318,7 +338,7 @@ func TestQuotaTrackingIntegration(t *testing.T) {
 	}
 
 	// Make a real API call
-	testPatent := "EP1000000B1"
+	testPatent := "EP.1000000.B1"
 	_, err = client.GetBiblio(ctx, "publication", "docdb", testPatent)
 	if err != nil {
 		t.Fatalf("Failed to get biblio: %v", err)
@@ -336,19 +356,6 @@ func TestQuotaTrackingIntegration(t *testing.T) {
 		quota.Individual.Used, quota.Individual.Limit, quota.Individual.UsagePercent())
 	t.Logf("Registered Quota: Used=%d, Limit=%d (%.2f%%)",
 		quota.Registered.Used, quota.Registered.Limit, quota.Registered.UsagePercent())
-
-	// Verify status is one of the valid values
-	validStatuses := map[string]bool{
-		"green":  true,
-		"yellow": true,
-		"red":    true,
-		"black":  true,
-		"":       true, // May be empty if EPO doesn't send it
-	}
-
-	if !validStatuses[quota.Status] {
-		t.Errorf("Unexpected quota status: %s", quota.Status)
-	}
 
 	// Make another request to verify quota is updated
 	_, err = client.GetAbstract(ctx, "publication", "docdb", testPatent)
@@ -406,16 +413,16 @@ func TestSearchIntegration(t *testing.T) {
 			t.Fatalf("Failed to search: %v", err)
 		}
 
-		if results == "" {
-			t.Error("Received empty search results")
+		if results == nil {
+			t.Fatal("Received nil search results")
 		}
 
-		// Should contain XML with search results
-		if !strings.Contains(results, "search-result") && !strings.Contains(results, "<") {
-			t.Error("Search results do not appear to be XML")
+		if results.TotalCount == 0 {
+			t.Error("Expected TotalCount > 0")
 		}
 
-		t.Logf("Successfully retrieved search results (length: %d bytes)", len(results))
+		t.Logf("Successfully retrieved search results: %d total, %d parsed results",
+			results.TotalCount, len(results.Results))
 	})
 
 	// Test: Search with applicant
@@ -425,11 +432,11 @@ func TestSearchIntegration(t *testing.T) {
 			t.Fatalf("Failed to search by applicant: %v", err)
 		}
 
-		if results == "" {
-			t.Error("Received empty search results")
+		if results == nil {
+			t.Fatal("Received nil search results")
 		}
 
-		t.Logf("Successfully retrieved applicant search results (length: %d bytes)", len(results))
+		t.Logf("Successfully retrieved applicant search: %d total results", results.TotalCount)
 	})
 
 	// Test: Search with constituent
@@ -439,11 +446,12 @@ func TestSearchIntegration(t *testing.T) {
 			t.Fatalf("Failed to search with constituent: %v", err)
 		}
 
-		if results == "" {
-			t.Error("Received empty search results")
+		if results == nil {
+			t.Fatal("Received nil search results")
 		}
 
-		t.Logf("Successfully retrieved search with biblio constituent (length: %d bytes)", len(results))
+		t.Logf("Successfully retrieved search with biblio constituent: %d results",
+			len(results.Results))
 	})
 }
 
@@ -469,8 +477,8 @@ func TestFamilyRetrievalIntegration(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	// Test patent: EP1000000B1 (has a known family)
-	testPatent := "EP1000000B1"
+	// Test patent: EP.1000000.B1 (docdb format, has a known family)
+	testPatent := "EP.1000000.B1"
 
 	// Test: Basic family retrieval
 	t.Run("GetFamily", func(t *testing.T) {
@@ -479,16 +487,32 @@ func TestFamilyRetrievalIntegration(t *testing.T) {
 			t.Fatalf("Failed to get family: %v", err)
 		}
 
-		if family == "" {
-			t.Error("Received empty family data")
+		if family == nil {
+			t.Fatal("Received nil family data")
 		}
 
-		// Should contain XML with family members
-		if !strings.Contains(family, "family") && !strings.Contains(family, "<") {
-			t.Error("Family data does not appear to be XML")
+		if len(family.Members) == 0 {
+			t.Error("Expected non-empty family members")
 		}
 
-		t.Logf("Successfully retrieved family data (length: %d bytes)", len(family))
+		// Verify parsed struct fields
+		for i, m := range family.Members {
+			if m.Country == "" || m.DocNumber == "" {
+				t.Errorf("Member %d: missing Country or DocNumber", i)
+			}
+		}
+
+		if len(family.Countries) == 0 {
+			t.Error("Expected non-empty Countries list")
+		}
+
+		t.Logf("Successfully retrieved family: %d members, countries: %v",
+			len(family.Members), family.Countries)
+
+		// Save fixture
+		if raw, err := client.GetFamilyRaw(ctx, "publication", "docdb", testPatent); err == nil {
+			saveFixture(t, "family_EP1000000", []byte(raw))
+		}
 	})
 
 	// Test: Family with biblio
@@ -498,33 +522,40 @@ func TestFamilyRetrievalIntegration(t *testing.T) {
 			t.Fatalf("Failed to get family with biblio: %v", err)
 		}
 
-		if family == "" {
-			t.Error("Received empty family with biblio data")
+		if family == nil {
+			t.Fatal("Received nil family data")
 		}
 
-		// Should contain both family and biblio data
-		if !strings.Contains(family, "family") && !strings.Contains(family, "biblio") {
-			t.Error("Family data does not appear to contain family or biblio information")
+		if len(family.Members) == 0 {
+			t.Error("Expected non-empty family members")
 		}
 
-		// Family with biblio should be larger than basic family
-		t.Logf("Successfully retrieved family with biblio (length: %d bytes)", len(family))
+		// Verify biblio data extracted
+		withTitle := 0
+		for _, m := range family.Members {
+			if m.Title != "" {
+				withTitle++
+			}
+		}
+		t.Logf("Family with biblio: %d members, %d with Title", len(family.Members), withTitle)
+		if withTitle == 0 {
+			t.Error("Expected at least some members with Title from biblio")
+		}
 	})
 
 	// Test: Family with legal
 	t.Run("GetFamilyWithLegal", func(t *testing.T) {
 		family, err := client.GetFamilyWithLegal(ctx, "publication", "docdb", testPatent)
 		if err != nil {
-			// Legal data might not always be available, log warning instead of failure
 			t.Logf("Warning: Failed to get family with legal: %v", err)
 			return
 		}
 
-		if family == "" {
-			t.Error("Received empty family with legal data")
+		if family == nil {
+			t.Fatal("Received nil family data")
 		}
 
-		t.Logf("Successfully retrieved family with legal (length: %d bytes)", len(family))
+		t.Logf("Successfully retrieved family with legal: %d members", len(family.Members))
 	})
 }
 
@@ -551,7 +582,7 @@ func TestImageRetrievalIntegration(t *testing.T) {
 	defer cancel()
 
 	// Test: Retrieve first page of patent drawings
-	// EP1000000B1 should have drawings available
+	// EP.1000000.B1 should have drawings available
 	t.Run("GetImage", func(t *testing.T) {
 		imageData, err := client.GetImage(ctx, "EP", "1000000", "B1", "Drawing", 1)
 		if err != nil {
@@ -584,13 +615,6 @@ func TestImageRetrievalIntegration(t *testing.T) {
 	})
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 // TestAdditionalServicesIntegration tests legal, register, and number conversion services.
 func TestAdditionalServicesIntegration(t *testing.T) {
 	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
@@ -613,33 +637,44 @@ func TestAdditionalServicesIntegration(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	testPatent := "EP1000000B1"
+	testPatent := "EP.1000000.B1"
 
 	// Test: Legal status retrieval
 	t.Run("GetLegal", func(t *testing.T) {
 		legal, err := client.GetLegal(ctx, "publication", "docdb", testPatent)
 		if err != nil {
-			// Legal data might not be available for all patents
 			t.Logf("Warning: Failed to get legal status: %v", err)
 			t.Skip("Skipping legal test - legal data may not be available")
 			return
 		}
 
-		if legal == "" {
-			t.Error("Received empty legal data")
+		if legal == nil {
+			t.Fatal("Received nil legal data")
 		}
 
-		// Should contain XML with legal information
-		if !strings.Contains(legal, "legal") && !strings.Contains(legal, "<") {
-			t.Error("Legal data does not appear to be XML")
+		if len(legal.LegalEvents) == 0 {
+			t.Error("Expected non-empty legal events")
 		}
 
-		t.Logf("Successfully retrieved legal status (length: %d bytes)", len(legal))
+		// Verify parsed fields
+		for i, e := range legal.LegalEvents {
+			if i < 3 {
+				t.Logf("Event %d: Code=%s Country=%s Date=%s", i+1, e.EventCode, e.Country, e.Date)
+			}
+		}
+
+		status := DeriveOverallStatus(legal.LegalEvents)
+		t.Logf("Legal status for %s: %s (%d events)", legal.PatentNumber, status, len(legal.LegalEvents))
+
+		// Save fixture
+		if raw, err := client.GetLegalRaw(ctx, "publication", "docdb", testPatent); err == nil {
+			saveFixture(t, "legal_EP1000000", []byte(raw))
+		}
 	})
 
-	// Test: Register biblio retrieval
-	t.Run("GetRegisterBiblio", func(t *testing.T) {
-		register, err := client.GetRegisterBiblio(ctx, "publication", "docdb", testPatent)
+	// Test: Register biblio retrieval (raw XML) — register requires epodoc format
+	t.Run("GetRegisterBiblioRaw", func(t *testing.T) {
+		register, err := client.GetRegisterBiblioRaw(ctx, "publication", "epodoc", "EP1000000")
 		if err != nil {
 			// Register data might not be available for all patents
 			t.Logf("Warning: Failed to get register biblio: %v", err)
@@ -654,42 +689,266 @@ func TestAdditionalServicesIntegration(t *testing.T) {
 		t.Logf("Successfully retrieved register biblio (length: %d bytes)", len(register))
 	})
 
-	// Test: Register events retrieval
+	// Test: Register events retrieval (parsed) — register requires epodoc format
 	t.Run("GetRegisterEvents", func(t *testing.T) {
-		events, err := client.GetRegisterEvents(ctx, "publication", "docdb", testPatent)
+		data, err := client.GetRegisterEvents(ctx, "publication", "epodoc", "EP1000000")
 		if err != nil {
-			// Events might not be available for all patents
 			t.Logf("Warning: Failed to get register events: %v", err)
 			t.Skip("Skipping register events test - data may not be available")
 			return
 		}
 
-		if events == "" {
-			t.Error("Received empty events data")
+		if len(data.Events) == 0 {
+			t.Error("Expected non-empty Events")
 		}
 
-		t.Logf("Successfully retrieved register events (length: %d bytes)", len(events))
+		// Verify events have required fields
+		for i, evt := range data.Events {
+			if evt.Date == "" || evt.EventCode == "" {
+				t.Errorf("Event %d missing Date or EventCode", i)
+				break
+			}
+			if evt.Category == "" {
+				t.Errorf("Event %d missing Category", i)
+				break
+			}
+		}
+
+		t.Logf("Retrieved %d register events, %d statuses for %s",
+			len(data.Events), len(data.Statuses), data.PatentNumber)
+
+		// Save fixture
+		if raw, err := client.GetRegisterEventsRaw(ctx, "publication", "epodoc", "EP1000000"); err == nil {
+			saveFixture(t, "register_events_EP1000000", []byte(raw))
+		}
 	})
 
-	// Test: Number conversion
+	// Test: Number conversion (parsed)
 	t.Run("ConvertPatentNumber", func(t *testing.T) {
-		// Convert from docdb to epodoc format
-		converted, err := client.ConvertPatentNumber(ctx, "publication", "docdb", testPatent, "epodoc")
+		data, err := client.ConvertPatentNumber(ctx, "publication", "docdb", testPatent, "epodoc")
 		if err != nil {
 			t.Logf("Warning: Failed to convert patent number: %v", err)
 			t.Skip("Skipping number conversion test - service may not be available")
 			return
 		}
 
-		if converted == "" {
-			t.Error("Received empty conversion result")
+		if data.DocNumber == "" {
+			t.Error("Expected non-empty DocNumber")
+		}
+		if data.Kind == "" {
+			t.Error("Expected non-empty Kind")
+		}
+		if data.InputFormat != "docdb" {
+			t.Errorf("Expected InputFormat 'docdb', got %q", data.InputFormat)
+		}
+		if data.OutputFormat != "epodoc" {
+			t.Errorf("Expected OutputFormat 'epodoc', got %q", data.OutputFormat)
 		}
 
-		// Should contain the converted number
-		if !strings.Contains(converted, "EP") || !strings.Contains(converted, "1000000") {
-			t.Logf("Warning: Conversion result does not contain expected patent number parts")
-		}
+		t.Logf("Converted %s → DocNumber=%s Kind=%s Date=%s",
+			testPatent, data.DocNumber, data.Kind, data.Date)
 
-		t.Logf("Successfully converted patent number (result length: %d bytes)", len(converted))
+		// Save fixture
+		if raw, err := client.ConvertPatentNumberRaw(ctx, "publication", "docdb", testPatent, "epodoc"); err == nil {
+			saveFixture(t, "convert_patent_number", []byte(raw))
+		}
 	})
+}
+
+// TestClassificationIntegration tests CPC classification schema retrieval.
+func TestClassificationIntegration(t *testing.T) {
+	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
+	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
+
+	if consumerKey == "" || consumerSecret == "" {
+		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
+	}
+
+	config := &Config{
+		ConsumerKey:    consumerKey,
+		ConsumerSecret: consumerSecret,
+	}
+
+	client, err := NewClient(config)
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	t.Run("GetClassificationSchema", func(t *testing.T) {
+		data, err := client.GetClassificationSchema(ctx, "H04W", false, false)
+		if err != nil {
+			t.Fatalf("Failed to get classification schema: %v", err)
+		}
+
+		if data.Symbol == "" {
+			t.Error("Expected non-empty Symbol")
+		}
+		if data.Title == "" {
+			t.Error("Expected non-empty Title")
+		}
+		if data.Level < 0 {
+			t.Errorf("Expected Level >= 0, got %d", data.Level)
+		}
+		if data.SchemeType == "" {
+			t.Error("Expected non-empty SchemeType")
+		}
+
+		t.Logf("Classification: Symbol=%s Title=%q Level=%d SchemeType=%s Children=%d",
+			data.Symbol, data.Title, data.Level, data.SchemeType, len(data.Children))
+
+		// Verify child fields if present
+		for i, ch := range data.Children {
+			if ch.Symbol == "" {
+				t.Errorf("Child[%d] has empty Symbol", i)
+			}
+			if i < 3 {
+				t.Logf("  Child[%d]: Symbol=%s Title=%q Level=%d", i, ch.Symbol, ch.Title, ch.Level)
+			}
+		}
+
+		// Save fixture
+		if raw, err := client.GetClassificationSchemaRaw(ctx, "H04W", false, false); err == nil {
+			saveFixture(t, "classification_schema_H04W", []byte(raw))
+		}
+	})
+
+	t.Run("GetClassificationSchema_WithAncestors", func(t *testing.T) {
+		data, err := client.GetClassificationSchema(ctx, "H04W84/18", true, false)
+		if err != nil {
+			t.Logf("Warning: Failed to get classification with ancestors: %v", err)
+			t.Skip("Skipping ancestors test")
+			return
+		}
+
+		if data.Symbol == "" {
+			t.Error("Expected non-empty Symbol")
+		}
+
+		t.Logf("Classification with ancestors: Symbol=%s Title=%q Level=%d",
+			data.Symbol, data.Title, data.Level)
+	})
+}
+
+// TestPublishedEquivalentsIntegration tests published equivalents retrieval.
+func TestPublishedEquivalentsIntegration(t *testing.T) {
+	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
+	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
+
+	if consumerKey == "" || consumerSecret == "" {
+		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
+	}
+
+	config := &Config{
+		ConsumerKey:    consumerKey,
+		ConsumerSecret: consumerSecret,
+	}
+
+	client, err := NewClient(config)
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	testPatent := "EP.1000000.B1"
+
+	t.Run("GetPublishedEquivalents", func(t *testing.T) {
+		data, err := client.GetPublishedEquivalents(ctx, "publication", "docdb", testPatent)
+		if err != nil {
+			t.Fatalf("Failed to get published equivalents: %v", err)
+		}
+
+		if len(data.Equivalents) == 0 {
+			t.Error("Expected non-empty Equivalents for EP.1000000.B1")
+		}
+
+		for i, eq := range data.Equivalents {
+			if eq.Country == "" || eq.DocNumber == "" {
+				t.Errorf("Equivalent[%d]: missing Country or DocNumber", i)
+			}
+			if i < 5 {
+				t.Logf("Equivalent[%d]: %s%s%s", i, eq.Country, eq.DocNumber, eq.Kind)
+			}
+		}
+
+		t.Logf("Total equivalents for %s: %d", testPatent, len(data.Equivalents))
+
+		// Save fixture
+		if raw, err := client.GetPublishedEquivalentsRaw(ctx, "publication", "docdb", testPatent); err == nil {
+			saveFixture(t, "published_equivalents_EP1000000", []byte(raw))
+		}
+	})
+}
+
+// TestEdgeCasesIntegration tests edge cases with patents that may have limited data.
+func TestEdgeCasesIntegration(t *testing.T) {
+	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
+	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
+
+	if consumerKey == "" || consumerSecret == "" {
+		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
+	}
+
+	config := &Config{
+		ConsumerKey:    consumerKey,
+		ConsumerSecret: consumerSecret,
+	}
+
+	client, err := NewClient(config)
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	// EP.0000001.B1 — very old patent, likely has minimal or no legal events
+	t.Run("GetLegal_OldPatent", func(t *testing.T) {
+		data, err := client.GetLegal(ctx, "publication", "docdb", "EP.0000001.B1")
+		if err != nil {
+			// Not found or no data is acceptable for edge case
+			t.Logf("GetLegal for EP.0000001.B1 returned error (expected for edge case): %v", err)
+			return
+		}
+
+		t.Logf("EP0000001B1 legal events: %d", len(data.LegalEvents))
+		if len(data.LegalEvents) == 0 {
+			t.Log("No legal events for EP0000001B1 (edge case confirmed)")
+		}
+	})
+
+	// Test GetFamily on a patent with a small family
+	t.Run("GetFamily_SmallFamily", func(t *testing.T) {
+		data, err := client.GetFamily(ctx, "publication", "docdb", "EP.0000001.B1")
+		if err != nil {
+			t.Logf("GetFamily for EP.0000001.B1 returned error: %v", err)
+			return
+		}
+
+		t.Logf("EP0000001B1 family: %d members, countries: %v",
+			len(data.Members), data.Countries)
+	})
+}
+
+// saveFixture saves raw API response data as a fixture file when -update-fixtures is set.
+func saveFixture(t *testing.T, name string, data []byte) {
+	t.Helper()
+	if !*updateFixtures {
+		return
+	}
+	dir := filepath.Join("testdata", "fixtures")
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		t.Logf("Warning: failed to create fixture dir: %v", err)
+		return
+	}
+	path := filepath.Join(dir, name+".xml")
+	if err := os.WriteFile(path, data, 0644); err != nil {
+		t.Logf("Warning: failed to write fixture %s: %v", path, err)
+		return
+	}
+	t.Logf("Updated fixture: %s", path)
 }

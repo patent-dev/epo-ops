@@ -12,33 +12,30 @@ import (
 //
 // This file contains methods for CPC schema, statistics, mapping, and media.
 
-// GetClassificationSchema retrieves CPC classification schema hierarchy.
-//
-// This method retrieves the Cooperative Patent Classification (CPC) hierarchy for a given
-// classification symbol. The CPC is a patent classification system jointly developed by
-// the EPO and USPTO.
+// GetClassificationSchema retrieves and parses CPC classification schema hierarchy.
 //
 // Parameters:
 //   - class: CPC classification symbol (e.g., "A01B", "H04W84/18")
-//   - Section + Class format: "A01" retrieves all subclasses
-//   - Class + Subclass format: "A01B" retrieves class hierarchy
-//   - Full symbol: "H04W84/18" retrieves specific classification
 //   - ancestors: If true, include ancestor classifications in the hierarchy
 //   - navigation: If true, include navigation links to related classifications
 //
-// Returns XML containing:
-//   - Classification hierarchy structure
-//   - Class titles and descriptions
-//   - Parent/child relationships
-//   - Related classification links (if navigation=true)
+// Returns parsed ClassificationData with Symbol, Title, Level, SchemeType, and Children.
+func (c *Client) GetClassificationSchema(ctx context.Context, class string, ancestors, navigation bool) (*ClassificationData, error) {
+	xmlData, err := c.GetClassificationSchemaRaw(ctx, class, ancestors, navigation)
+	if err != nil {
+		return nil, err
+	}
+	return ParseClassificationSchema(xmlData)
+}
+
+// GetClassificationSchemaRaw retrieves CPC classification schema hierarchy as raw XML.
 //
-// Example:
+// Parameters:
+//   - class: CPC classification symbol (e.g., "A01B", "H04W84/18")
+//   - ancestors: If true, include ancestor classifications in the hierarchy
+//   - navigation: If true, include navigation links to related classifications
 //
-//	// Get full hierarchy for class A01B
-//	schema, err := client.GetClassificationSchema(ctx, "A01B", false, false)
-//
-//	// Get with ancestors and navigation
-//	schema, err := client.GetClassificationSchema(ctx, "H04W84/18", true, true)
+// Returns raw XML response.
 func (c *Client) GetClassificationSchemaRaw(ctx context.Context, class string, ancestors, navigation bool) (string, error) {
 	if class == "" {
 		return "", &ConfigError{Message: "classification class cannot be empty"}

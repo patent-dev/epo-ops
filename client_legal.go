@@ -133,18 +133,24 @@ func (c *Client) GetRegisterBiblioMultipleRaw(ctx context.Context, refType, form
 	})
 }
 
-// GetRegisterEvents retrieves procedural events from the EPO Register.
+// GetRegisterEvents retrieves and parses procedural events from the EPO Register.
+// Returns a parsed RegisterEventsData struct with patent statuses and dossier events.
+func (c *Client) GetRegisterEvents(ctx context.Context, refType, format, number string) (*RegisterEventsData, error) {
+	xmlData, err := c.GetRegisterEventsRaw(ctx, refType, format, number)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRegisterEvents(xmlData)
+}
+
+// GetRegisterEventsRaw retrieves procedural events from the EPO Register as raw XML.
 //
 // Parameters:
 //   - refType: Reference type (e.g., "publication", "application", "priority")
 //   - format: Number format (e.g., "docdb", "epodoc")
 //   - number: Patent number (e.g., "EP1000000")
 //
-// Returns EPO Register events as XML, including:
-//   - Filing events
-//   - Publication events
-//   - Examination events
-//   - Grant/refusal events
+// Returns EPO Register events as XML.
 func (c *Client) GetRegisterEventsRaw(ctx context.Context, refType, format, number string) (string, error) {
 	if err := ValidateRefType(refType); err != nil {
 		return "", err

@@ -11,7 +11,25 @@ import (
 // Number Conversion Service - Patent number format conversion.
 //
 // This file contains methods for converting patent numbers between formats.
-func (c *Client) ConvertPatentNumber(ctx context.Context, refType, inputFormat, number, outputFormat string) (string, error) {
+
+// ConvertPatentNumber converts a patent number between formats and returns parsed data.
+//
+// Parameters:
+//   - refType: Reference type (e.g., RefTypePublication, RefTypeApplication, RefTypePriority)
+//   - inputFormat: Input format ("original", "epodoc", "docdb")
+//   - number: Patent number in input format
+//   - outputFormat: Output format ("original", "epodoc", "docdb")
+//
+// Returns parsed NumberConversionData with Country, DocNumber, Kind, and Date fields.
+func (c *Client) ConvertPatentNumber(ctx context.Context, refType, inputFormat, number, outputFormat string) (*NumberConversionData, error) {
+	xmlData, err := c.ConvertPatentNumberRaw(ctx, refType, inputFormat, number, outputFormat)
+	if err != nil {
+		return nil, err
+	}
+	return ParseNumberConversion(xmlData)
+}
+
+func (c *Client) ConvertPatentNumberRaw(ctx context.Context, refType, inputFormat, number, outputFormat string) (string, error) {
 	if err := ValidateRefType(refType); err != nil {
 		return "", err
 	}
@@ -45,7 +63,7 @@ func (c *Client) ConvertPatentNumber(ctx context.Context, refType, inputFormat, 
 //   - outputFormat: Output format ("original", "epodoc", "docdb")
 //
 // Returns XML containing converted patent numbers for all requested patents.
-func (c *Client) ConvertPatentNumberMultiple(ctx context.Context, refType, inputFormat string, numbers []string, outputFormat string) (string, error) {
+func (c *Client) ConvertPatentNumberMultipleRaw(ctx context.Context, refType, inputFormat string, numbers []string, outputFormat string) (string, error) {
 	if err := ValidateRefType(refType); err != nil {
 		return "", err
 	}

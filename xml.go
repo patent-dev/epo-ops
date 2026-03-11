@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -113,6 +114,8 @@ type FamilyMember struct {
 	DocNumber      string
 	Kind           string
 	Date           string
+	Title          string   // Invention title (populated from biblio data, English preferred)
+	Applicants     []string // Applicant names (populated from biblio data, epodoc format)
 	ApplicationRef ApplicationReference
 	PriorityClaims []PriorityClaim
 }
@@ -143,6 +146,7 @@ type FamilyData struct {
 	FamilyID     string
 	TotalCount   int
 	Legal        bool
+	Countries    []string // Unique country codes from all members, sorted alphabetically
 	Members      []FamilyMember
 }
 
@@ -152,7 +156,10 @@ type LegalEvent struct {
 	Description string
 	Influence   string
 	DateMigr    string
-	Fields      map[string]string
+	Country     string            // Country code from L001EP field
+	Date        string            // Gazette date from L007EP field
+	EventCode   string            // Legal event code from L008EP field
+	Fields      map[string]string // All L-code field values
 }
 
 // LegalData represents parsed legal event data
@@ -161,6 +168,58 @@ type LegalData struct {
 	PatentNumber string
 	FamilyID     string
 	LegalEvents  []LegalEvent
+}
+
+// RegisterEvent represents a single dossier event from the EPO Register
+type RegisterEvent struct {
+	ID          string // Event identifier (e.g., "EVT_434577438")
+	Date        string // Event date (YYYYMMDD)
+	EventCode   string // Event code (e.g., "0009250", "EPIDOSNIGR1")
+	Description string // Human-readable description
+	Category    string // Categorized: filing, publication, examination, grant, opposition, appeal, other
+	GazetteNum  string // Gazette number (e.g., "2022/32"), empty if not available
+	GazetteDate string // Gazette date (YYYYMMDD), empty if not available
+}
+
+// PatentStatus represents a patent status entry from the EPO Register
+type PatentStatus struct {
+	Date        string // Status change date (YYYYMMDD)
+	Code        string // Status code (e.g., "7", "8")
+	Description string // Human-readable description
+}
+
+// RegisterEventsData represents parsed register events data
+type RegisterEventsData struct {
+	PatentNumber string
+	Query        string
+	Statuses     []PatentStatus
+	Events       []RegisterEvent
+}
+
+// NumberConversionData represents parsed patent number conversion data
+type NumberConversionData struct {
+	InputFormat  string
+	OutputFormat string
+	Country      string
+	DocNumber    string
+	Kind         string
+	Date         string
+}
+
+// ClassificationChild represents a child classification item
+type ClassificationChild struct {
+	Symbol string
+	Title  string
+	Level  int
+}
+
+// ClassificationData represents parsed CPC classification schema data
+type ClassificationData struct {
+	Symbol     string
+	Title      string
+	Level      int
+	SchemeType string
+	Children   []ClassificationChild
 }
 
 // Paragraph represents a description paragraph
@@ -628,6 +687,24 @@ type familyXML struct {
 				} `xml:"document-id"`
 				ActiveIndicator string `xml:"priority-active-indicator"`
 			} `xml:"priority-claim"`
+			ExchangeDocuments []struct {
+				BiblioData struct {
+					Titles []struct {
+						Lang  string `xml:"lang,attr"`
+						Title string `xml:",chardata"`
+					} `xml:"invention-title"`
+					Parties struct {
+						Applicants struct {
+							Applicants []struct {
+								DataFormat string `xml:"data-format,attr"`
+								Name       struct {
+									Name string `xml:"name"`
+								} `xml:"applicant-name"`
+							} `xml:"applicant"`
+						} `xml:"applicants"`
+					} `xml:"parties"`
+				} `xml:"bibliographic-data"`
+			} `xml:"exchange-document"`
 		} `xml:"family-member"`
 	} `xml:"patent-family"`
 }
@@ -652,7 +729,9 @@ func ParseFamily(xmlData string) (*FamilyData, error) {
 		}
 	}
 
-	data := &FamilyData{}
+	data := &FamilyData{
+		Members: []FamilyMember{}, // Always non-nil, even if empty
+	}
 
 	// Parse patent number from publication reference
 	// Some family responses have a top-level publication-reference, others don't
@@ -668,9 +747,6 @@ func ParseFamily(xmlData string) (*FamilyData, error) {
 		}
 	}
 
-	// Patent number is optional for some family responses
-	// We'll validate we have at least family members below
-
 	// Parse attributes
 	data.Legal = raw.PatentFamily.Legal == "true"
 	if raw.PatentFamily.TotalResultCount != "" {
@@ -680,6 +756,7 @@ func ParseFamily(xmlData string) (*FamilyData, error) {
 	}
 
 	// Parse family members
+	countrySet := make(map[string]bool)
 	for _, member := range raw.PatentFamily.FamilyMembers {
 		familyMember := FamilyMember{
 			FamilyID: member.FamilyID,
@@ -716,23 +793,62 @@ func ParseFamily(xmlData string) (*FamilyData, error) {
 			})
 		}
 
+		// Extract biblio data from exchange-document (present in GetFamilyWithBiblio responses)
+		for _, exDoc := range member.ExchangeDocuments {
+			// Title: prefer English, fallback to first available
+			if familyMember.Title == "" {
+				for _, t := range exDoc.BiblioData.Titles {
+					title := strings.TrimSpace(t.Title)
+					if title == "" {
+						continue
+					}
+					if strings.EqualFold(t.Lang, "en") {
+						familyMember.Title = title
+						break
+					}
+					if familyMember.Title == "" {
+						familyMember.Title = title
+					}
+				}
+			}
+
+			// Applicants: prefer epodoc format, deduplicate
+			if len(familyMember.Applicants) == 0 {
+				seen := make(map[string]bool)
+				for _, a := range exDoc.BiblioData.Parties.Applicants.Applicants {
+					if !strings.EqualFold(a.DataFormat, "epodoc") {
+						continue
+					}
+					name := strings.TrimSpace(a.Name.Name)
+					if name != "" && !seen[name] {
+						seen[name] = true
+						familyMember.Applicants = append(familyMember.Applicants, name)
+					}
+				}
+			}
+		}
+
 		if familyMember.FamilyID != "" {
 			data.FamilyID = familyMember.FamilyID
+		}
+
+		if familyMember.Country != "" {
+			countrySet[familyMember.Country] = true
 		}
 
 		data.Members = append(data.Members, familyMember)
 	}
 
-	// Validate parsed data
-	// Note: FamilyID may be empty in some responses (especially simplified test data)
-	// but should be present in real EPO API responses
-
-	if len(data.Members) == 0 {
-		return nil, &DataValidationError{
-			Parser:       "ParseFamily",
-			MissingField: "Members",
-			Message:      "family should have at least one member",
+	// Compute sorted unique countries
+	if len(countrySet) > 0 {
+		countries := make([]string, 0, len(countrySet))
+		for c := range countrySet {
+			countries = append(countries, c)
 		}
+		sort.Strings(countries)
+		data.Countries = countries
+	} else {
+		data.Countries = []string{}
 	}
 
 	return data, nil
@@ -883,7 +999,9 @@ func ParseLegal(xmlData string) (*LegalData, error) {
 		}
 	}
 
-	data := &LegalData{}
+	data := &LegalData{
+		LegalEvents: []LegalEvent{}, // Always non-nil, even if empty
+	}
 
 	// Parse patent number
 	pubRef := raw.PatentFamily.PublicationRef.DocumentID
@@ -903,12 +1021,16 @@ func ParseLegal(xmlData string) (*LegalData, error) {
 		}
 
 		for _, legal := range member.LegalEvents {
+			fields := extractLegalFields(legal)
 			event := LegalEvent{
-				Code:        legal.Code,
-				Description: legal.Desc,
-				Influence:   legal.Infl,
-				DateMigr:    legal.DateMigr,
-				Fields:      extractLegalFields(legal), // Dynamic extraction using reflection
+				Code:        strings.TrimSpace(legal.Code),
+				Description: strings.TrimSpace(legal.Desc),
+				Influence:   strings.TrimSpace(legal.Infl),
+				DateMigr:    strings.TrimSpace(legal.DateMigr),
+				Country:     strings.TrimSpace(fields["L001EP"]),
+				Date:        strings.TrimSpace(fields["L007EP"]),
+				EventCode:   strings.TrimSpace(fields["L008EP"]),
+				Fields:      fields,
 			}
 
 			data.LegalEvents = append(data.LegalEvents, event)
@@ -1195,4 +1317,287 @@ func ParseEquivalents(xmlData string) (*EquivalentsData, error) {
 	}
 
 	return data, nil
+}
+
+// --- Register Events XML Structs ---
+
+// registerEventsXML is the internal XML struct for register events responses
+type registerEventsXML struct {
+	XMLName        xml.Name `xml:"world-patent-data"`
+	RegisterSearch struct {
+		TotalCount string `xml:"total-result-count,attr"`
+		Query      struct {
+			Text string `xml:",chardata"`
+		} `xml:"query"`
+		RegisterDocuments struct {
+			Documents []registerDocumentXML `xml:"register-document"`
+		} `xml:"register-documents"`
+	} `xml:"register-search"`
+}
+
+type registerDocumentXML struct {
+	Status   string `xml:"status,attr"`
+	Statuses struct {
+		Entries []struct {
+			ChangeDate string `xml:"change-date,attr"`
+			StatusCode string `xml:"status-code,attr"`
+			Text       string `xml:",chardata"`
+		} `xml:"ep-patent-status"`
+	} `xml:"ep-patent-statuses"`
+	EventsData []struct {
+		DossierEvent struct {
+			ID        string `xml:"id,attr"`
+			EventType string `xml:"event-type,attr"`
+			EventDate struct {
+				Date string `xml:"date"`
+			} `xml:"event-date"`
+			EventCode string `xml:"event-code"`
+			EventText struct {
+				Type string `xml:"event-text-type,attr"`
+				Text string `xml:",chardata"`
+			} `xml:"event-text"`
+			GazetteRef struct {
+				GazetteNum string `xml:"gazette-num"`
+				Date       string `xml:"date"`
+			} `xml:"gazette-reference"`
+		} `xml:"dossier-event"`
+	} `xml:"events-data"`
+}
+
+// categorizeRegisterEvent maps an event code to a category string.
+// The description parameter is used as a fallback when the event code
+// doesn't match a known pattern.
+func categorizeRegisterEvent(eventCode, description string) string {
+	upper := strings.ToUpper(eventCode)
+
+	// Grant-related
+	if strings.Contains(upper, "IGR") || eventCode == "0009210" {
+		return "grant"
+	}
+	// Examination-related
+	if strings.Contains(upper, "EXR") || eventCode == "0009171" || eventCode == "0009185" {
+		return "examination"
+	}
+	// Publication-related
+	if eventCode == "0009012" {
+		return "publication"
+	}
+	// Opposition-related
+	if strings.Contains(upper, "OPPO") || eventCode == "0009261" {
+		return "opposition"
+	}
+	// Appeal-related
+	if strings.Contains(upper, "APPEAL") {
+		return "appeal"
+	}
+	// Filing-related
+	if eventCode == "0009100" {
+		return "filing"
+	}
+
+	// Description-based fallback for unrecognized codes
+	upperDesc := strings.ToUpper(description)
+	if strings.Contains(upperDesc, "APPEAL") {
+		return "appeal"
+	}
+	if strings.Contains(upperDesc, "OPPOSITION") {
+		return "opposition"
+	}
+
+	return "other"
+}
+
+// ParseRegisterEvents parses EPO Register events XML into a RegisterEventsData struct.
+func ParseRegisterEvents(xmlData string) (*RegisterEventsData, error) {
+	var raw registerEventsXML
+	if err := xml.Unmarshal([]byte(xmlData), &raw); err != nil {
+		return nil, &XMLParseError{
+			Parser:    "ParseRegisterEvents",
+			Element:   "world-patent-data",
+			XMLSample: truncateXML(xmlData, 200),
+			Cause:     err,
+		}
+	}
+
+	data := &RegisterEventsData{
+		Query:    strings.TrimSpace(raw.RegisterSearch.Query.Text),
+		Statuses: []PatentStatus{},
+		Events:   []RegisterEvent{},
+	}
+
+	// Extract patent number from query (e.g., "publication=EP2400812" → "EP2400812")
+	if q := data.Query; q != "" {
+		if idx := strings.Index(q, "="); idx >= 0 {
+			data.PatentNumber = strings.TrimSpace(q[idx+1:])
+		}
+	}
+
+	docs := raw.RegisterSearch.RegisterDocuments.Documents
+	if len(docs) == 0 {
+		return data, nil
+	}
+
+	// Use the first register document
+	doc := docs[0]
+
+	// Extract patent statuses
+	for _, s := range doc.Statuses.Entries {
+		data.Statuses = append(data.Statuses, PatentStatus{
+			Date:        strings.TrimSpace(s.ChangeDate),
+			Code:        strings.TrimSpace(s.StatusCode),
+			Description: strings.TrimSpace(s.Text),
+		})
+	}
+
+	// Extract dossier events
+	for _, ed := range doc.EventsData {
+		evt := ed.DossierEvent
+		code := strings.TrimSpace(evt.EventCode)
+		desc := strings.TrimSpace(evt.EventText.Text)
+		regEvent := RegisterEvent{
+			ID:          strings.TrimSpace(evt.ID),
+			Date:        strings.TrimSpace(evt.EventDate.Date),
+			EventCode:   code,
+			Description: desc,
+			Category:    categorizeRegisterEvent(code, desc),
+			GazetteNum:  strings.TrimSpace(evt.GazetteRef.GazetteNum),
+			GazetteDate: strings.TrimSpace(evt.GazetteRef.Date),
+		}
+		data.Events = append(data.Events, regEvent)
+	}
+
+	// Sort events chronologically (oldest first)
+	sort.Slice(data.Events, func(i, j int) bool {
+		return data.Events[i].Date < data.Events[j].Date
+	})
+
+	return data, nil
+}
+
+// --- Number Conversion XML Structs ---
+
+type numberConversionXML struct {
+	XMLName         xml.Name `xml:"world-patent-data"`
+	Standardization struct {
+		InputFormat  string `xml:"inputFormat,attr"`
+		OutputFormat string `xml:"outputFormat,attr"`
+		Output       struct {
+			PublicationRef struct {
+				DocumentID struct {
+					Type      string `xml:"document-id-type,attr"`
+					Country   string `xml:"country"`
+					DocNumber string `xml:"doc-number"`
+					Kind      string `xml:"kind"`
+					Date      string `xml:"date"`
+				} `xml:"document-id"`
+			} `xml:"publication-reference"`
+		} `xml:"output"`
+	} `xml:"standardization"`
+}
+
+// ParseNumberConversion parses EPO number conversion XML into a NumberConversionData struct.
+func ParseNumberConversion(xmlData string) (*NumberConversionData, error) {
+	var raw numberConversionXML
+	if err := xml.Unmarshal([]byte(xmlData), &raw); err != nil {
+		return nil, &XMLParseError{
+			Parser:    "ParseNumberConversion",
+			Element:   "world-patent-data",
+			XMLSample: truncateXML(xmlData, 200),
+			Cause:     err,
+		}
+	}
+
+	std := raw.Standardization
+	docID := std.Output.PublicationRef.DocumentID
+
+	if docID.DocNumber == "" {
+		return nil, &DataValidationError{
+			Parser:       "ParseNumberConversion",
+			MissingField: "doc-number",
+			Message:      "output document-id missing or incomplete",
+		}
+	}
+
+	return &NumberConversionData{
+		InputFormat:  strings.TrimSpace(std.InputFormat),
+		OutputFormat: strings.TrimSpace(std.OutputFormat),
+		Country:      strings.TrimSpace(docID.Country),
+		DocNumber:    strings.TrimSpace(docID.DocNumber),
+		Kind:         strings.TrimSpace(docID.Kind),
+		Date:         strings.TrimSpace(docID.Date),
+	}, nil
+}
+
+// --- Classification Schema XML Structs ---
+
+type classificationSchemaXML struct {
+	XMLName              xml.Name `xml:"world-patent-data"`
+	ClassificationScheme struct {
+		CPC struct {
+			ClassScheme struct {
+				SchemeType string                  `xml:"scheme-type,attr"`
+				Items      []classificationItemXML `xml:"classification-item"`
+			} `xml:"class-scheme"`
+		} `xml:"cpc"`
+	} `xml:"classification-scheme"`
+}
+
+type classificationItemXML struct {
+	Level  int    `xml:"level,attr"`
+	Symbol string `xml:"classification-symbol"`
+	Title  struct {
+		TitleParts []struct {
+			Text string `xml:"text"`
+		} `xml:"title-part"`
+	} `xml:"class-title"`
+	Children []classificationItemXML `xml:"classification-item"`
+}
+
+// ParseClassificationSchema parses EPO classification schema XML into a ClassificationData struct.
+func ParseClassificationSchema(xmlData string) (*ClassificationData, error) {
+	var raw classificationSchemaXML
+	if err := xml.Unmarshal([]byte(xmlData), &raw); err != nil {
+		return nil, &XMLParseError{
+			Parser:    "ParseClassificationSchema",
+			Element:   "world-patent-data",
+			XMLSample: truncateXML(xmlData, 200),
+			Cause:     err,
+		}
+	}
+
+	scheme := raw.ClassificationScheme.CPC.ClassScheme
+	items := scheme.Items
+
+	if len(items) == 0 {
+		return &ClassificationData{
+			Children: []ClassificationChild{},
+		}, nil
+	}
+
+	item := items[0]
+	title := ""
+	if len(item.Title.TitleParts) > 0 {
+		title = strings.TrimSpace(item.Title.TitleParts[0].Text)
+	}
+
+	children := []ClassificationChild{}
+	for _, child := range item.Children {
+		childTitle := ""
+		if len(child.Title.TitleParts) > 0 {
+			childTitle = strings.TrimSpace(child.Title.TitleParts[0].Text)
+		}
+		children = append(children, ClassificationChild{
+			Symbol: strings.TrimSpace(child.Symbol),
+			Title:  childTitle,
+			Level:  child.Level,
+		})
+	}
+
+	return &ClassificationData{
+		Symbol:     strings.TrimSpace(item.Symbol),
+		Title:      title,
+		Level:      item.Level,
+		SchemeType: strings.TrimSpace(scheme.SchemeType),
+		Children:   children,
+	}, nil
 }

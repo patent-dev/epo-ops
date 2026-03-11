@@ -15,7 +15,7 @@ func demoNumber(demo *DemoContext) {
 	// 1. ConvertPatentNumber (docdb -> epodoc)
 	runEndpoint(demo, "convert_patent_number_epodoc", "ConvertPatentNumber (to epodoc)",
 		func() ([]byte, error) {
-			result, err := demo.Client.ConvertPatentNumber(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent, ops.FormatEPODOC)
+			result, err := demo.Client.ConvertPatentNumberRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent, ops.FormatEPODOC)
 			return []byte(result), err
 		},
 		FormatRequestDescription("ConvertPatentNumber", map[string]string{
@@ -28,7 +28,7 @@ func demoNumber(demo *DemoContext) {
 	// Also demonstrate docdb -> original conversion
 	runEndpoint(demo, "convert_patent_number_original", "ConvertPatentNumber (to original)",
 		func() ([]byte, error) {
-			result, err := demo.Client.ConvertPatentNumber(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent, ops.FormatOriginal)
+			result, err := demo.Client.ConvertPatentNumberRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent, ops.FormatOriginal)
 			return []byte(result), err
 		},
 		FormatRequestDescription("ConvertPatentNumber", map[string]string{
@@ -42,7 +42,7 @@ func demoNumber(demo *DemoContext) {
 	runEndpoint(demo, "convert_patent_number_multiple", "ConvertPatentNumberMultiple",
 		func() ([]byte, error) {
 			numbers := GetBulkTestPatents(demo.Patent)
-			result, err := demo.Client.ConvertPatentNumberMultiple(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, numbers, ops.FormatEPODOC)
+			result, err := demo.Client.ConvertPatentNumberMultipleRaw(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, numbers, ops.FormatEPODOC)
 			return []byte(result), err
 		},
 		FormatRequestDescription("ConvertPatentNumberMultiple", map[string]string{
