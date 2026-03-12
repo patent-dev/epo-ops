@@ -22,7 +22,7 @@ This library provides an idiomatic Go interface to interact with the EPO's Open 
 - INPADOC family retrieval
 - CPC/ECLA classification services (schema, statistics, mapping, media)
 - Patent image retrieval with TIFF to PNG conversion
-- Legal status retrieval with patent status derivation (active, expired, lapsed, withdrawn, revoked)
+- Legal status retrieval with INPADOC legal event data
 - EPO Register access (biblio, events, procedural steps, unitary patent)
 - Patent number format conversion and validation
 - Comprehensive error handling with custom error types
@@ -403,14 +403,6 @@ for _, event := range legal.LegalEvents {
     }
 }
 
-// Derive overall patent status from legal events
-status := ops.DeriveOverallStatus(legal.LegalEvents)
-fmt.Printf("Overall Status: %s\n", status) // "active", "expired", "lapsed", etc.
-
-// Derive per-country status (e.g., is the patent still active in Germany?)
-deStatus := ops.DerivePatentStatus(legal.LegalEvents, "DE")
-fmt.Printf("Status in DE: %s\n", deStatus)
-
 // Raw XML access
 xmlData, err := client.GetLegalRaw(ctx, "publication", "docdb", "EP.1000000.B1")
 
@@ -423,10 +415,6 @@ for _, event := range regEvents.Events {
 // EPO Register bibliographic data (returns raw XML)
 registerBiblio, err := client.GetRegisterBiblioRaw(ctx, "publication", "epodoc", "EP1000000")
 ```
-
-**Status Values**: `active`, `expired`, `lapsed`, `withdrawn`, `revoked`, `pending`, `unknown`
-
-**Note**: `DeriveOverallStatus` skips per-country lapse events (PG25, PG2D) and returns the overall patent status. Use `DerivePatentStatus` with a target country for country-specific status.
 
 ### Number Conversion
 

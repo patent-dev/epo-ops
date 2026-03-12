@@ -663,8 +663,7 @@ func TestAdditionalServicesIntegration(t *testing.T) {
 			}
 		}
 
-		status := DeriveOverallStatus(legal.LegalEvents)
-		t.Logf("Legal status for %s: %s (%d events)", legal.PatentNumber, status, len(legal.LegalEvents))
+		t.Logf("Legal events for %s: %d events", legal.PatentNumber, len(legal.LegalEvents))
 
 		// Save fixture
 		if raw, err := client.GetLegalRaw(ctx, "publication", "docdb", testPatent); err == nil {

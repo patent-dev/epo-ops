@@ -274,12 +274,7 @@ func TestParseLegal(t *testing.T) {
 		t.Error("Expected at least some events with Country field")
 	}
 
-	// Test status derivation on real data
-	status := DeriveOverallStatus(data.LegalEvents)
-	t.Logf("Overall patent status for %s: %s", data.PatentNumber, status)
-	if status == StatusUnknown {
-		t.Log("Warning: status is unknown - may need more L-code mappings")
-	}
+	t.Logf("Parsed %d legal events for %s", len(data.LegalEvents), data.PatentNumber)
 }
 
 func TestParseLegal_EmptyEvents(t *testing.T) {
@@ -312,10 +307,6 @@ func TestParseLegal_EmptyEvents(t *testing.T) {
 		t.Errorf("Expected 0 events, got %d", len(data.LegalEvents))
 	}
 
-	status := DeriveOverallStatus(data.LegalEvents)
-	if status != StatusUnknown {
-		t.Errorf("Expected unknown status for empty events, got %q", status)
-	}
 }
 
 func TestParseDescription(t *testing.T) {
