@@ -75,7 +75,7 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Printf("Total results: %d\n", results.TotalResults)
+    fmt.Printf("Total results: %d\n", results.TotalCount)
 
     // Get patent family (returns *FamilyData)
     family, err := client.GetFamily(ctx, "publication", "docdb", "EP.1000000.B1")
@@ -115,9 +115,9 @@ fmt.Printf("Members: %d\n", len(family.Members))
 
 // Returns *SearchResultData struct
 results, err := client.Search(ctx, "ti=battery", "1-5")
-fmt.Printf("Total: %d\n", results.TotalResults)
-for _, patent := range results.Patents {
-    fmt.Printf("  %s\n", patent.Number)
+fmt.Printf("Total: %d\n", results.TotalCount)
+for _, r := range results.Results {
+    fmt.Printf("  %s%s\n", r.Country, r.DocNumber)
 }
 
 // Returns *LegalData struct
@@ -306,14 +306,12 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Total results: %d\n", results.TotalResults)
-fmt.Printf("Range: %s\n", results.Range)
-fmt.Printf("Returned: %d patents\n", len(results.Patents))
+fmt.Printf("Total results: %d\n", results.TotalCount)
+fmt.Printf("Range: %d-%d\n", results.RangeBegin, results.RangeEnd)
+fmt.Printf("Returned: %d results\n", len(results.Results))
 
-for _, patent := range results.Patents {
-    fmt.Printf("Patent: %s\n", patent.Number)
-    fmt.Printf("  Country: %s, Date: %s, Kind: %s\n",
-        patent.Country, patent.Date, patent.Kind)
+for _, r := range results.Results {
+    fmt.Printf("  %s%s%s - %s\n", r.Country, r.DocNumber, r.Kind, r.Title)
 }
 
 // Search with specific constituent → *SearchResultData

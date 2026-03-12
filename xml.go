@@ -1162,6 +1162,34 @@ func ParseFulltext(xmlData string) (*FulltextData, error) {
 	return data, nil
 }
 
+// searchExchangeDocs holds exchange-document elements from search results (with constituents)
+type searchExchangeDocs struct {
+	Documents []struct {
+		System     string `xml:"system,attr"`
+		FamilyID   string `xml:"family-id,attr"`
+		Country    string `xml:"country,attr"`
+		DocNumber  string `xml:"doc-number,attr"`
+		Kind       string `xml:"kind,attr"`
+		BiblioData struct {
+			InventionTitle []struct {
+				Lang string `xml:"lang,attr"`
+				Text string `xml:",chardata"`
+			} `xml:"invention-title"`
+		} `xml:"bibliographic-data"`
+	} `xml:"exchange-document"`
+}
+
+// searchPubRef holds publication-reference elements from search results (without constituents)
+type searchPubRef struct {
+	System   string `xml:"system,attr"`
+	FamilyID string `xml:"family-id,attr"`
+	DocID    struct {
+		Country   string `xml:"country"`
+		DocNumber string `xml:"doc-number"`
+		Kind      string `xml:"kind"`
+	} `xml:"document-id"`
+}
+
 // Internal structs for Search XML unmarshaling
 type searchXML struct {
 	XMLName      xml.Name `xml:"world-patent-data"`
@@ -1172,25 +1200,15 @@ type searchXML struct {
 			Begin string `xml:"begin,attr"`
 			End   string `xml:"end,attr"`
 		} `xml:"range"`
-		ExchangeDocuments struct {
-			Documents []struct {
-				System     string `xml:"system,attr"`
-				FamilyID   string `xml:"family-id,attr"`
-				Country    string `xml:"country,attr"`
-				DocNumber  string `xml:"doc-number,attr"`
-				Kind       string `xml:"kind,attr"`
-				BiblioData struct {
-					InventionTitle []struct {
-						Lang string `xml:"lang,attr"`
-						Text string `xml:",chardata"`
-					} `xml:"invention-title"`
-				} `xml:"bibliographic-data"`
-			} `xml:"exchange-document"`
-		} `xml:"exchange-documents"`
+		SearchResult struct {
+			ExchangeDocuments     searchExchangeDocs `xml:"exchange-documents"`
+			PublicationReferences []searchPubRef     `xml:"publication-reference"`
+		} `xml:"search-result"`
 	} `xml:"biblio-search"`
 }
 
-// ParseSearch parses search result XML into structured data
+// ParseSearch parses search result XML into structured data.
+// Handles both formats: with constituents (exchange-documents) and without (publication-reference).
 func ParseSearch(xmlData string) (*SearchResultData, error) {
 	var raw searchXML
 	if err := xml.Unmarshal([]byte(xmlData), &raw); err != nil {
@@ -1223,8 +1241,8 @@ func ParseSearch(xmlData string) (*SearchResultData, error) {
 		}
 	}
 
-	// Parse results
-	for _, doc := range raw.BiblioSearch.ExchangeDocuments.Documents {
+	// Parse results from exchange-documents (search with constituents)
+	for _, doc := range raw.BiblioSearch.SearchResult.ExchangeDocuments.Documents {
 		result := SearchResult{
 			System:    doc.System,
 			FamilyID:  doc.FamilyID,
@@ -1241,6 +1259,19 @@ func ParseSearch(xmlData string) (*SearchResultData, error) {
 		}
 
 		data.Results = append(data.Results, result)
+	}
+
+	// Fallback: parse publication-reference elements (search without constituents)
+	if len(data.Results) == 0 {
+		for _, ref := range raw.BiblioSearch.SearchResult.PublicationReferences {
+			data.Results = append(data.Results, SearchResult{
+				System:    ref.System,
+				FamilyID:  ref.FamilyID,
+				Country:   ref.DocID.Country,
+				DocNumber: ref.DocID.DocNumber,
+				Kind:      ref.DocID.Kind,
+			})
+		}
 	}
 
 	return data, nil

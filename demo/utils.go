@@ -12,13 +12,13 @@ import (
 type FileFormat string
 
 const (
-	FormatXML   FileFormat = "xml"
-	FormatJSON  FileFormat = "json"
-	FormatTIFF  FileFormat = "tiff"
-	FormatPNG   FileFormat = "png"
-	FormatGIF   FileFormat = "gif"
-	FormatJPEG  FileFormat = "jpeg"
-	FormatText  FileFormat = "txt"
+	FormatXML    FileFormat = "xml"
+	FormatJSON   FileFormat = "json"
+	FormatTIFF   FileFormat = "tiff"
+	FormatPNG    FileFormat = "png"
+	FormatGIF    FileFormat = "gif"
+	FormatJPEG   FileFormat = "jpeg"
+	FormatText   FileFormat = "txt"
 	FormatBinary FileFormat = "bin"
 )
 
