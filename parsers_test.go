@@ -544,8 +544,12 @@ func TestCategorizeRegisterEvent(t *testing.T) {
 		{"EPIDOSNIGR3", "Payment of fee for grant", "grant"},
 		{"EPIDOSNIGR5", "Payment of fee for publishing/printing", "grant"},
 		{"EPIDOSNIGR7", "Receipt of the translation of the claim(s)", "grant"},
-		// Opposition
-		{"0009261", "No opposition filed within time limit", "opposition"},
+		// No-opposition (0009261 means "no opposition filed", not "opposition filed")
+		{"0009261", "No opposition filed within time limit", "no_opposition"},
+		// No-opposition via description fallback
+		{"UNKNOWN00", "No opposition filed within time limit", "no_opposition"},
+		// Actual opposition
+		{"EPIDOSCOPPO", "Opposition filed", "opposition"},
 		// Appeal (description-based fallback)
 		{"UNKNOWN01", "Appeal filed by the patent proprietor", "appeal"},
 		{"UNKNOWN02", "Decision on appeal", "appeal"},

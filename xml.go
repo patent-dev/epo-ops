@@ -1383,8 +1383,12 @@ func categorizeRegisterEvent(eventCode, description string) string {
 	if eventCode == "0009012" {
 		return "publication"
 	}
+	// No-opposition (0009261 = "No opposition filed within time limit")
+	if eventCode == "0009261" {
+		return "no_opposition"
+	}
 	// Opposition-related
-	if strings.Contains(upper, "OPPO") || eventCode == "0009261" {
+	if strings.Contains(upper, "OPPO") {
 		return "opposition"
 	}
 	// Appeal-related
@@ -1400,6 +1404,9 @@ func categorizeRegisterEvent(eventCode, description string) string {
 	upperDesc := strings.ToUpper(description)
 	if strings.Contains(upperDesc, "APPEAL") {
 		return "appeal"
+	}
+	if strings.Contains(upperDesc, "NO OPPOSITION") {
+		return "no_opposition"
 	}
 	if strings.Contains(upperDesc, "OPPOSITION") {
 		return "opposition"
