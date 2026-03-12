@@ -227,9 +227,10 @@ func (q *CQLQuery) validate() {
 func (q *CQLQuery) checkBracketMatching() {
 	depth := 0
 	for _, token := range q.Tokens {
-		if token.Type == TokenLParen {
+		switch token.Type {
+		case TokenLParen:
 			depth++
-		} else if token.Type == TokenRParen {
+		case TokenRParen:
 			depth--
 			if depth < 0 {
 				q.Errors = append(q.Errors, fmt.Sprintf("unmatched closing parenthesis at position %d", token.Pos))

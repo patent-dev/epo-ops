@@ -230,7 +230,7 @@ func (c *Client) executeRequest(ctx context.Context, fn func() (*http.Response, 
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Parse and store quota information from headers
 	quotaInfo := ParseQuotaHeaders(resp.Header)

@@ -202,8 +202,10 @@ func ValidatePatentNumber(number string) error {
 	// Allow letters, digits, and common separators (space, dash, dot, slash)
 	for i := 0; i < len(number); i++ {
 		c := number[i]
-		if !((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
-			(c >= '0' && c <= '9') || c == ' ' || c == '-' || c == '.' || c == '/') {
+		isLetter := (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
+		isDigit := c >= '0' && c <= '9'
+		isSeparator := c == ' ' || c == '-' || c == '.' || c == '/'
+		if !isLetter && !isDigit && !isSeparator {
 			return &ConfigError{Message: "patent number contains invalid characters"}
 		}
 	}

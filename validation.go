@@ -8,9 +8,9 @@ import (
 
 // Regular expressions for patent number format validation
 var (
-	// Docdb format: CC.number.KC (e.g., EP.1000000.B1)
-	// Country code (2 letters), dot, number (digits), dot, kind code (letter + optional digit)
-	docdbPattern = regexp.MustCompile(`^[A-Z]{2}\.\d+\.[A-Z]\d?$`)
+	// Docdb format: CC.number.KC (e.g., EP.1000000.B1) - kind code is optional
+	// Country code (2 letters), dot, number (digits), dot, optional kind code (letter + optional digit)
+	docdbPattern = regexp.MustCompile(`^[A-Z]{2}\.\d+\.([A-Z]\d?)?$`)
 
 	// Epodoc format: CCnumber or CCnumberKC (e.g., EP1000000 or EP1000000B1)
 	// Country code (2 letters), number (digits), optional kind code (letter + optional digit)
@@ -20,19 +20,20 @@ var (
 	datePattern = regexp.MustCompile(`^\d{8}$`)
 )
 
-// ValidateDocdbFormat validates the docdb format: CC.number.KC
+// ValidateDocdbFormat validates the docdb format: CC.number.KC (kind code optional)
 //
 // Examples of valid docdb format:
 //   - EP.1000000.B1
 //   - US.5551212.A
 //   - WO.2023123456.A1
+//   - US.7654321. (without kind code)
 //
 // Format rules:
 //   - Two-letter country code in uppercase
 //   - Dot separator
 //   - Numeric document number
 //   - Dot separator
-//   - Kind code: letter + optional digit
+//   - Optional kind code: letter + optional digit
 func ValidateDocdbFormat(number string) error {
 	if number == "" {
 		return &ValidationError{

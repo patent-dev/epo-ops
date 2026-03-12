@@ -751,9 +751,7 @@ func ParseFamily(xmlData string) (*FamilyData, error) {
 	// Parse attributes
 	data.Legal = raw.PatentFamily.Legal == "true"
 	if raw.PatentFamily.TotalResultCount != "" {
-		if _, err := fmt.Sscanf(raw.PatentFamily.TotalResultCount, "%d", &data.TotalCount); err != nil {
-			// Non-critical: if parsing fails, TotalCount remains 0
-		}
+		_, _ = fmt.Sscanf(raw.PatentFamily.TotalResultCount, "%d", &data.TotalCount)
 	}
 
 	// Parse family members
@@ -1226,19 +1224,13 @@ func ParseSearch(xmlData string) (*SearchResultData, error) {
 
 	// Parse counts and ranges
 	if raw.BiblioSearch.TotalResultCount != "" {
-		if _, err := fmt.Sscanf(raw.BiblioSearch.TotalResultCount, "%d", &data.TotalCount); err != nil {
-			// Non-critical: if parsing fails, TotalCount remains 0
-		}
+		_, _ = fmt.Sscanf(raw.BiblioSearch.TotalResultCount, "%d", &data.TotalCount)
 	}
 	if raw.BiblioSearch.Range.Begin != "" {
-		if _, err := fmt.Sscanf(raw.BiblioSearch.Range.Begin, "%d", &data.RangeBegin); err != nil {
-			// Non-critical: if parsing fails, RangeBegin remains 0
-		}
+		_, _ = fmt.Sscanf(raw.BiblioSearch.Range.Begin, "%d", &data.RangeBegin)
 	}
 	if raw.BiblioSearch.Range.End != "" {
-		if _, err := fmt.Sscanf(raw.BiblioSearch.Range.End, "%d", &data.RangeEnd); err != nil {
-			// Non-critical: if parsing fails, RangeEnd remains 0
-		}
+		_, _ = fmt.Sscanf(raw.BiblioSearch.Range.End, "%d", &data.RangeEnd)
 	}
 
 	// Parse results from exchange-documents (search with constituents)
