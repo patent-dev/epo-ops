@@ -1,6 +1,7 @@
 package cql
 
 import (
+	"errors"
 	"strings"
 	"testing"
 )
@@ -526,5 +527,66 @@ func TestComplexQueries(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestValidate_TypedFailureKinds(t *testing.T) {
+	cases := []struct {
+		name     string
+		query    string
+		wantKind CQLValidationKind
+	}{
+		{"unknown field", "badfield=value", CQLValidationUnknownField},
+		{"unclosed parens", "(ti=bluetooth", CQLValidationUnclosedParens},
+		{"unmatched closing paren", "ti=bluetooth)", CQLValidationUnmatchedParens},
+		// Multiple tokens with no field=value structure (e.g. a free-text
+		// "X AND Y" query, or USPTO-style "field:value field:value").
+		{"no field=value pattern", "foo bar baz", CQLValidationNoFieldPattern},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			q, err := ParseCQL(tc.query)
+			if err != nil {
+				t.Fatalf("ParseCQL returned hard error: %v", err)
+			}
+			valErr := q.Validate()
+			if valErr == nil {
+				t.Fatalf("Validate returned nil, expected an error")
+			}
+			var typed *CQLValidationError
+			if !errors.As(valErr, &typed) {
+				t.Fatalf("Validate did not return *CQLValidationError; got %T (%v)", valErr, valErr)
+			}
+			first := typed.First()
+			if first == nil {
+				t.Fatalf("CQLValidationError.First() returned nil")
+			}
+			if first.Kind != tc.wantKind {
+				t.Errorf("first failure Kind = %q, want %q (message=%q)", first.Kind, tc.wantKind, first.Message)
+			}
+			// Backward-compat: q.Errors must still be populated in parallel.
+			if len(q.Errors) != len(typed.Failures) {
+				t.Errorf("len(q.Errors)=%d, len(Failures)=%d; should be equal", len(q.Errors), len(typed.Failures))
+			}
+		})
+	}
+}
+
+func TestValidate_UnknownFieldCarriesFieldName(t *testing.T) {
+	q, err := ParseCQL("nosuchfield=value")
+	if err != nil {
+		t.Fatalf("ParseCQL: %v", err)
+	}
+	valErr := q.Validate()
+	var typed *CQLValidationError
+	if !errors.As(valErr, &typed) {
+		t.Fatalf("not a *CQLValidationError")
+	}
+	f := typed.First()
+	if f == nil || f.Kind != CQLValidationUnknownField {
+		t.Fatalf("expected unknown_field, got %+v", f)
+	}
+	if f.Field != "nosuchfield" {
+		t.Errorf("Field = %q, want %q", f.Field, "nosuchfield")
 	}
 }
