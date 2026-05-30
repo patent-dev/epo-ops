@@ -1,8 +1,11 @@
 package epo_ops
 
 import (
+	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"net/http"
 )
 
 // AuthError represents an authentication error.
@@ -198,6 +201,69 @@ func parseErrorXML(body []byte, statusCode int) (*OPSError, error) {
 
 	// Could not parse as either format
 	return nil, fmt.Errorf("unable to parse error XML")
+}
+
+// parseEPOJSONErrorBody decodes EPO's JSON error envelope. EPO returns some
+// upstream backend errors as HTTP 200 with a JSON body preceded by one or
+// more XML processing instructions, which would otherwise reach the XML
+// parsers downstream. The body looks like:
+//
+//	<?xml-stylesheet type='text/xsl' href='...'?>{"error":{"message":"...","details":{"original":{"code":404,"message":"..."}}}}
+//
+// The returned ok flag is true when the body matches this shape and was
+// decoded into a typed error. Common upstream codes are mapped to existing
+// error types so callers can use the standard errors.Is / errors.As patterns.
+func parseEPOJSONErrorBody(body []byte) (error, bool) {
+	start := bytes.IndexByte(body, '{')
+	if start < 0 {
+		return nil, false
+	}
+
+	var payload struct {
+		Error struct {
+			Message string `json:"message"`
+			Code    string `json:"code"`
+			Details struct {
+				Original struct {
+					Code    int    `json:"code"`
+					Message string `json:"message"`
+				} `json:"original"`
+			} `json:"details"`
+		} `json:"error"`
+	}
+	if err := json.Unmarshal(body[start:], &payload); err != nil {
+		return nil, false
+	}
+
+	message := payload.Error.Details.Original.Message
+	if message == "" {
+		message = payload.Error.Message
+	}
+	code := payload.Error.Details.Original.Code
+	if message == "" && code == 0 {
+		return nil, false
+	}
+
+	switch code {
+	case http.StatusNotFound:
+		return &NotFoundError{Message: message}, true
+	case http.StatusUnauthorized:
+		return &AuthError{StatusCode: code, Message: message}, true
+	case http.StatusForbidden, http.StatusTooManyRequests:
+		return &QuotaExceededError{Message: message}, true
+	case http.StatusServiceUnavailable:
+		return &ServiceUnavailableError{StatusCode: code, Message: message}, true
+	}
+
+	statusCode := code
+	if statusCode == 0 {
+		statusCode = http.StatusOK
+	}
+	return &OPSError{
+		HTTPStatus: statusCode,
+		Code:       fmt.Sprintf("HTTP.%d", statusCode),
+		Message:    message,
+	}, true
 }
 
 // ConfigError represents a configuration error.

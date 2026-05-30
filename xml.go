@@ -208,19 +208,21 @@ type NumberConversionData struct {
 
 // ClassificationChild represents a child classification item
 type ClassificationChild struct {
-	Symbol string
-	Title  string
-	Level  int
+	Symbol      string
+	Title       string
+	Level       int
+	HasChildren bool // True when the symbol has descendants that are not included in this response.
 }
 
 // ClassificationData represents parsed CPC classification schema data
 type ClassificationData struct {
-	Symbol     string
-	Title      string
-	Level      int
-	SchemeType string
-	Children   []ClassificationChild
-	Ancestors  []ClassificationChild
+	Symbol      string
+	Title       string
+	Level       int
+	SchemeType  string
+	HasChildren bool // True when the symbol has descendants that are not included in this response.
+	Children    []ClassificationChild
+	Ancestors   []ClassificationChild
 }
 
 // Paragraph represents a description paragraph
@@ -1574,9 +1576,10 @@ type classificationSchemaXML struct {
 }
 
 type classificationItemXML struct {
-	Level  int    `xml:"level,attr"`
-	Symbol string `xml:"classification-symbol"`
-	Title  struct {
+	Level       int    `xml:"level,attr"`
+	HasChildren bool   `xml:"has-children,attr"`
+	Symbol      string `xml:"classification-symbol"`
+	Title       struct {
 		TitleParts []struct {
 			Text string `xml:"text"`
 		} `xml:"title-part"`
@@ -1620,9 +1623,10 @@ func ParseClassificationSchema(xmlData string) (*ClassificationData, error) {
 			ancestorTitle = strings.TrimSpace(item.Title.TitleParts[0].Text)
 		}
 		ancestors = append(ancestors, ClassificationChild{
-			Symbol: strings.TrimSpace(item.Symbol),
-			Title:  ancestorTitle,
-			Level:  item.Level,
+			Symbol:      strings.TrimSpace(item.Symbol),
+			Title:       ancestorTitle,
+			Level:       item.Level,
+			HasChildren: item.HasChildren,
 		})
 		item = item.Children[0]
 	}
@@ -1639,18 +1643,20 @@ func ParseClassificationSchema(xmlData string) (*ClassificationData, error) {
 			childTitle = strings.TrimSpace(child.Title.TitleParts[0].Text)
 		}
 		children = append(children, ClassificationChild{
-			Symbol: strings.TrimSpace(child.Symbol),
-			Title:  childTitle,
-			Level:  child.Level,
+			Symbol:      strings.TrimSpace(child.Symbol),
+			Title:       childTitle,
+			Level:       child.Level,
+			HasChildren: child.HasChildren,
 		})
 	}
 
 	return &ClassificationData{
-		Symbol:     strings.TrimSpace(item.Symbol),
-		Title:      title,
-		Level:      item.Level,
-		SchemeType: strings.TrimSpace(scheme.SchemeType),
-		Children:   children,
-		Ancestors:  ancestors,
+		Symbol:      strings.TrimSpace(item.Symbol),
+		Title:       title,
+		Level:       item.Level,
+		SchemeType:  strings.TrimSpace(scheme.SchemeType),
+		HasChildren: item.HasChildren,
+		Children:    children,
+		Ancestors:   ancestors,
 	}, nil
 }

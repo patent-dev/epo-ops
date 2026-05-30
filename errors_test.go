@@ -2,6 +2,7 @@ package epo_ops
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"testing"
 )
@@ -120,6 +121,97 @@ func TestParseErrorXML_EmptyXML(t *testing.T) {
 
 	if opsErr != nil {
 		t.Errorf("Expected nil OPSError for empty XML, got %+v", opsErr)
+	}
+}
+
+func TestParseEPOJSONErrorBody_UpstreamNotFound(t *testing.T) {
+	body := []byte(`<?xml-stylesheet type='text/xsl' href='../../../style/cpc.xsl' ?>{"error":{"message":"Unexpected response from remote server: GET http://classification-web-green-v4.bss-cst.svc.cluster.local/foo resulted HTTP 404 Not Found","details":{"original":{"code":404,"message":"Invalid or unknown class H04W84"}}}}`)
+
+	err, ok := parseEPOJSONErrorBody(body)
+	if !ok {
+		t.Fatal("expected ok=true for JSON-in-XML envelope")
+	}
+
+	var notFound *NotFoundError
+	if !errors.As(err, &notFound) {
+		t.Fatalf("expected NotFoundError, got %T: %v", err, err)
+	}
+	if notFound.Message != "Invalid or unknown class H04W84" {
+		t.Errorf("expected upstream message, got %q", notFound.Message)
+	}
+}
+
+func TestParseEPOJSONErrorBody_FallbackToOuterMessage(t *testing.T) {
+	body := []byte(`<?xml-stylesheet type='text/xsl' href='x'?>{"error":{"message":"Something broke","code":"SERVER.Generic"}}`)
+
+	err, ok := parseEPOJSONErrorBody(body)
+	if !ok {
+		t.Fatal("expected ok=true")
+	}
+
+	var opsErr *OPSError
+	if !errors.As(err, &opsErr) {
+		t.Fatalf("expected OPSError fallback, got %T: %v", err, err)
+	}
+	if opsErr.Message != "Something broke" {
+		t.Errorf("expected outer message, got %q", opsErr.Message)
+	}
+	if opsErr.HTTPStatus != http.StatusOK {
+		t.Errorf("expected HTTPStatus 200 for missing upstream code, got %d", opsErr.HTTPStatus)
+	}
+}
+
+func TestParseEPOJSONErrorBody_MapsUpstreamCodes(t *testing.T) {
+	body := func(code int) []byte {
+		return []byte(fmt.Sprintf(`<?xml-stylesheet href='x'?>{"error":{"details":{"original":{"code":%d,"message":"upstream"}}}}`, code))
+	}
+
+	err, _ := parseEPOJSONErrorBody(body(http.StatusUnauthorized))
+	var authErr *AuthError
+	if !errors.As(err, &authErr) {
+		t.Errorf("401: expected AuthError, got %T", err)
+	}
+
+	err, _ = parseEPOJSONErrorBody(body(http.StatusForbidden))
+	var quotaErr *QuotaExceededError
+	if !errors.As(err, &quotaErr) {
+		t.Errorf("403: expected QuotaExceededError, got %T", err)
+	}
+
+	err, _ = parseEPOJSONErrorBody(body(http.StatusTooManyRequests))
+	if !errors.As(err, &quotaErr) {
+		t.Errorf("429: expected QuotaExceededError, got %T", err)
+	}
+
+	err, _ = parseEPOJSONErrorBody(body(http.StatusServiceUnavailable))
+	var svcErr *ServiceUnavailableError
+	if !errors.As(err, &svcErr) {
+		t.Errorf("503: expected ServiceUnavailableError, got %T", err)
+	}
+}
+
+func TestParseEPOJSONErrorBody_RejectsNormalXML(t *testing.T) {
+	body := []byte(`<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='x'?><ops:world-patent-data xmlns:ops="http://ops.epo.org"><ops:foo/></ops:world-patent-data>`)
+
+	err, ok := parseEPOJSONErrorBody(body)
+	if ok {
+		t.Errorf("expected ok=false for well-formed XML, got err=%v", err)
+	}
+}
+
+func TestParseEPOJSONErrorBody_RejectsEmptyAndMalformed(t *testing.T) {
+	cases := [][]byte{
+		nil,
+		[]byte(""),
+		[]byte("   "),
+		[]byte(`<?xml-stylesheet href='x'?>not json`),
+		[]byte(`<?xml-stylesheet href='x'?>{"unrelated":1}`),
+		[]byte(`<?xml-stylesheet href='x'`), // unterminated PI
+	}
+	for i, body := range cases {
+		if _, ok := parseEPOJSONErrorBody(body); ok {
+			t.Errorf("case %d: expected ok=false for %q", i, body)
+		}
 	}
 }
 

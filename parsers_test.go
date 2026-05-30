@@ -752,6 +752,47 @@ func TestParseClassificationSchema_WithChildren(t *testing.T) {
 	}
 }
 
+func TestParseClassificationSchema_HasChildrenAttr(t *testing.T) {
+	xmlData := `<?xml version="1.0" encoding="UTF-8"?>
+<ops:world-patent-data xmlns:ops="http://ops.epo.org">
+  <ops:classification-scheme>
+    <ops:cpc>
+      <cpc:class-scheme xmlns:cpc="http://www.epo.org/cpcexport" scheme-type="cpc">
+        <cpc:classification-item level="5" has-children="true">
+          <cpc:classification-symbol>H04W</cpc:classification-symbol>
+          <cpc:class-title><cpc:title-part><cpc:text>WIRELESS COMMUNICATION NETWORKS</cpc:text></cpc:title-part></cpc:class-title>
+          <cpc:classification-item level="6" has-children="true">
+            <cpc:classification-symbol>H04W4/00</cpc:classification-symbol>
+            <cpc:class-title><cpc:title-part><cpc:text>Services specially adapted for wireless communication networks</cpc:text></cpc:title-part></cpc:class-title>
+          </cpc:classification-item>
+          <cpc:classification-item level="6" has-children="false">
+            <cpc:classification-symbol>H04W8/00</cpc:classification-symbol>
+            <cpc:class-title><cpc:title-part><cpc:text>Network data management</cpc:text></cpc:title-part></cpc:class-title>
+          </cpc:classification-item>
+        </cpc:classification-item>
+      </cpc:class-scheme>
+    </ops:cpc>
+  </ops:classification-scheme>
+</ops:world-patent-data>`
+
+	data, err := ParseClassificationSchema(xmlData)
+	if err != nil {
+		t.Fatalf("ParseClassificationSchema failed: %v", err)
+	}
+	if !data.HasChildren {
+		t.Error("Expected HasChildren=true on target symbol")
+	}
+	if len(data.Children) != 2 {
+		t.Fatalf("Expected 2 children, got %d", len(data.Children))
+	}
+	if !data.Children[0].HasChildren {
+		t.Errorf("Expected child[0] HasChildren=true, got false")
+	}
+	if data.Children[1].HasChildren {
+		t.Errorf("Expected child[1] HasChildren=false, got true")
+	}
+}
+
 func TestParseClassificationSchema_EmptyResponse(t *testing.T) {
 	xmlData := `<?xml version="1.0" encoding="UTF-8"?>
 <ops:world-patent-data xmlns:ops="http://ops.epo.org">

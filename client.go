@@ -247,6 +247,13 @@ func (c *Client) executeRequest(ctx context.Context, fn func() (*http.Response, 
 		return nil, c.handleErrorResponse(resp.StatusCode, body)
 	}
 
+	// Some endpoints return HTTP 200 with a JSON error envelope wrapped in
+	// an XML processing instruction. Surface it as a typed error so XML
+	// parsers downstream are not asked to parse JSON.
+	if jsonErr, ok := parseEPOJSONErrorBody(body); ok {
+		return nil, jsonErr
+	}
+
 	return body, nil
 }
 
