@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="../../../../style/exchange.xsl"?>
 <ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
     <exchange-documents>
+        <exchange-document system="ops.epo.org" country="EP" doc-number="2533477" kind="A1" status="not found">
+            <bibliographic-data>
+                <publication-reference>
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>2533477</doc-number>
+                        <kind>A1</kind>
+                    </document-id>
+                </publication-reference>
+                <parties/>
+            </bibliographic-data>
+        </exchange-document>
         <exchange-document country="EP" doc-number="2400812" kind="A1">
             <bibliographic-data>
                 <publication-reference>
@@ -57,6 +69,9 @@
                 </publication-reference>
                 <parties/>
             </bibliographic-data>
+            <abstract lang="en">
+                <p>A method, apparatus, and computer program for operating a Bluetooth network is presented. The method comprises providing a Bluetooth system comprising a plurality of Bluetooth devices forming Bluetooth piconets disconnected from each other; and providing a route for a data packet between two remote Bluetooth devices through the Bluetooth system by sequentially changing structures of the Bluetooth piconets, wherein at least some of the plurality of Bluetooth devices sequentially create and terminate connections with different Bluetooth devices as a result of the sequential change of the structures of the Bluetooth piconets.</p>
+            </abstract>
         </exchange-document>
     </exchange-documents>
 </ops:world-patent-data>

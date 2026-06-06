@@ -7,9 +7,9 @@ import (
 
 // demoUsage demonstrates Usage Services endpoint (1 endpoint)
 func demoUsage(demo *DemoContext) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Usage Services (1 endpoint)")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	// Format date range as dd/mm/yyyy~dd/mm/yyyy (yesterday to today)
 	now := time.Now()

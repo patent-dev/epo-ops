@@ -116,7 +116,7 @@ func main() {
 		EndpointFilter: *endpointFilter,
 	}
 
-	fmt.Printf("✓ Client initialized\n")
+	fmt.Printf("OK Client initialized\n")
 	fmt.Printf("  Patent: %s\n", demo.Patent)
 	if !*skipSave {
 		absPath, _ := filepath.Abs(*examplesDir)
@@ -164,32 +164,32 @@ func main() {
 }
 
 func printBanner() {
-	fmt.Println("╔════════════════════════════════════════════════════════════════╗")
-	fmt.Println("║              EPO OPS v3.2 Go Client - Demo                   ║")
-	fmt.Println("║                  46 OpenAPI v3 Endpoints                      ║")
-	fmt.Println("╚════════════════════════════════════════════════════════════════╝")
+	fmt.Println("+================================================================+")
+	fmt.Println("|              EPO OPS v3.2 Go Client - Demo                     |")
+	fmt.Println("|                  46 OpenAPI v3 Endpoints                       |")
+	fmt.Println("+================================================================+")
 	fmt.Println()
 }
 
 func printSummary(demo *DemoContext) {
 	fmt.Println()
-	fmt.Println("╔════════════════════════════════════════════════════════════════╗")
-	fmt.Println("║                      Demo Summary                             ║")
-	fmt.Println("╚════════════════════════════════════════════════════════════════╝")
+	fmt.Println("+================================================================+")
+	fmt.Println("|                      Demo Summary                              |")
+	fmt.Println("+================================================================+")
 	fmt.Printf("  Total Endpoints: %d\n", demo.TotalCount)
-	fmt.Printf("  ✓ Success:       %d\n", demo.SuccessCount)
-	fmt.Printf("  ✗ Failed:        %d\n", demo.FailureCount)
+	fmt.Printf("  OK Success:       %d\n", demo.SuccessCount)
+	fmt.Printf("  FAIL Failed:        %d\n", demo.FailureCount)
 	fmt.Println()
 }
 
 func demoQuotaMonitoring(client *ops.Client) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Quota Monitoring")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	quota := client.GetLastQuota()
 	if quota == nil {
-		fmt.Println("  ✗ No quota information available")
+		fmt.Println("  FAIL No quota information available")
 		fmt.Println()
 		return
 	}
@@ -216,15 +216,15 @@ func demoQuotaMonitoring(client *ops.Client) {
 func getQuotaStatus(status string) string {
 	switch status {
 	case "green":
-		return "🟢 Green (healthy)"
+		return "[green] Green (healthy)"
 	case "yellow":
-		return "🟡 Yellow (moderate)"
+		return "[yellow] Yellow (moderate)"
 	case "red":
-		return "🔴 Red (high usage)"
+		return "[red] Red (high usage)"
 	case "black":
-		return "⚫ Black (exceeded)"
+		return "* Black (exceeded)"
 	default:
-		return fmt.Sprintf("❓ %s", status)
+		return fmt.Sprintf("? %s", status)
 	}
 }
 
@@ -236,11 +236,11 @@ func runEndpoint(demo *DemoContext, name, description string, fn func() ([]byte,
 	}
 
 	demo.TotalCount++
-	fmt.Printf("  → %s... ", description)
+	fmt.Printf("  -> %s... ", description)
 
 	data, err := fn()
 	if err != nil {
-		fmt.Printf("✗ %v\n", err)
+		fmt.Printf("FAIL %v\n", err)
 		demo.FailureCount++
 		return
 	}
@@ -260,12 +260,12 @@ func runEndpoint(demo *DemoContext, name, description string, fn func() ([]byte,
 	}
 
 	if validationErr != nil {
-		fmt.Printf("✗ Invalid %s: %v\n", format, validationErr)
+		fmt.Printf("FAIL Invalid %s: %v\n", format, validationErr)
 		demo.FailureCount++
 		return
 	}
 
-	fmt.Printf("✓ %d bytes (%s)\n", len(data), format)
+	fmt.Printf("OK %d bytes (%s)\n", len(data), format)
 	demo.SuccessCount++
 
 	// Save example

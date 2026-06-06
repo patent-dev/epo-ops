@@ -106,15 +106,15 @@ func DecodeTIFF(tiffData []byte) (image.Image, error) {
 // This is useful for converting all pages of a multi-page patent document.
 // Returns a slice of PNG byte slices, one for each input TIFF.
 //
-// If an error occurs during conversion of any image, the error is returned
-// and processing stops. Successfully converted images up to that point are returned.
+// If an error occurs during conversion of any image, processing stops and the
+// error is returned with a nil slice (no partial results).
 func BatchTIFFToPNG(tiffImages [][]byte) ([][]byte, error) {
 	pngImages := make([][]byte, 0, len(tiffImages))
 
 	for i, tiffData := range tiffImages {
 		pngData, err := TIFFToPNG(tiffData)
 		if err != nil {
-			return pngImages, fmt.Errorf("failed to convert image %d: %w", i+1, err)
+			return nil, fmt.Errorf("failed to convert image %d: %w", i+1, err)
 		}
 		pngImages = append(pngImages, pngData)
 	}

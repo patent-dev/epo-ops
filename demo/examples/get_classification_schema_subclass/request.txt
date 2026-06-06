@@ -1,7 +1,7 @@
-Method: GetClassificationSchemaSubclass
+Method: GetClassificationSchemaSubclassRaw
 
 Parameters:
-  subclass: 00
   ancestors: false
   navigation: false
   class: H04W4
+  subclass: 00

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="../../../../../style/numbers.xsl"?>
 <ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <ops:meta name="status" value="pBRE028"/>
+    <ops:meta name="status" value="SUCCESS"/>
     <ops:standardization inputFormat="docdb" outputFormat="epodoc">
         <ops:input>
             <ops:publication-reference>

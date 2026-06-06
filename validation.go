@@ -203,10 +203,10 @@ func ValidateRefType(refType string) error {
 //   - With spaces: "EP 1000000 B1" (spaces removed before processing)
 //
 // Examples:
-//   - "EP2884620A2" → "EP.2884620.A2"
-//   - "EP.2884620.A2" → "EP.2884620.A2" (already DOCDB)
-//   - "US5551212A" → "US.5551212.A"
-//   - "EP 1000000 B1" → "EP.1000000.B1"
+//   - "EP2884620A2" -> "EP.2884620.A2"
+//   - "EP.2884620.A2" -> "EP.2884620.A2" (already DOCDB)
+//   - "US5551212A" -> "US.5551212.A"
+//   - "EP 1000000 B1" -> "EP.1000000.B1"
 //
 // Returns an error if:
 //   - The input is empty

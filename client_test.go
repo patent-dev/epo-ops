@@ -485,7 +485,7 @@ func TestErrorHandling(t *testing.T) {
 	defer authServer.Close()
 
 	t.Run("404 Not Found", func(t *testing.T) {
-		opsServer := newMockOPSServer(t, func(w http.ResponseWriter, r *http.Request) {
+		opsServer := newMockOPSServer(t, func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusNotFound)
 			_, _ = w.Write(loadTestData("error_404.xml"))
 		})
@@ -515,7 +515,7 @@ func TestErrorHandling(t *testing.T) {
 	})
 
 	t.Run("503 Service Unavailable", func(t *testing.T) {
-		opsServer := newMockOPSServer(t, func(w http.ResponseWriter, r *http.Request) {
+		opsServer := newMockOPSServer(t, func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusServiceUnavailable)
 			_, _ = w.Write([]byte(`Service temporarily unavailable`))
 		})
@@ -546,7 +546,7 @@ func TestErrorHandling(t *testing.T) {
 	})
 
 	t.Run("429 Quota Exceeded", func(t *testing.T) {
-		opsServer := newMockOPSServer(t, func(w http.ResponseWriter, r *http.Request) {
+		opsServer := newMockOPSServer(t, func(w http.ResponseWriter, _ *http.Request) {
 			w.Header().Set("X-Throttling-Control", "black")
 			w.WriteHeader(http.StatusTooManyRequests)
 			_, _ = w.Write(loadTestData("error_429.xml"))
@@ -582,7 +582,7 @@ func TestQuotaTracking(t *testing.T) {
 	authServer := newMockAuthServer(t)
 	defer authServer.Close()
 
-	opsServer := newMockOPSServer(t, func(w http.ResponseWriter, r *http.Request) {
+	opsServer := newMockOPSServer(t, func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("X-Throttling-Control", "green")
 		w.Header().Set("X-IndividualQuota", "used=1234567,quota=4000000000")
 		w.Header().Set("X-RegisteredQuota", "used=5000000,quota=10000000000")
@@ -704,7 +704,7 @@ func TestContextCancellation(t *testing.T) {
 	defer authServer.Close()
 
 	// Create a slow server
-	opsServer := newMockOPSServer(t, func(w http.ResponseWriter, r *http.Request) {
+	opsServer := newMockOPSServer(t, func(w http.ResponseWriter, _ *http.Request) {
 		time.Sleep(200 * time.Millisecond)
 		_, _ = w.Write([]byte(`<data></data>`))
 	})
@@ -740,7 +740,7 @@ func TestContextCancellation(t *testing.T) {
 // Test token refresh on 401
 func TestTokenRefreshOn401(t *testing.T) {
 	authCallCount := 0
-	authServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	authServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		authCallCount++
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{"access_token":"test_token_12345","expires_in":"3600"}`))
@@ -748,7 +748,7 @@ func TestTokenRefreshOn401(t *testing.T) {
 	defer authServer.Close()
 
 	requestCount := 0
-	opsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	opsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		requestCount++
 
 		// First request returns 401, second succeeds
@@ -797,7 +797,7 @@ func BenchmarkGetBiblio(b *testing.B) {
 	authServer := newMockAuthServer(&testing.T{})
 	defer authServer.Close()
 
-	opsServer := newMockOPSServer(&testing.T{}, func(w http.ResponseWriter, r *http.Request) {
+	opsServer := newMockOPSServer(&testing.T{}, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(`<data>test</data>`))
 	})
 	defer opsServer.Close()

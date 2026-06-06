@@ -18,3 +18,5 @@ coverage.html
 # IDE
 .idea/
 .vscode/
+# Local agent/tooling config
+.claude/

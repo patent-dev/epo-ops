@@ -1,8 +1,8 @@
-Method: GetClassificationMapping
+Method: GetClassificationMappingRaw
 
 Parameters:
+  subclass: 18
   outputFormat: ecla
   additional: false
   inputFormat: cpc
   class: H04W84
-  subclass: 18

@@ -103,10 +103,10 @@ func DetectFormat(data []byte) FileFormat {
 // FormatRequestDescription formats a request description with parameters
 func FormatRequestDescription(method string, params map[string]string) string {
 	var sb strings.Builder
-	sb.WriteString(fmt.Sprintf("Method: %s\n\n", method))
+	fmt.Fprintf(&sb, "Method: %s\n\n", method)
 	sb.WriteString("Parameters:\n")
 	for k, v := range params {
-		sb.WriteString(fmt.Sprintf("  %s: %s\n", k, v))
+		fmt.Fprintf(&sb, "  %s: %s\n", k, v)
 	}
 	return sb.String()
 }
@@ -135,8 +135,9 @@ func ValidateTIFF(data []byte) error {
 	}
 
 	// Check TIFF magic numbers
-	if !((data[0] == 'I' && data[1] == 'I' && data[2] == 42 && data[3] == 0) ||
-		(data[0] == 'M' && data[1] == 'M' && data[2] == 0 && data[3] == 42)) {
+	littleEndian := data[0] == 'I' && data[1] == 'I' && data[2] == 42 && data[3] == 0
+	bigEndian := data[0] == 'M' && data[1] == 'M' && data[2] == 0 && data[3] == 42
+	if !littleEndian && !bigEndian {
 		return fmt.Errorf("invalid TIFF magic number")
 	}
 

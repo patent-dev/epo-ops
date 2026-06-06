@@ -1,6 +1,6 @@
 module github.com/patent-dev/epo-ops/demo
 
-go 1.25.0
+go 1.26.1
 
 require github.com/patent-dev/epo-ops v0.0.0
 

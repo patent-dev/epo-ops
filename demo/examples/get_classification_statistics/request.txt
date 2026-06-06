@@ -1,4 +1,4 @@
-Method: GetClassificationStatistics
+Method: GetClassificationStatisticsRaw
 
 Parameters:
   query: H04W

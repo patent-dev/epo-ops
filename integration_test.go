@@ -671,7 +671,7 @@ func TestAdditionalServicesIntegration(t *testing.T) {
 		}
 	})
 
-	// Test: Register biblio retrieval (raw XML) — register requires epodoc format
+	// Test: Register biblio retrieval (raw XML) - register requires epodoc format
 	t.Run("GetRegisterBiblioRaw", func(t *testing.T) {
 		register, err := client.GetRegisterBiblioRaw(ctx, "publication", "epodoc", "EP1000000")
 		if err != nil {
@@ -688,7 +688,7 @@ func TestAdditionalServicesIntegration(t *testing.T) {
 		t.Logf("Successfully retrieved register biblio (length: %d bytes)", len(register))
 	})
 
-	// Test: Register events retrieval (parsed) — register requires epodoc format
+	// Test: Register events retrieval (parsed) - register requires epodoc format
 	t.Run("GetRegisterEvents", func(t *testing.T) {
 		data, err := client.GetRegisterEvents(ctx, "publication", "epodoc", "EP1000000")
 		if err != nil {
@@ -744,7 +744,7 @@ func TestAdditionalServicesIntegration(t *testing.T) {
 			t.Errorf("Expected OutputFormat 'epodoc', got %q", data.OutputFormat)
 		}
 
-		t.Logf("Converted %s → DocNumber=%s Kind=%s Date=%s",
+		t.Logf("Converted %s -> DocNumber=%s Kind=%s Date=%s",
 			testPatent, data.DocNumber, data.Kind, data.Date)
 
 		// Save fixture
@@ -905,7 +905,7 @@ func TestEdgeCasesIntegration(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	// EP.0000001.B1 — very old patent, likely has minimal or no legal events
+	// EP.0000001.B1 - very old patent, likely has minimal or no legal events
 	t.Run("GetLegal_OldPatent", func(t *testing.T) {
 		data, err := client.GetLegal(ctx, "publication", "docdb", "EP.0000001.B1")
 		if err != nil {

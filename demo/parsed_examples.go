@@ -8,17 +8,17 @@ import (
 
 // demoParsedAPI showcases the benefits of the parsed struct API
 func demoParsedAPI(demo *DemoContext) {
-	fmt.Println("\n📊 Parsed API Examples - Type-Safe Access")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("\nParsed API Examples - Type-Safe Access")
+	fmt.Println("==============================================================")
 	fmt.Println("These examples demonstrate direct struct access without XML parsing")
 	fmt.Println()
 
 	// Example 1: Family traversal with type safety
-	fmt.Println("🔍 Example 1: Type-Safe Family Analysis")
-	fmt.Println("─────────────────────────────────────")
+	fmt.Println("Example 1: Type-Safe Family Analysis")
+	fmt.Println("-------------------------------------")
 	family, err := demo.Client.GetFamily(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 	if err != nil {
-		fmt.Printf("❌ Error: %v\n\n", err)
+		fmt.Printf("FAIL Error: %v\n\n", err)
 	} else {
 		fmt.Printf("Patent Number: %s\n", family.PatentNumber)
 		fmt.Printf("Family ID:     %s\n", family.FamilyID)
@@ -59,11 +59,11 @@ func demoParsedAPI(demo *DemoContext) {
 	}
 
 	// Example 2: Legal event analysis
-	fmt.Println("⚖️  Example 2: Legal Event Timeline")
-	fmt.Println("─────────────────────────────────────")
+	fmt.Println("Example 2: Legal Event Timeline")
+	fmt.Println("-------------------------------------")
 	legal, err := demo.Client.GetLegal(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 	if err != nil {
-		fmt.Printf("❌ Error: %v\n\n", err)
+		fmt.Printf("FAIL Error: %v\n\n", err)
 	} else {
 		fmt.Printf("Patent:        %s\n", legal.PatentNumber)
 		fmt.Printf("Family ID:     %s\n", legal.FamilyID)
@@ -91,11 +91,11 @@ func demoParsedAPI(demo *DemoContext) {
 	}
 
 	// Example 3: Search with immediate access
-	fmt.Println("🔎 Example 3: Search with Structured Results")
-	fmt.Println("─────────────────────────────────────")
+	fmt.Println("Example 3: Search with Structured Results")
+	fmt.Println("-------------------------------------")
 	results, err := demo.Client.Search(demo.Ctx, "ti=battery", "1-5")
 	if err != nil {
-		fmt.Printf("❌ Error: %v\n\n", err)
+		fmt.Printf("FAIL Error: %v\n\n", err)
 	} else {
 		fmt.Printf("Query:         %s\n", results.Query)
 		fmt.Printf("Total Results: %d\n", results.TotalCount)
@@ -120,11 +120,11 @@ func demoParsedAPI(demo *DemoContext) {
 	}
 
 	// Example 4: Description with paragraphs
-	fmt.Println("📄 Example 4: Description with Structured Text")
-	fmt.Println("─────────────────────────────────────")
+	fmt.Println("Example 4: Description with Structured Text")
+	fmt.Println("-------------------------------------")
 	description, err := demo.Client.GetDescription(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 	if err != nil {
-		fmt.Printf("❌ Error: %v\n\n", err)
+		fmt.Printf("FAIL Error: %v\n\n", err)
 	} else {
 		fmt.Printf("Patent:     %s\n", description.PatentNumber)
 		fmt.Printf("Country:    %s\n", description.Country)
@@ -150,11 +150,11 @@ func demoParsedAPI(demo *DemoContext) {
 	}
 
 	// Example 5: Equivalents (simple family)
-	fmt.Println("🌐 Example 5: Published Equivalents")
-	fmt.Println("─────────────────────────────────────")
+	fmt.Println("Example 5: Published Equivalents")
+	fmt.Println("-------------------------------------")
 	equivalents, err := demo.Client.GetPublishedEquivalents(demo.Ctx, ops.RefTypePublication, ops.FormatDocDB, demo.Patent)
 	if err != nil {
-		fmt.Printf("❌ Error: %v\n\n", err)
+		fmt.Printf("FAIL Error: %v\n\n", err)
 	} else {
 		fmt.Printf("Patent:      %s\n", equivalents.PatentNumber)
 		fmt.Printf("Equivalents: %d\n", len(equivalents.Equivalents))
@@ -173,13 +173,13 @@ func demoParsedAPI(demo *DemoContext) {
 	}
 
 	// Summary
-	fmt.Println("✅ Benefits of Parsed API:")
-	fmt.Println("  • No manual XML parsing required")
-	fmt.Println("  • Type-safe field access")
-	fmt.Println("  • IDE autocomplete support")
-	fmt.Println("  • Compiler catches field name errors")
-	fmt.Println("  • Cleaner, more readable code")
+	fmt.Println("OK Benefits of Parsed API:")
+	fmt.Println("  - No manual XML parsing required")
+	fmt.Println("  - Type-safe field access")
+	fmt.Println("  - IDE autocomplete support")
+	fmt.Println("  - Compiler catches field name errors")
+	fmt.Println("  - Cleaner, more readable code")
 	fmt.Println()
-	fmt.Println("💡 Tip: Use *Raw() methods if you need XML for debugging or storage")
+	fmt.Println("Tip: Use *Raw() methods if you need XML for debugging or storage")
 	fmt.Println()
 }

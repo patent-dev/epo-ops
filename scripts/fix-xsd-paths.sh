@@ -50,7 +50,7 @@ if grep -q "wars/levelx" "$XSD_FILE"; then
     grep "wars/levelx" "$XSD_FILE"
     exit 1
 else
-    echo "✓ All paths fixed successfully!"
+    echo "OK All paths fixed successfully!"
 fi
 
 # Show the fixed import statements

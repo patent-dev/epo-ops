@@ -1,4 +1,4 @@
-Method: GetRegisterEventsMultiple
+Method: GetRegisterEventsMultipleRaw
 
 Parameters:
   refType: publication

@@ -12,6 +12,8 @@ import (
 // Legal and Register Services - Legal status and EPO Register data.
 //
 // This file contains methods for retrieving legal status events and EPO Register information.
+
+// GetLegal retrieves parsed legal status data for a patent.
 func (c *Client) GetLegal(ctx context.Context, refType, format, number string) (*LegalData, error) {
 	xmlData, err := c.GetLegalRaw(ctx, refType, format, number)
 	if err != nil {
@@ -69,7 +71,7 @@ func (c *Client) GetLegalMultiple(ctx context.Context, refType, format string, n
 	return ParseLegal(xmlData)
 }
 
-// GetRegisterBiblio retrieves bibliographic data from the EPO Register.
+// GetRegisterBiblioRaw retrieves bibliographic data from the EPO Register.
 //
 // Parameters:
 //   - refType: Reference type (e.g., "publication", "application", "priority")
@@ -94,7 +96,7 @@ func (c *Client) GetRegisterBiblioRaw(ctx context.Context, refType, format, numb
 	})
 }
 
-// GetRegisterBiblioMultiple retrieves bibliographic data from the EPO Register for multiple patents.
+// GetRegisterBiblioMultipleRaw retrieves bibliographic data from the EPO Register for multiple patents.
 // Uses POST endpoint for efficient batch retrieval of up to 100 patents in one request.
 //
 // Parameters:
@@ -165,7 +167,7 @@ func (c *Client) GetRegisterEventsRaw(ctx context.Context, refType, format, numb
 	})
 }
 
-// GetRegisterEventsMultiple retrieves procedural events from the EPO Register for multiple patents.
+// GetRegisterEventsMultipleRaw retrieves procedural events from the EPO Register for multiple patents.
 // Uses POST endpoint for efficient batch retrieval of up to 100 patents in one request.
 //
 // Parameters:
@@ -204,7 +206,7 @@ func (c *Client) GetRegisterEventsMultipleRaw(ctx context.Context, refType, form
 	})
 }
 
-// GetRegisterProceduralSteps retrieves procedural steps from the EPO Register.
+// GetRegisterProceduralStepsRaw retrieves procedural steps from the EPO Register.
 //
 // Procedural steps provide detailed information about the procedural history of a patent
 // application, including milestones, deadlines, and administrative actions.
@@ -227,7 +229,7 @@ func (c *Client) GetRegisterEventsMultipleRaw(ctx context.Context, refType, form
 //	if err != nil {
 //	    log.Fatal(err)
 //	}
-func (c *Client) GetRegisterProceduralStepsRaw(ctx context.Context, refType, format, number string) (string, error) {
+func (c *Client) GetRegisterProceduralStepsRaw(ctx context.Context, refType, _, number string) (string, error) {
 	if err := ValidateRefType(refType); err != nil {
 		return "", err
 	}
@@ -250,7 +252,7 @@ func (c *Client) GetRegisterProceduralStepsRaw(ctx context.Context, refType, for
 	})
 }
 
-// GetRegisterProceduralStepsMultiple retrieves procedural steps for multiple patent numbers.
+// GetRegisterProceduralStepsMultipleRaw retrieves procedural steps for multiple patent numbers.
 //
 // This method uses the POST endpoint to retrieve procedural step data for multiple
 // patent numbers in a single request.
@@ -266,7 +268,7 @@ func (c *Client) GetRegisterProceduralStepsRaw(ctx context.Context, refType, for
 //
 //	numbers := []string{"EP1000000", "EP1000001", "EP1000002"}
 //	steps, err := client.GetRegisterProceduralStepsMultiple(ctx, "publication", "epodoc", numbers)
-func (c *Client) GetRegisterProceduralStepsMultipleRaw(ctx context.Context, refType, format string, numbers []string) (string, error) {
+func (c *Client) GetRegisterProceduralStepsMultipleRaw(ctx context.Context, refType, _ string, numbers []string) (string, error) {
 	if len(numbers) == 0 {
 		return "", &ConfigError{Message: "numbers list cannot be empty"}
 	}
@@ -296,7 +298,7 @@ func (c *Client) GetRegisterProceduralStepsMultipleRaw(ctx context.Context, refT
 	})
 }
 
-// GetRegisterUNIP retrieves unitary patent package (UPP) information from the EPO Register.
+// GetRegisterUNIPRaw retrieves unitary patent package (UPP) information from the EPO Register.
 //
 // Parameters:
 //   - refType: Reference type (RefTypePublication or RefTypeApplication)
@@ -311,7 +313,7 @@ func (c *Client) GetRegisterProceduralStepsMultipleRaw(ctx context.Context, refT
 // Example:
 //
 //	unip, err := client.GetRegisterUNIP(ctx, epo_ops.RefTypePublication, "epodoc", "EP3000000")
-func (c *Client) GetRegisterUNIPRaw(ctx context.Context, refType, format, number string) (string, error) {
+func (c *Client) GetRegisterUNIPRaw(ctx context.Context, refType, _, number string) (string, error) {
 	// Validate reference type
 	if err := ValidateRefType(refType); err != nil {
 		return "", err
@@ -336,7 +338,7 @@ func (c *Client) GetRegisterUNIPRaw(ctx context.Context, refType, format, number
 	})
 }
 
-// GetRegisterUNIPMultiple retrieves unitary patent package (UPP) information for multiple patents.
+// GetRegisterUNIPMultipleRaw retrieves unitary patent package (UPP) information for multiple patents.
 //
 // Parameters:
 //   - refType: Reference type (RefTypePublication or RefTypeApplication)

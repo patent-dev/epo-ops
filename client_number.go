@@ -29,6 +29,7 @@ func (c *Client) ConvertPatentNumber(ctx context.Context, refType, inputFormat, 
 	return ParseNumberConversion(xmlData)
 }
 
+// ConvertPatentNumberRaw converts a patent number from one format to another and returns the raw XML response.
 func (c *Client) ConvertPatentNumberRaw(ctx context.Context, refType, inputFormat, number, outputFormat string) (string, error) {
 	if err := ValidateRefType(refType); err != nil {
 		return "", err
@@ -53,7 +54,7 @@ func (c *Client) ConvertPatentNumberRaw(ctx context.Context, refType, inputForma
 	})
 }
 
-// ConvertPatentNumberMultiple converts multiple patent numbers from one format to another.
+// ConvertPatentNumberMultipleRaw converts multiple patent numbers from one format to another.
 // Uses POST endpoint for efficient batch conversion of up to 100 patents in one request.
 //
 // Parameters:

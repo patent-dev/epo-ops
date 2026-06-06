@@ -40,7 +40,7 @@ Converts EPO OPS Swagger 2.0 specification to OpenAPI 3.0 format.
 
 **What it does**:
 1. Converts `resources/ops.yaml` (Swagger 2.0) to `openapi.yaml` (OpenAPI 3.0)
-2. Fixes OAuth2 flow: `authorizationCode` → `clientCredentials`
+2. Fixes OAuth2 flow: `authorizationCode` -> `clientCredentials`
 3. Removes invalid `format: string` from boolean parameters
 4. **Adds missing usage stats endpoint** from official OPS v3.2 documentation (EPO forgot to include it in swagger)
 
@@ -83,13 +83,13 @@ Even though only 5 XSDs are currently embedded in `xml.go`, all 8 files form a *
 
 ```
 ops.xsd (master)
-  ├── imports: exchange-documents.xsd
-  ├── imports: fulltext-documents.xsd
-  ├── imports: CPCSchema.xsd
-  ├── imports: CPCDefinitions.xsd
-  ├── imports: rplus.xsd
-  ├── imports: ccd.xsd
-  └── includes: ops_legal.xsd
+  +-- imports: exchange-documents.xsd
+  +-- imports: fulltext-documents.xsd
+  +-- imports: CPCSchema.xsd
+  +-- imports: CPCDefinitions.xsd
+  +-- imports: rplus.xsd
+  +-- imports: ccd.xsd
+  +-- includes: ops_legal.xsd
 ```
 
 Users who need full XML validation require all schemas in the chain.

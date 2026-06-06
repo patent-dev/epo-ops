@@ -57,7 +57,7 @@ func (c *Client) GetClassificationSchemaRaw(ctx context.Context, class string, a
 	})
 }
 
-// GetClassificationSchemaSubclass retrieves CPC classification schema for a specific subclass.
+// GetClassificationSchemaSubclassRaw retrieves CPC classification schema for a specific subclass.
 //
 // This is a more specific version of GetClassificationSchema that retrieves classification
 // hierarchy for a specific class/subclass combination.
@@ -98,7 +98,7 @@ func (c *Client) GetClassificationSchemaSubclassRaw(ctx context.Context, class, 
 	})
 }
 
-// GetClassificationSchemaMultiple retrieves CPC classification schemas for multiple classifications.
+// GetClassificationSchemaMultipleRaw retrieves CPC classification schemas for multiple classifications.
 //
 // This method uses the POST endpoint to retrieve classification data for multiple
 // classification symbols in a single request.
@@ -174,7 +174,7 @@ func (c *Client) GetClassificationMedia(ctx context.Context, mediaName string, a
 	})
 }
 
-// GetClassificationStatistics searches for CPC classification statistics.
+// GetClassificationStatisticsRaw searches for CPC classification statistics.
 //
 // This method retrieves statistical information about patent counts across CPC
 // classification codes. It allows searching for classification codes and returns
@@ -218,7 +218,7 @@ func (c *Client) GetClassificationStatisticsRaw(ctx context.Context, query strin
 	})
 }
 
-// GetClassificationMapping converts between CPC and ECLA classification formats.
+// GetClassificationMappingRaw converts between CPC and ECLA classification formats.
 //
 // This method maps classification codes between the Cooperative Patent Classification (CPC)
 // and European Classification (ECLA) systems. This is useful when working with patents that

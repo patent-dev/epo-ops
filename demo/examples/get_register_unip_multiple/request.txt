@@ -1,6 +1,6 @@
-Method: GetRegisterUNIPMultiple
+Method: GetRegisterUNIPMultipleRaw
 
 Parameters:
+  format: epodoc
   numbers: bulk test patents from CSV
   refType: publication
-  format: epodoc

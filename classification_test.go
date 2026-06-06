@@ -229,14 +229,6 @@ func TestGetClassificationSchemaMultipleRaw(t *testing.T) {
 	}
 }
 
-// min returns the minimum of two integers
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 // setupIntegrationTest creates a test client and context for integration tests.
 // It skips the test if EPO credentials are not configured.
 func setupIntegrationTest(t *testing.T) (*Client, context.Context) {

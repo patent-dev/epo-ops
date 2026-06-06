@@ -134,7 +134,7 @@ func TestParseLegal_DynamicFields(t *testing.T) {
 
 	t.Logf("Event 3 successfully captured %d L*EP fields up to L050EP: %v", len(event3.Fields), event3.Fields)
 
-	t.Logf("\n✓ Dynamic field extraction successfully handles L001EP through L050EP")
+	t.Logf("\nOK Dynamic field extraction successfully handles L001EP through L050EP")
 }
 
 // TestExtractLegalFields_EdgeCases tests edge cases in the reflection-based field extraction

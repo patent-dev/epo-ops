@@ -8,9 +8,9 @@ import (
 
 // demoPublished demonstrates all Published Data Services endpoints (15 endpoints)
 func demoPublished(demo *DemoContext) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Published Data Services (15 endpoints)")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	// 1. GetBiblio (GET)
 	runEndpoint(demo, "get_biblio", "GetBiblio",

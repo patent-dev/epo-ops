@@ -1,35 +1,27 @@
 # EPO OPS Go Client
 
-A Go client library for the European Patent Office's Open Patent Services (OPS) API v3.2.
+[![CI](https://github.com/patent-dev/epo-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/patent-dev/epo-ops/actions/workflows/ci.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/patent-dev/epo-ops.svg)](https://pkg.go.dev/github.com/patent-dev/epo-ops)
+[![Go Report Card](https://goreportcard.com/badge/github.com/patent-dev/epo-ops)](https://goreportcard.com/report/github.com/patent-dev/epo-ops)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+A Go client library for the European Patent Office's Open Patent Services (OPS) REST API v3.2, with OAuth2 authentication and typed responses.
 
 ## Overview
 
-This library provides an idiomatic Go interface to interact with the EPO's Open Patent Services, allowing you to:
+This library provides an idiomatic Go interface to the EPO's Open Patent Services:
 
-- Retrieve patent bibliographic data, claims, descriptions, and abstracts
-- Search for patents using various criteria
-- Get patent family information (INPADOC)
-- Access CPC/ECLA classification data (schema, statistics, mapping, media)
-- Download patent images and convert TIFF to PNG
-- Access legal status and register data
-- Track API quota usage
-
-## Features
-
-- OAuth2 authentication with automatic token management
-- Patent text retrieval (biblio, claims, description, abstract, fulltext)
-- Patent search using CQL (Contextual Query Language)
-- INPADOC family retrieval
+- OAuth2 authentication with automatic token management and refresh on 401
+- Patent text retrieval: bibliographic data, claims, description, abstract, and fulltext
+- Patent search using CQL (Contextual Query Language), with optional constituents
+- INPADOC family retrieval, including biblio and legal variants
 - CPC/ECLA classification services (schema, statistics, mapping, media)
 - Patent image retrieval with TIFF to PNG conversion
 - Legal status retrieval with INPADOC legal event data
 - EPO Register access (biblio, events, procedural steps, unitary patent)
 - Patent number format conversion and validation
-- Comprehensive error handling with custom error types
-- Automatic retry logic with exponential backoff
-- Quota tracking and fair use monitoring
-- Unit and integration tests
-
+- Quota tracking against the fair use policy
+- Typed errors plus automatic retry with exponential backoff
 
 ## Installation
 
@@ -37,7 +29,26 @@ This library provides an idiomatic Go interface to interact with the EPO's Open 
 go get github.com/patent-dev/epo-ops
 ```
 
-## Quick Start
+## Getting access
+
+The EPO OPS API requires a free developer account and an OAuth2 Consumer Key + Consumer Secret.
+
+1. Register at the [EPO Developer Portal](https://developers.epo.org/user/register), choose the
+   **Non-paying** access method, and submit the form. Wait for the confirmation email.
+
+2. Sign in at the [portal](https://developers.epo.org/user/login) and open **My Apps**.
+
+3. Click **Add a new App** to register an application and obtain its **Consumer Key** and
+   **Consumer Secret**.
+
+4. Export them for the client / demo:
+   ```bash
+   export EPO_OPS_CONSUMER_KEY=...
+   export EPO_OPS_CONSUMER_SECRET=...
+   ```
+
+
+## Quick start
 
 ```go
 package main
@@ -51,393 +62,45 @@ import (
 )
 
 func main() {
-    config := &ops.Config{
+    client, err := ops.NewClient(&ops.Config{
         ConsumerKey:    "your-consumer-key",
         ConsumerSecret: "your-consumer-secret",
-    }
-
-    client, err := ops.NewClient(config)
+    })
     if err != nil {
         log.Fatal(err)
     }
 
     ctx := context.Background()
 
-    // Retrieve bibliographic data (returns *BiblioData)
     biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Printf("Title: %v\n", biblio.Titles)
-
-    // Search patents (returns *SearchResultData)
-    results, err := client.Search(ctx, "ti=plastic", "1-5")
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Printf("Total results: %d\n", results.TotalCount)
-
-    // Get patent family (returns *FamilyData)
-    family, err := client.GetFamily(ctx, "publication", "docdb", "EP.1000000.B1")
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Printf("Family members: %d\n", len(family.Members))
-
-    // Get patent image (first page of drawings)
-    imageData, err := client.GetImage(ctx, "EP", "1000000", "B1", "Drawing", 1)
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Printf("Retrieved image: %d bytes\n", len(imageData))
+    fmt.Printf("Title: %s\n", biblio.Titles["en"])
 }
 ```
 
-## Parsed vs Raw API
+## Usage
 
-This library provides two ways to access API data:
-
-### Parsed API (Type-Safe, Recommended)
-
-By default, methods return parsed Go structs for type-safe access:
+### Client creation
 
 ```go
-// Returns *BiblioData struct
-biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
-fmt.Printf("Title: %s\n", biblio.Titles["en"])
-fmt.Printf("Country: %s, Doc: %s, Kind: %s\n", biblio.Country, biblio.DocNumber, biblio.Kind)
-fmt.Printf("Applicants: %d\n", len(biblio.Applicants))
-
-// Returns *FamilyData struct
-family, err := client.GetFamily(ctx, "publication", "docdb", "EP.1000000.B1")
-fmt.Printf("Family ID: %s\n", family.FamilyID)
-fmt.Printf("Members: %d\n", len(family.Members))
-
-// Returns *SearchResultData struct
-results, err := client.Search(ctx, "ti=battery", "1-5")
-fmt.Printf("Total: %d\n", results.TotalCount)
-for _, r := range results.Results {
-    fmt.Printf("  %s%s\n", r.Country, r.DocNumber)
-}
-
-// Returns *LegalData struct
-legal, err := client.GetLegal(ctx, "publication", "docdb", "EP.1000000.B1")
-for _, event := range legal.LegalEvents {
-    fmt.Printf("%s: %s\n", event.Date, event.Code)
-}
-```
-
-### Raw API (XML Access)
-
-For special cases (e.g., saving raw XML, custom parsing), use `*Raw()` methods:
-
-```go
-// Returns raw XML string
-xmlData, err := client.GetBiblioRaw(ctx, "publication", "docdb", "EP.1000000.B1")
-os.WriteFile("biblio.xml", []byte(xmlData), 0644)
-
-// All endpoints have Raw variants
-familyXML, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP.1000000.B1")
-searchXML, err := client.SearchRaw(ctx, "ti=battery", "1-5")
-legalXML, err := client.GetLegalRaw(ctx, "publication", "docdb", "EP.1000000.B1")
-```
-
-**Architecture Note**: Parsed methods internally call the corresponding `*Raw()` method and parse the result. This ensures consistent data access and eliminates code duplication.
-
-## Getting Credentials
-
-To use the EPO OPS API, you need to register for API credentials:
-
-1. Visit https://developers.epo.org/
-2. Create an account or sign in
-3. Register a new application to get your consumer key and secret
-
-## Fair Use Policy & Quota Tracking
-
-The EPO OPS API has usage limits:
-- **Non-paying users**: 4 GB/week (free)
-- **Paying users**: >4 GB/week (€2,800/year)
-
-See: https://www.epo.org/en/service-support/ordering/fair-use
-
-This client automatically tracks quota usage from API responses:
-
-```go
-// Make API calls
-client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
-
-// Check quota status
-quota := client.GetLastQuota()
-if quota != nil {
-    fmt.Printf("Status: %s\n", quota.Status) // "green", "yellow", "red", or "black"
-    fmt.Printf("Individual: %d/%d (%.2f%%)\n",
-        quota.Individual.Used,
-        quota.Individual.Limit,
-        quota.Individual.UsagePercent())
-}
-```
-
-## Image Retrieval & TIFF Conversion
-
-Patent images from EPO are typically in TIFF format. This library includes utilities to convert TIFF to PNG:
-
-```go
-import (
-    ops "github.com/patent-dev/epo-ops"
-    "github.com/patent-dev/epo-ops/tiffutil"
-)
-
-// Retrieve patent image (TIFF format)
-imageData, err := client.GetImage(ctx, "EP", "1000000", "B1", "Drawing", 1)
-if err != nil {
-    log.Fatal(err)
-}
-
-// Convert TIFF to PNG (with automatic rotation for landscape images)
-pngData, err := tiffutil.TIFFToPNG(imageData)
-if err != nil {
-    log.Fatal(err)
-}
-
-// Save PNG file
-os.WriteFile("patent_drawing.png", pngData, 0644)
-
-// Or convert without rotation
-pngData, err := tiffutil.TIFFToPNGNoRotate(imageData)
-
-// Or batch convert multiple pages
-pngImages, err := tiffutil.BatchTIFFToPNG([][]byte{imageData1, imageData2, imageData3})
-```
-
-The TIFF utilities support:
-- CCITT Group 3/4 compression (common in patent drawings)
-- LZW compression
-- CMYK color model
-- Automatic landscape-to-portrait rotation
-
-## API Reference
-
-### Client Creation
-
-```go
-// Create client with default configuration
-config := &ops.Config{
+// Defaults are filled in for any field left zero.
+client, err := ops.NewClient(&ops.Config{
     ConsumerKey:    "your-key",
     ConsumerSecret: "your-secret",
-}
-client, err := ops.NewClient(config)
+})
 
-// Create client with custom configuration
-config := &ops.Config{
+// Custom configuration.
+client, err := ops.NewClient(&ops.Config{
     ConsumerKey:    "your-key",
     ConsumerSecret: "your-secret",
-    BaseURL:        "https://ops.epo.org/3.2/rest-services",  // Default
-    MaxRetries:     3,                                          // Default
-    RetryDelay:     time.Second,                                // Default
-    Timeout:        30 * time.Second,                           // Default
-}
-client, err := ops.NewClient(config)
+    BaseURL:        "https://ops.epo.org/3.2/rest-services", // default
+    MaxRetries:     3,                                       // default
+    RetryDelay:     time.Second,                             // default
+    Timeout:        30 * time.Second,                        // default
+})
 ```
-
-### Published Data Retrieval
-
-All methods return parsed Go structs by default. Use `*Raw()` variants for XML access.
-
-```go
-// Retrieve bibliographic data → *BiblioData
-biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
-if err != nil {
-    log.Fatal(err)
-}
-fmt.Printf("Title: %s\n", biblio.Titles["en"])
-fmt.Printf("Publication Date: %s\n", biblio.PublicationDate)
-fmt.Printf("IPC: %v\n", biblio.IPCClasses)
-for _, applicant := range biblio.Applicants {
-    fmt.Printf("Applicant: %s (%s)\n", applicant.Name, applicant.Country)
-}
-
-// Retrieve claims → *ClaimsData
-claims, err := client.GetClaims(ctx, "publication", "docdb", "EP.1000000.B1")
-fmt.Printf("Claims count: %d\n", len(claims.Claims))
-for _, claim := range claims.Claims {
-    fmt.Printf("Claim %s: %s\n", claim.Number, claim.Text)
-}
-
-// Retrieve description → *DescriptionData
-description, err := client.GetDescription(ctx, "publication", "docdb", "EP.1000000.B1")
-fmt.Printf("Paragraphs: %d\n", len(description.Paragraphs))
-
-// Retrieve abstract → *AbstractData
-abstract, err := client.GetAbstract(ctx, "publication", "docdb", "EP.1000000.B1")
-fmt.Printf("Abstract: %s\n", abstract.Text)
-
-// Retrieve full text → *FulltextData (biblio + abstract + description + claims)
-fulltext, err := client.GetFulltext(ctx, "publication", "docdb", "EP.1000000.B1")
-fmt.Printf("Title: %s\n", fulltext.Biblio.Titles["en"])
-fmt.Printf("Abstract: %s\n", fulltext.Abstract.Text)
-fmt.Printf("Description paragraphs: %d\n", len(fulltext.Description.Paragraphs))
-fmt.Printf("Claims: %d\n", len(fulltext.Claims.Claims))
-
-// Get published equivalents (simple family) → *EquivalentsData
-equivalents, err := client.GetPublishedEquivalents(ctx, "publication", "docdb", "EP.1000000.B1")
-fmt.Printf("Equivalents: %d\n", len(equivalents.Equivalents))
-for _, eq := range equivalents.Equivalents {
-    fmt.Printf("  %s (Date: %s, Kind: %s)\n", eq.DocNumber, eq.Date, eq.Kind)
-}
-
-// Raw XML access (if needed)
-xmlData, err := client.GetBiblioRaw(ctx, "publication", "docdb", "EP.1000000.B1")
-os.WriteFile("biblio.xml", []byte(xmlData), 0644)
-```
-
-**Parameters**:
-- `refType`: Reference type - `"publication"`, `"application"`, or `"priority"`
-- `format`: Number format - `"docdb"` or `"epodoc"`
-- `number`: Patent number - docdb format: `"EP.1000000.B1"`, epodoc format: `"EP1000000"`
-
-### Search
-
-Returns `*SearchResultData` with parsed results.
-
-```go
-// Basic search → *SearchResultData
-results, err := client.Search(ctx, "ti=battery", "1-25")
-if err != nil {
-    log.Fatal(err)
-}
-
-fmt.Printf("Total results: %d\n", results.TotalCount)
-fmt.Printf("Range: %d-%d\n", results.RangeBegin, results.RangeEnd)
-fmt.Printf("Returned: %d results\n", len(results.Results))
-
-for _, r := range results.Results {
-    fmt.Printf("  %s%s%s - %s\n", r.Country, r.DocNumber, r.Kind, r.Title)
-}
-
-// Search with specific constituent → *SearchResultData
-results, err := client.SearchWithConstituent(ctx, "biblio", "pa=Siemens", "1-10")
-
-// Raw XML access
-xmlData, err := client.SearchRaw(ctx, "ti=battery", "1-25")
-```
-
-**CQL Query Examples**:
-- `ti=plastic` - Title contains "plastic"
-- `pa=Siemens` - Applicant is Siemens
-- `ti=plastic and pa=Siemens` - Combined search
-- `de` - Country code DE
-
-**Range Format**: `"1-25"` (default), `"1-100"`, etc.
-
-### Family Retrieval
-
-Returns `*FamilyData` with parsed family information.
-
-```go
-// Basic INPADOC family → *FamilyData
-family, err := client.GetFamily(ctx, "publication", "docdb", "EP.1000000.B1")
-if err != nil {
-    log.Fatal(err)
-}
-
-fmt.Printf("Family ID: %s\n", family.FamilyID)
-fmt.Printf("Patent Number: %s\n", family.PatentNumber)
-fmt.Printf("Total Members: %d\n", family.TotalCount)
-fmt.Printf("Has Legal Data: %v\n", family.Legal)
-
-for _, member := range family.Members {
-    fmt.Printf("Member: %s %s %s (Date: %s)\n",
-        member.Country, member.DocNumber, member.Kind, member.Date)
-
-    if member.ApplicationRef.DocNumber != "" {
-        fmt.Printf("  Application: %s %s (Date: %s)\n",
-            member.ApplicationRef.Country,
-            member.ApplicationRef.DocNumber,
-            member.ApplicationRef.Date)
-    }
-
-    for _, priority := range member.PriorityClaims {
-        fmt.Printf("  Priority: %s %s (Date: %s)\n",
-            priority.Country, priority.DocNumber, priority.Date)
-    }
-}
-
-// Family with bibliographic data → *FamilyData
-family, err := client.GetFamilyWithBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
-
-// Family with legal status → *FamilyData
-family, err := client.GetFamilyWithLegal(ctx, "publication", "docdb", "EP.1000000.B1")
-
-// Raw XML access
-xmlData, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP.1000000.B1")
-```
-
-### Images
-
-```go
-// Retrieve patent image (typically TIFF format)
-imageData, err := client.GetImage(ctx, "EP", "1000000", "B1", "Drawing", 1)
-
-// Image types: "FullDocument", "Drawing", "FirstPageClipping"
-// Page: 1-based page number
-```
-
-### Legal Status & Register
-
-```go
-// Legal status data → *LegalData
-legal, err := client.GetLegal(ctx, "publication", "docdb", "EP.1000000.B1")
-if err != nil {
-    log.Fatal(err)
-}
-
-fmt.Printf("Patent: %s\n", legal.PatentNumber)
-fmt.Printf("Legal Events: %d\n", len(legal.LegalEvents))
-
-for _, event := range legal.LegalEvents {
-    fmt.Printf("Event: %s (Code: %s, Country: %s)\n", event.Date, event.EventCode, event.Country)
-    if event.Description != "" {
-        fmt.Printf("  Description: %s\n", event.Description)
-    }
-}
-
-// Raw XML access
-xmlData, err := client.GetLegalRaw(ctx, "publication", "docdb", "EP.1000000.B1")
-
-// Register events → *RegisterEventsData
-regEvents, err := client.GetRegisterEvents(ctx, "publication", "epodoc", "EP1000000")
-for _, event := range regEvents.Events {
-    fmt.Printf("%s: %s (%s)\n", event.Date, event.Description, event.Category)
-}
-
-// EPO Register bibliographic data (returns raw XML)
-registerBiblio, err := client.GetRegisterBiblioRaw(ctx, "publication", "epodoc", "EP1000000")
-```
-
-### Number Conversion
-
-```go
-// Convert patent number formats
-converted, err := client.ConvertPatentNumber(ctx, "publication", "docdb", "EP.1000000.B1", "epodoc")
-```
-
-**Formats**:
-- `original`: `US.(05/948,554).19781004`
-- `epodoc`: `US19780948554`
-- `docdb`: `US 19780948554`
-
-### Quota Monitoring
-
-```go
-// Get last quota information
-quota := client.GetLastQuota()
-if quota != nil {
-    fmt.Printf("Status: %s\n", quota.Status)
-    fmt.Printf("Usage: %.2f%%\n", quota.Individual.UsagePercent())
-}
-```
-
-## Configuration Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
@@ -448,104 +111,250 @@ if quota != nil {
 | `RetryDelay` | time.Duration | `1s` | Base delay between retries |
 | `Timeout` | time.Duration | `30s` | HTTP client timeout (increase for bulk classification endpoints) |
 
-## Error Handling
+### Parsed vs raw API
 
-The library provides custom error types for different failure scenarios:
+Most methods return parsed Go structs for type-safe access. Each has a `*Raw()` variant that
+returns the original XML for custom parsing or storage. Parsed methods internally call their
+`*Raw()` counterpart and parse the result, so the two always agree.
 
 ```go
+// Parsed -> *BiblioData
 biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
+fmt.Printf("Title: %s\n", biblio.Titles["en"])
+
+// Raw -> XML string
+xmlData, err := client.GetBiblioRaw(ctx, "publication", "docdb", "EP.1000000.B1")
+os.WriteFile("biblio.xml", []byte(xmlData), 0644)
+```
+
+Common parameters for published-data methods:
+
+- `refType`: `"publication"`, `"application"`, or `"priority"`
+- `format`: `"docdb"` or `"epodoc"`
+- `number`: docdb format `"EP.1000000.B1"`, epodoc format `"EP1000000"`
+
+### Published data retrieval
+
+```go
+// Bibliographic data -> *BiblioData
+biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
+fmt.Printf("Publication Date: %s\n", biblio.PublicationDate)
+for _, applicant := range biblio.Applicants {
+    fmt.Printf("Applicant: %s (%s)\n", applicant.Name, applicant.Country)
+}
+
+// Claims -> *ClaimsData
+claims, err := client.GetClaims(ctx, "publication", "docdb", "EP.1000000.B1")
+
+// Description -> *DescriptionData
+description, err := client.GetDescription(ctx, "publication", "docdb", "EP.1000000.B1")
+
+// Abstract -> *AbstractData
+abstract, err := client.GetAbstract(ctx, "publication", "docdb", "EP.1000000.B1")
+
+// Full text (biblio + abstract + description + claims) -> *FulltextData
+fulltext, err := client.GetFulltext(ctx, "publication", "docdb", "EP.1000000.B1")
+
+// Published equivalents (simple family) -> *EquivalentsData
+equivalents, err := client.GetPublishedEquivalents(ctx, "publication", "docdb", "EP.1000000.B1")
+```
+
+### Search
+
+Returns `*SearchResultData` with parsed results.
+
+```go
+results, err := client.Search(ctx, "ti=battery", "1-25")
 if err != nil {
-    switch e := err.(type) {
-    case *ops.AuthError:
-        // Authentication failed
-        log.Printf("Auth error: %v", e)
-    case *ops.NotFoundError:
-        // Patent not found (404)
-        log.Printf("Patent not found: %v", e)
-    case *ops.QuotaExceededError:
-        // Fair use limit exceeded
-        log.Printf("Quota exceeded: %v", e)
-    case *ops.ServiceUnavailableError:
-        // Temporary service outage
-        log.Printf("Service unavailable: %v", e)
-    default:
-        // Other errors
-        log.Printf("Error: %v", err)
-    }
+    log.Fatal(err)
+}
+fmt.Printf("Total results: %d\n", results.TotalCount)
+for _, r := range results.Results {
+    fmt.Printf("  %s%s%s - %s\n", r.Country, r.DocNumber, r.Kind, r.Title)
+}
+
+// Search with a specific constituent.
+results, err = client.SearchWithConstituent(ctx, "biblio", "pa=Siemens", "1-10")
+
+// Raw XML access.
+xmlData, err := client.SearchRaw(ctx, "ti=battery", "1-25")
+```
+
+CQL examples: `ti=plastic` (title), `pa=Siemens` (applicant), `de` (country code DE),
+`ti=plastic and pa=Siemens` (combined). Range format: `"1-25"` (default), `"1-100"`, etc.
+
+### Family retrieval
+
+Returns `*FamilyData` with parsed family information.
+
+```go
+family, err := client.GetFamily(ctx, "publication", "docdb", "EP.1000000.B1")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Family ID: %s, members: %d\n", family.FamilyID, family.TotalCount)
+for _, member := range family.Members {
+    fmt.Printf("Member: %s %s %s (Date: %s)\n",
+        member.Country, member.DocNumber, member.Kind, member.Date)
+}
+
+// Variants enriching the family with biblio or legal data.
+family, err = client.GetFamilyWithBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
+family, err = client.GetFamilyWithLegal(ctx, "publication", "docdb", "EP.1000000.B1")
+
+// Raw XML access.
+xmlData, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP.1000000.B1")
+```
+
+### Images and TIFF conversion
+
+Patent images from EPO are typically TIFF. The `tiffutil` package converts them to PNG,
+handling CCITT Group 3/4 and LZW compression, the CMYK color model, and automatic
+landscape-to-portrait rotation.
+
+```go
+import (
+    ops "github.com/patent-dev/epo-ops"
+    "github.com/patent-dev/epo-ops/tiffutil"
+)
+
+// Retrieve a patent image (image types: "FullDocument", "Drawing", "FirstPageClipping").
+imageData, err := client.GetImage(ctx, "EP", "1000000", "B1", "Drawing", 1)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Convert TIFF -> PNG (with automatic rotation for landscape images).
+pngData, err := tiffutil.TIFFToPNG(imageData)
+os.WriteFile("patent_drawing.png", pngData, 0644)
+
+// Without rotation, or batch convert multiple pages.
+pngData, err = tiffutil.TIFFToPNGNoRotate(imageData)
+pngImages, err := tiffutil.BatchTIFFToPNG([][]byte{imageData})
+```
+
+### Legal status and register
+
+```go
+// Legal status -> *LegalData
+legal, err := client.GetLegal(ctx, "publication", "docdb", "EP.1000000.B1")
+for _, event := range legal.LegalEvents {
+    fmt.Printf("Event: %s (Code: %s, Country: %s)\n", event.Date, event.EventCode, event.Country)
+}
+
+// Register events -> *RegisterEventsData
+regEvents, err := client.GetRegisterEvents(ctx, "publication", "epodoc", "EP1000000")
+
+// EPO Register bibliographic data (raw XML).
+registerBiblio, err := client.GetRegisterBiblioRaw(ctx, "publication", "epodoc", "EP1000000")
+```
+
+### Number conversion
+
+```go
+converted, err := client.ConvertPatentNumber(ctx, "publication", "docdb", "EP.1000000.B1", "epodoc")
+```
+
+Formats: `original` (`US.(05/948,554).19781004`), `epodoc` (`US19780948554`),
+`docdb` (`US 19780948554`).
+
+### Quota monitoring
+
+The EPO OPS fair use policy limits non-paying users to 4 GB/week (paying users pay for more);
+see the [fair use page](https://www.epo.org/en/service-support/ordering/fair-use). The client
+tracks quota usage from API response headers.
+
+```go
+client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
+
+quota := client.GetLastQuota()
+if quota != nil {
+    fmt.Printf("Status: %s\n", quota.Status) // "green", "yellow", "red", or "black"
+    fmt.Printf("Individual: %.2f%%\n", quota.Individual.UsagePercent())
 }
 ```
 
-**Available Error Types**:
-- `AuthError` - Authentication failures
-- `NotFoundError` - Resource not found (404)
-- `QuotaExceededError` - Fair use quota exceeded (429, 403)
-- `ServiceUnavailableError` - Temporary service outage (503)
-- `AmbiguousPatentError` - Multiple kind codes available
-- `ConfigError` - Configuration issues
-
-## Retry Logic
+### Retry logic
 
 The client automatically retries failed requests with exponential backoff:
 
 - **Retryable**: 5xx errors, 408, timeouts, network errors
 - **Non-retryable**: 404, 400, authentication errors, quota exceeded
-- **Token refresh**: Automatic on 401 errors
-- **Backoff**: Exponential with base delay × (attempt + 1)
+- **Token refresh**: automatic on 401 errors
+- **Backoff**: exponential, base delay x (attempt + 1)
 
-Example with custom retry configuration:
+Tune it through `MaxRetries` and `RetryDelay` on the `Config`.
+
+## Error handling
+
+The library returns typed errors. Use `errors.As` to inspect them:
 
 ```go
-config := &ops.Config{
-    ConsumerKey:    "your-key",
-    ConsumerSecret: "your-secret",
-    MaxRetries:     5,                   // Try up to 5 times
-    RetryDelay:     2 * time.Second,     // Start with 2s delay
+biblio, err := client.GetBiblio(ctx, "publication", "docdb", "EP.1000000.B1")
+if err != nil {
+    var notFound *ops.NotFoundError
+    var quota *ops.QuotaExceededError
+    switch {
+    case errors.As(err, &notFound):
+        log.Printf("patent not found: %v", notFound)
+    case errors.As(err, &quota):
+        log.Printf("fair use quota exceeded: %v", quota)
+    default:
+        log.Printf("error: %v", err)
+    }
 }
-client, err := ops.NewClient(config)
 ```
+
+Available error types:
+
+- `AuthError` - authentication failures
+- `NotFoundError` - resource not found (404)
+- `QuotaExceededError` - fair use quota exceeded (429, 403)
+- `ServiceUnavailableError` - temporary service outage (503)
+- `AmbiguousPatentError` - multiple kind codes available
+- `ValidationError` - invalid input (number, format, date)
+- `ConfigError` - configuration issues
 
 ## Testing
 
-Run unit tests:
 ```bash
-go test -v
+make test              # unit tests (mock HTTP server, race)
+make test-integration  # integration tests against the real API, needs credentials
+make lint
 ```
 
-Run integration tests (requires credentials):
+Integration tests require credentials in the environment:
+
 ```bash
 export EPO_OPS_CONSUMER_KEY="your-key"
 export EPO_OPS_CONSUMER_SECRET="your-secret"
-go test -tags=integration -v
 ```
 
-## Demo Application
+See the [demo/](demo/) directory for a complete example application exercising all features.
 
-See the [demo/](demo/) directory for a complete example application demonstrating all features.
+## API specification
 
-## API Specification
+The typed client in `generated/` is produced by [oapi-codegen](https://github.com/oapi-codegen/oapi-codegen)
+from an OpenAPI 3.0 specification kept in [openapi.yaml](openapi.yaml). That spec was:
 
-This library uses an OpenAPI 3.0 specification that was:
-- Converted from the official EPO OPS Swagger 2.0 specification
-- Extended to include the Data Usage Statistics endpoint (missing from official spec)
-- Enhanced with proper type definitions for generated code
+- Converted from the official EPO OPS Swagger 2.0 specification (`resources/ops.yaml`)
+- Fixed up for OpenAPI 3.0 (OAuth2 flow set to `clientCredentials`, invalid parameter formats removed)
+- Extended with the Data Usage Statistics endpoint (`/developers/me/stats/usage`), which the official
+  spec omits
 
-The specification is maintained in [openapi.yaml](openapi.yaml) and used to generate strongly-typed client code.
+To regenerate after the spec changes, run `make generate`, which re-applies the conversion fixes (via
+the scripts in [scripts/](scripts/)) and then runs the `//go:generate` directives in `client.go`.
 
-## Related Projects
+## Related projects
 
 Part of the [patent.dev](https://patent.dev) open-source patent data ecosystem:
 
-- [uspto-odp](https://github.com/patent-dev/uspto-odp) - USPTO Open Data Portal client (search, PTAB, XML full text)
-- [epo-bdds](https://github.com/patent-dev/epo-bdds) - EPO Bulk Data Distribution Service client
+- [epo-bdds](https://github.com/patent-dev/epo-bdds) - EPO Bulk Data Distribution Service client (DOCDB, INPADOC, EP full text)
+- [uspto-odp](https://github.com/patent-dev/uspto-odp) - USPTO Open Data Portal client (patents, PTAB, TSDR, full text)
 - [dpma-connect-plus](https://github.com/patent-dev/dpma-connect-plus) - DPMA Connect Plus client (patents, designs, trademarks)
 
 The [bulk-file-loader](https://github.com/patent-dev/bulk-file-loader) uses these libraries for automated patent data downloads.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## Credits
-
-**Developed by:**
-- Wolfgang Stark - [patent.dev](https://patent.dev) - [Funktionslust GmbH](https://funktionslust.digital)
+MIT - Funktionslust GmbH / patent.dev.

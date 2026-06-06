@@ -126,17 +126,17 @@ spec['paths']['/../developers/me/stats/usage'] = usage_endpoint
 with open('openapi.yaml', 'w') as f:
     yaml.dump(spec, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
 
-print("✓ Added usage stats endpoint")
+print("OK Added usage stats endpoint")
 PYTHON_SCRIPT
 
-echo "✓ Conversion complete!"
+echo "OK Conversion complete!"
 echo ""
 echo "Changes made:"
-echo "  1. Converted Swagger 2.0 → OpenAPI 3.0"
-echo "  2. Fixed OAuth2 flow: authorizationCode → clientCredentials"
+echo "  1. Converted Swagger 2.0 -> OpenAPI 3.0"
+echo "  2. Fixed OAuth2 flow: authorizationCode -> clientCredentials"
 echo "  3. Updated tokenUrl to HTTPS"
 echo "  4. Removed unnecessary scopes"
-echo "  5. Fixed attachment parameter: type boolean → string"
+echo "  5. Fixed attachment parameter: type boolean -> string"
 echo "  6. Added missing usage stats endpoint (from official docs)"
 echo ""
 echo "Output: openapi.yaml"

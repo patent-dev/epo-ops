@@ -8,9 +8,9 @@ import (
 
 // demoFamily demonstrates all Family Services endpoints (5 endpoints)
 func demoFamily(demo *DemoContext) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Family Services - INPADOC (5 endpoints)")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	// 1. GetFamily (basic family members) - Showcase PARSED API
 	runEndpoint(demo, "get_family", "GetFamily",
@@ -22,7 +22,7 @@ func demoFamily(demo *DemoContext) {
 			}
 
 			// Format parsed data for display
-			output := "✓ Parsed Family Data\n"
+			output := "OK Parsed Family Data\n"
 			output += fmt.Sprintf("Family ID:     %s\n", family.FamilyID)
 			output += fmt.Sprintf("Patent Number: %s\n", family.PatentNumber)
 			output += fmt.Sprintf("Total Members: %d\n\n", len(family.Members))

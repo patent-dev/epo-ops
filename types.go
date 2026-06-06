@@ -84,19 +84,6 @@ func DefaultConfig() *Config {
 	}
 }
 
-// BulkOptions holds configuration options for bulk retrieval operations.
-type BulkOptions struct {
-	// MaxConcurrent is the maximum number of concurrent requests.
-	// Default: 1 (sequential processing)
-	// Note: Concurrent processing not yet implemented
-	MaxConcurrent int
-
-	// OnProgress is called after each batch completes.
-	// Parameters: current batch number, total batches
-	// Optional: set to nil to disable progress callbacks
-	OnProgress func(current, total int)
-}
-
 // ImageInquiry represents the response from an image inquiry request.
 // It contains information about available images for a patent document.
 type ImageInquiry struct {
@@ -187,8 +174,9 @@ type PatentNumber struct {
 //
 // Validation rules:
 //   - Must not be empty
-//   - Length must be between 4 and 50 characters
-//   - Must contain only ASCII letters, digits, and basic punctuation
+//   - Length must not exceed 50 characters
+//   - Must contain only ASCII letters, digits, and the separators space, dash,
+//     dot, and slash
 //
 // Note: This is a permissive validation. Invalid patent numbers will be
 // rejected by the EPO API with appropriate error messages.
@@ -221,16 +209,16 @@ func ValidatePatentNumber(number string) error {
 //   - Followed by REQUIRED kind code (K) - 1-2 chars, always starts with A-Z, a-z, always at the end
 //
 // Examples:
-//   - "EP2400812A1" → {Country: "EP", Number: "2400812", Kind: "A1"}
-//   - "DE123C" → {Country: "DE", Number: "123", Kind: "C"}
-//   - "DE123C1" → {Country: "DE", Number: "123", Kind: "C1"}
-//   - "USD123456S1" → {Country: "US", Number: "D123456", Kind: "S1"}
+//   - "EP2400812A1" -> {Country: "EP", Number: "2400812", Kind: "A1"}
+//   - "DE123C" -> {Country: "DE", Number: "123", Kind: "C"}
+//   - "DE123C1" -> {Country: "DE", Number: "123", Kind: "C1"}
+//   - "USD123456S1" -> {Country: "US", Number: "D123456", Kind: "S1"}
 //
 // Invalid examples (return empty PatentNumber):
-//   - "DE123" → {Country: "", Number: "", Kind: ""} (missing kind code)
-//   - "123C" → {Country: "", Number: "", Kind: ""} (no country code)
-//   - "D123C" → {Country: "", Number: "", Kind: ""} (country code too short)
-//   - "DEC" → {Country: "", Number: "", Kind: ""} (no number portion)
+//   - "DE123" -> {Country: "", Number: "", Kind: ""} (missing kind code)
+//   - "123C" -> {Country: "", Number: "", Kind: ""} (no country code)
+//   - "D123C" -> {Country: "", Number: "", Kind: ""} (country code too short)
+//   - "DEC" -> {Country: "", Number: "", Kind: ""} (no number portion)
 func ParsePatentNumber(number string) PatentNumber {
 	result := PatentNumber{}
 
@@ -250,7 +238,7 @@ func ParsePatentNumber(number string) PatentNumber {
 	// The kind code is 1-2 chars at the end, starting with a letter
 	// We scan from the end to find where the kind code starts
 
-	// Case 1: Last 2 chars are letters → 2-char kind code
+	// Case 1: Last 2 chars are letters -> 2-char kind code
 	if len(number) >= 5 && isLetter(number[len(number)-2]) && isLetter(number[len(number)-1]) {
 		result.Number = number[2 : len(number)-2]
 		result.Kind = number[len(number)-2:]
@@ -261,7 +249,7 @@ func ParsePatentNumber(number string) PatentNumber {
 		return result
 	}
 
-	// Case 2: Last char is letter, second-to-last is digit → 1-char kind code
+	// Case 2: Last char is letter, second-to-last is digit -> 1-char kind code
 	if len(number) >= 4 && isDigit(number[len(number)-2]) && isLetter(number[len(number)-1]) {
 		result.Number = number[2 : len(number)-1]
 		result.Kind = number[len(number)-1:]
@@ -272,7 +260,7 @@ func ParsePatentNumber(number string) PatentNumber {
 		return result
 	}
 
-	// Case 3: Last 2 chars are letter+digit (e.g., "C1") → 2-char kind code
+	// Case 3: Last 2 chars are letter+digit (e.g., "C1") -> 2-char kind code
 	if len(number) >= 5 && isLetter(number[len(number)-2]) && isDigit(number[len(number)-1]) {
 		result.Number = number[2 : len(number)-2]
 		result.Kind = number[len(number)-2:]

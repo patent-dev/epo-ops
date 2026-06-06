@@ -9,13 +9,13 @@ import (
 
 // demoImages demonstrates Image Retrieval endpoints (2 endpoints)
 func demoImages(demo *DemoContext) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Image Retrieval Services (2 endpoints)")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	parts := ops.ParsePatentNumber(demo.ToEpodoc())
 	if parts.Country == "" {
-		fmt.Println("  ✗ Could not parse patent number")
+		fmt.Println("  FAIL Could not parse patent number")
 		fmt.Println()
 		return
 	}
@@ -46,20 +46,20 @@ func demoImages(demo *DemoContext) {
 		}))
 
 	// 3. Convert TIFF to PNG (if we have TIFF data)
-	fmt.Printf("  → TIFF to PNG conversion... ")
+	fmt.Printf("  -> TIFF to PNG conversion... ")
 	imageData, err := demo.Client.GetImage(demo.Ctx, parts.Country, parts.Number, parts.Kind, ops.ImageTypeThumbnail, 1)
 	if err != nil {
-		fmt.Printf("✗ Could not fetch image: %v\n", err)
+		fmt.Printf("FAIL Could not fetch image: %v\n", err)
 	} else {
 		format := DetectFormat(imageData)
 		if format == FormatTIFF {
 			pngData, err := tiffutil.TIFFToPNG(imageData)
 			if err != nil {
-				fmt.Printf("✗ Conversion failed: %v\n", err)
+				fmt.Printf("FAIL Conversion failed: %v\n", err)
 				demo.TotalCount++
 				demo.FailureCount++
 			} else {
-				fmt.Printf("✓ %d bytes PNG\n", len(pngData))
+				fmt.Printf("OK %d bytes PNG\n", len(pngData))
 				demo.TotalCount++
 				demo.SuccessCount++
 
@@ -75,7 +75,7 @@ func demoImages(demo *DemoContext) {
 				}
 			}
 		} else {
-			fmt.Printf("✗ Image is %s, not TIFF (conversion skipped)\n", format)
+			fmt.Printf("FAIL Image is %s, not TIFF (conversion skipped)\n", format)
 			demo.TotalCount++
 			demo.FailureCount++
 		}

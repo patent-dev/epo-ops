@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -133,10 +134,14 @@ func (a *Authenticator) requestToken(ctx context.Context) (string, error) {
 		}
 	}
 
-	// Parse expires_in (returned as string by EPO API)
-	var expiresInSeconds int
-	if _, err := fmt.Sscanf(tokenResp.ExpiresIn, "%d", &expiresInSeconds); err != nil {
-		return "", fmt.Errorf("failed to parse expires_in: %w", err)
+	// Parse expires_in (returned as string by EPO API). Reject malformed or
+	// non-positive values, which would otherwise cause a token refresh storm.
+	expiresInSeconds, err := strconv.Atoi(tokenResp.ExpiresIn)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse expires_in %q: %w", tokenResp.ExpiresIn, err)
+	}
+	if expiresInSeconds <= 0 {
+		return "", fmt.Errorf("invalid expires_in %q: must be positive", tokenResp.ExpiresIn)
 	}
 
 	// Cache token with expiry

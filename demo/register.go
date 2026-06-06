@@ -8,9 +8,9 @@ import (
 
 // demoRegister demonstrates all Register Services endpoints (10 endpoints)
 func demoRegister(demo *DemoContext) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Register Services (10 endpoints)")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	// 1. GetRegisterBiblioRaw (GET) - Format param is "epodoc" but number must have dots (docdb)
 	runEndpoint(demo, "get_register_biblio", "GetRegisterBiblioRaw",

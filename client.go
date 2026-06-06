@@ -32,7 +32,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	"github.com/patent-dev/epo-ops/generated"
@@ -204,29 +203,10 @@ func NewClient(config *Config) (*Client, error) {
 // executeRequest is a common helper that executes an HTTP request with retry logic and 401 handling.
 // Returns the response body as bytes.
 func (c *Client) executeRequest(ctx context.Context, fn func() (*http.Response, error)) ([]byte, error) {
-	var retriedAfter401 atomic.Bool
-
-	// Wrapper that handles 401 token refresh
-	requestWithAuth := func() (*http.Response, error) {
-		resp, err := fn()
-
-		// Special handling for 401 errors: clear token and retry once
-		// Use atomic swap to ensure only one retry happens even with concurrent requests
-		if err == nil && resp.StatusCode == http.StatusUnauthorized && !retriedAfter401.Swap(true) {
-			_ = resp.Body.Close() // Ignore close error, we're retrying the request
-
-			// Clear cached token to force refresh on next attempt
-			c.authenticator.ClearToken()
-
-			// Retry the request immediately (token will be refreshed by authTransport)
-			resp, err = fn()
-		}
-
-		return resp, err
-	}
-
-	// Execute with retry logic
-	resp, err := c.retryableRequest(ctx, requestWithAuth)
+	// Execute with retry logic. The retry loop handles 401 token refresh
+	// (clear token + refresh + retry once) so it composes correctly with the
+	// backoff retries for transient 5xx responses.
+	resp, err := c.retryableRequest(ctx, fn)
 	if err != nil {
 		return nil, err
 	}
@@ -244,13 +224,13 @@ func (c *Client) executeRequest(ctx context.Context, fn func() (*http.Response, 
 
 	// Check status code
 	if resp.StatusCode != http.StatusOK {
-		return nil, c.handleErrorResponse(resp.StatusCode, body)
+		return nil, c.handleErrorResponse(resp.StatusCode, resp.Header, body)
 	}
 
 	// Some endpoints return HTTP 200 with a JSON error envelope wrapped in
 	// an XML processing instruction. Surface it as a typed error so XML
 	// parsers downstream are not asked to parse JSON.
-	if jsonErr, ok := parseEPOJSONErrorBody(body); ok {
+	if jsonErr := parseEPOJSONErrorBody(body); jsonErr != nil {
 		return nil, jsonErr
 	}
 
@@ -273,7 +253,12 @@ func (c *Client) makeBinaryRequest(ctx context.Context, fn func() (*http.Respons
 }
 
 // handleErrorResponse converts HTTP error responses into appropriate error types.
-func (c *Client) handleErrorResponse(statusCode int, body []byte) error {
+func (c *Client) handleErrorResponse(statusCode int, header http.Header, body []byte) error {
+	retryAfter := ""
+	if header != nil {
+		retryAfter = header.Get("Retry-After")
+	}
+
 	// Try to parse structured XML error first
 	opsErr, err := parseErrorXML(body, statusCode)
 	if err == nil && opsErr != nil {
@@ -288,7 +273,7 @@ func (c *Client) handleErrorResponse(statusCode int, body []byte) error {
 				StatusCode: statusCode,
 				Message:    opsErr.Message,
 			}
-		case "SERVER.RateLimitExceeded", "SERVER.QuotaPerWeekExceeded", "HTTP.429", "HTTP.403":
+		case "SERVER.RateLimitExceeded", "SERVER.QuotaPerWeekExceeded", "HTTP.429":
 			return &QuotaExceededError{
 				Message: opsErr.Message,
 			}
@@ -296,8 +281,17 @@ func (c *Client) handleErrorResponse(statusCode int, body []byte) error {
 			return &ServiceUnavailableError{
 				StatusCode: statusCode,
 				Message:    opsErr.Message,
+				RetryAfter: retryAfter,
 			}
 		default:
+			// A 403 only means quota/rate limiting when the EPO error code
+			// explicitly says so; a bare 403 is a forbidden/access error.
+			if statusCode == http.StatusForbidden {
+				if isQuotaErrorCode(opsErr.Code) {
+					return &QuotaExceededError{Message: opsErr.Message}
+				}
+				return &ForbiddenError{StatusCode: statusCode, Message: opsErr.Message}
+			}
 			// Return the parsed OPSError for other codes
 			return opsErr
 		}
@@ -314,7 +308,14 @@ func (c *Client) handleErrorResponse(statusCode int, body []byte) error {
 			StatusCode: statusCode,
 			Message:    string(body),
 		}
-	case http.StatusTooManyRequests, http.StatusForbidden:
+	case http.StatusForbidden:
+		// Without a parseable quota code, treat a bare 403 as forbidden rather
+		// than quota exceeded.
+		return &ForbiddenError{
+			StatusCode: statusCode,
+			Message:    string(body),
+		}
+	case http.StatusTooManyRequests:
 		return &QuotaExceededError{
 			Message: string(body),
 		}
@@ -322,18 +323,31 @@ func (c *Client) handleErrorResponse(statusCode int, body []byte) error {
 		return &ServiceUnavailableError{
 			StatusCode: statusCode,
 			Message:    string(body),
+			RetryAfter: retryAfter,
 		}
 	default:
 		return fmt.Errorf("HTTP %d: %s", statusCode, string(body))
 	}
 }
+
+// isQuotaErrorCode reports whether an EPO error code denotes a quota or rate
+// limit condition (the only cases where a 403 should map to QuotaExceededError).
+func isQuotaErrorCode(code string) bool {
+	switch code {
+	case "SERVER.RateLimitExceeded", "SERVER.QuotaPerWeekExceeded",
+		"SERVER.QuotaPerHourExceeded", "HTTP.429":
+		return true
+	default:
+		return strings.Contains(code, "Quota") || strings.Contains(code, "RateLimit")
+	}
+}
+
+// formatBulkBody joins patent numbers into the newline-separated body used by
+// the EPO OPS bulk POST endpoints.
 func formatBulkBody(numbers []string) string {
 	return strings.Join(numbers, "\n")
 }
 
-// GetBiblioMultiple retrieves bibliographic data for multiple patents (bulk operation).
-// Uses POST endpoint for efficient batch retrieval of up to 100 patents in one request.
-//
 // GetLastQuota returns the last quota information from API responses.
 // Returns nil if no API calls have been made yet.
 //

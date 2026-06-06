@@ -1,6 +1,6 @@
 Method: SearchRegisterWithConstituent
 
 Parameters:
-  query: ti=solar
   range: 1-3
   constituent: biblio
+  query: ti=solar

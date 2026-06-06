@@ -8,9 +8,9 @@ import (
 
 // demoLegal demonstrates Legal Services endpoints (2 endpoints)
 func demoLegal(demo *DemoContext) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Legal Services (2 endpoints)")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	// 1. GetLegal (legal status events) - Showcase PARSED API
 	runEndpoint(demo, "get_legal", "GetLegal",
@@ -22,7 +22,7 @@ func demoLegal(demo *DemoContext) {
 			}
 
 			// Format parsed data for display
-			output := "✓ Parsed Legal Data\n"
+			output := "OK Parsed Legal Data\n"
 			output += fmt.Sprintf("Patent Number: %s\n", legal.PatentNumber)
 			output += fmt.Sprintf("Family ID:     %s\n", legal.FamilyID)
 			output += fmt.Sprintf("Legal Events:  %d\n\n", len(legal.LegalEvents))

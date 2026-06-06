@@ -8,9 +8,9 @@ import (
 
 // demoNumber demonstrates Number Services endpoints (3 endpoints)
 func demoNumber(demo *DemoContext) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Number Services (3 endpoints)")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	// 1. ConvertPatentNumber (docdb -> epodoc)
 	runEndpoint(demo, "convert_patent_number_epodoc", "ConvertPatentNumber (to epodoc)",

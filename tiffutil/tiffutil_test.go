@@ -35,3 +35,17 @@ func TestInvalidTIFF(t *testing.T) {
 		t.Error("Expected error for invalid TIFF data, got nil")
 	}
 }
+
+// TestBatchTIFFToPNG_ReturnsNilOnError verifies that a conversion failure
+// returns a nil slice rather than a partial result.
+func TestBatchTIFFToPNG_ReturnsNilOnError(t *testing.T) {
+	invalid := []byte("not a valid TIFF file")
+
+	images, err := BatchTIFFToPNG([][]byte{invalid, invalid})
+	if err == nil {
+		t.Fatal("Expected error for invalid TIFF data, got nil")
+	}
+	if images != nil {
+		t.Errorf("Expected nil slice on error, got %d images", len(images))
+	}
+}

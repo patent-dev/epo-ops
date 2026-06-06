@@ -8,9 +8,9 @@ import (
 
 // demoSearch demonstrates all Search Services endpoints (2 endpoints)
 func demoSearch(demo *DemoContext) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Search Services (2 endpoints)")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	// 1. Search (without constituents) - Showcase PARSED API
 	runEndpoint(demo, "search", "Search",
@@ -22,7 +22,7 @@ func demoSearch(demo *DemoContext) {
 			}
 
 			// Format parsed data for display
-			output := "✓ Parsed Search Results\n"
+			output := "OK Parsed Search Results\n"
 			output += fmt.Sprintf("Query:         %s\n", results.Query)
 			output += fmt.Sprintf("Total Results: %d\n", results.TotalCount)
 			output += fmt.Sprintf("Range:         %d-%d\n\n", results.RangeBegin, results.RangeEnd)

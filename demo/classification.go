@@ -6,9 +6,9 @@ import (
 
 // demoClassification demonstrates all Classification Services endpoints (5 endpoints)
 func demoClassification(demo *DemoContext) {
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 	fmt.Println("Classification Services (5 endpoints)")
-	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+	fmt.Println("==============================================================")
 
 	// 1. GetClassificationSchema (GET)
 	runEndpoint(demo, "get_classification_schema", "GetClassificationSchema",

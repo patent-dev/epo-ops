@@ -6,6 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 // AuthError represents an authentication error.
@@ -41,6 +42,17 @@ type QuotaExceededError struct {
 
 func (e *QuotaExceededError) Error() string {
 	return fmt.Sprintf("quota exceeded: %s", e.Message)
+}
+
+// ForbiddenError represents an HTTP 403 response that is not a quota or rate
+// limit condition (e.g. the account lacks access to the requested resource).
+type ForbiddenError struct {
+	StatusCode int
+	Message    string
+}
+
+func (e *ForbiddenError) Error() string {
+	return fmt.Sprintf("forbidden (status %d): %s", e.StatusCode, e.Message)
 }
 
 // AmbiguousPatentError represents a situation where a patent number
@@ -167,7 +179,8 @@ func parseErrorXML(body []byte, statusCode int) (*OPSError, error) {
 		MoreInfo string   `xml:"moreInfo"`
 	}
 
-	if err := xml.Unmarshal(body, &errResp); err == nil && errResp.Code != "" {
+	lastErr := xml.Unmarshal(body, &errResp)
+	if lastErr == nil && errResp.Code != "" {
 		return &OPSError{
 			HTTPStatus: statusCode,
 			Code:       errResp.Code,
@@ -197,10 +210,28 @@ func parseErrorXML(body []byte, statusCode int) (*OPSError, error) {
 			Message:    message,
 			MoreInfo:   "",
 		}, nil
+	} else if err != nil {
+		lastErr = err
 	}
 
-	// Could not parse as either format
-	return nil, fmt.Errorf("unable to parse error XML")
+	// Could not parse as either known format. Surface a sample of the body so
+	// callers can diagnose unexpected responses.
+	return nil, &XMLParseError{
+		Parser:    "parseErrorXML",
+		XMLSample: xmlSample(body),
+		Cause:     lastErr,
+	}
+}
+
+// xmlSample returns a truncated, single-line sample of a response body suitable
+// for inclusion in error messages.
+func xmlSample(body []byte) string {
+	const maxLen = 200
+	sample := strings.TrimSpace(string(body))
+	if len(sample) > maxLen {
+		sample = sample[:maxLen] + "..."
+	}
+	return sample
 }
 
 // parseEPOJSONErrorBody decodes EPO's JSON error envelope. EPO returns some
@@ -210,13 +241,13 @@ func parseErrorXML(body []byte, statusCode int) (*OPSError, error) {
 //
 //	<?xml-stylesheet type='text/xsl' href='...'?>{"error":{"message":"...","details":{"original":{"code":404,"message":"..."}}}}
 //
-// The returned ok flag is true when the body matches this shape and was
-// decoded into a typed error. Common upstream codes are mapped to existing
-// error types so callers can use the standard errors.Is / errors.As patterns.
-func parseEPOJSONErrorBody(body []byte) (error, bool) {
+// It returns nil when the body does not match this shape. Common upstream
+// codes are mapped to existing error types so callers can use the standard
+// errors.Is / errors.As patterns.
+func parseEPOJSONErrorBody(body []byte) error {
 	start := bytes.IndexByte(body, '{')
 	if start < 0 {
-		return nil, false
+		return nil
 	}
 
 	var payload struct {
@@ -232,7 +263,7 @@ func parseEPOJSONErrorBody(body []byte) (error, bool) {
 		} `json:"error"`
 	}
 	if err := json.Unmarshal(body[start:], &payload); err != nil {
-		return nil, false
+		return nil
 	}
 
 	message := payload.Error.Details.Original.Message
@@ -241,18 +272,18 @@ func parseEPOJSONErrorBody(body []byte) (error, bool) {
 	}
 	code := payload.Error.Details.Original.Code
 	if message == "" && code == 0 {
-		return nil, false
+		return nil
 	}
 
 	switch code {
 	case http.StatusNotFound:
-		return &NotFoundError{Message: message}, true
+		return &NotFoundError{Message: message}
 	case http.StatusUnauthorized:
-		return &AuthError{StatusCode: code, Message: message}, true
+		return &AuthError{StatusCode: code, Message: message}
 	case http.StatusForbidden, http.StatusTooManyRequests:
-		return &QuotaExceededError{Message: message}, true
+		return &QuotaExceededError{Message: message}
 	case http.StatusServiceUnavailable:
-		return &ServiceUnavailableError{StatusCode: code, Message: message}, true
+		return &ServiceUnavailableError{StatusCode: code, Message: message}
 	}
 
 	statusCode := code
@@ -263,7 +294,7 @@ func parseEPOJSONErrorBody(body []byte) (error, bool) {
 		HTTPStatus: statusCode,
 		Code:       fmt.Sprintf("HTTP.%d", statusCode),
 		Message:    message,
-	}, true
+	}
 }
 
 // ConfigError represents a configuration error.

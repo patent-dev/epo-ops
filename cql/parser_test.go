@@ -122,7 +122,7 @@ func TestParseCQL_ValidQueries(t *testing.T) {
 			if len(q.Tokens) != tt.wantTokens {
 				t.Errorf("ParseCQL() got %d tokens, want %d", len(q.Tokens), tt.wantTokens)
 				for i, token := range q.Tokens {
-					t.Logf("Token %d: %s = %q", i, token.Type, token.Value)
+					t.Logf("CQLToken %d: %s = %q", i, token.Type, token.Value)
 				}
 			}
 
@@ -279,12 +279,12 @@ func TestCQLQuery_URLEncode(t *testing.T) {
 			want:  "ti%3Dbluetooth",
 		},
 		{
-			name:  "Query with spaces",
+			name:  "CQLQuery with spaces",
 			query: "ti=bluetooth AND pa=apple",
 			want:  "ti%3Dbluetooth+AND+pa%3Dapple",
 		},
 		{
-			name:  "Query with special characters",
+			name:  "CQLQuery with special characters",
 			query: "pa=\"Apple Inc\"",
 			want:  "pa%3D%22Apple+Inc%22",
 		},
@@ -422,7 +422,7 @@ func TestTokenize(t *testing.T) {
 			if len(tokens) != len(tt.wantTokens) {
 				t.Errorf("tokenize() got %d tokens, want %d", len(tokens), len(tt.wantTokens))
 				for i, token := range tokens {
-					t.Logf("Token %d: %q", i, token.Value)
+					t.Logf("CQLToken %d: %q", i, token.Value)
 				}
 				return
 			}

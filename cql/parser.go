@@ -1,3 +1,5 @@
+// Package cql parses and validates EPO OPS Contextual CQLQuery Language (CQL)
+// search queries.
 package cql
 
 import (
@@ -99,6 +101,7 @@ type CQLToken struct {
 // TokenType represents the type of a CQL token.
 type TokenType int
 
+// CQLToken type constants enumerate the kinds of tokens a CQL query can contain.
 const (
 	TokenField TokenType = iota
 	TokenOperator

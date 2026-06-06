@@ -1458,7 +1458,7 @@ func ParseRegisterEvents(xmlData string) (*RegisterEventsData, error) {
 		Events:   []RegisterEvent{},
 	}
 
-	// Extract patent number from query (e.g., "publication=EP2400812" → "EP2400812")
+	// Extract patent number from query (e.g., "publication=EP2400812" -> "EP2400812")
 	if q := data.Query; q != "" {
 		if idx := strings.Index(q, "="); idx >= 0 {
 			data.PatentNumber = strings.TrimSpace(q[idx+1:])

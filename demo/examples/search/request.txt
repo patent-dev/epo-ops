@@ -1,5 +1,5 @@
 Method: Search
 
 Parameters:
-  range: 1-5
   query: ti=battery
+  range: 1-5

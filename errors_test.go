@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -127,9 +128,9 @@ func TestParseErrorXML_EmptyXML(t *testing.T) {
 func TestParseEPOJSONErrorBody_UpstreamNotFound(t *testing.T) {
 	body := []byte(`<?xml-stylesheet type='text/xsl' href='../../../style/cpc.xsl' ?>{"error":{"message":"Unexpected response from remote server: GET http://classification-web-green-v4.bss-cst.svc.cluster.local/foo resulted HTTP 404 Not Found","details":{"original":{"code":404,"message":"Invalid or unknown class H04W84"}}}}`)
 
-	err, ok := parseEPOJSONErrorBody(body)
-	if !ok {
-		t.Fatal("expected ok=true for JSON-in-XML envelope")
+	err := parseEPOJSONErrorBody(body)
+	if err == nil {
+		t.Fatal("expected typed error for JSON-in-XML envelope")
 	}
 
 	var notFound *NotFoundError
@@ -144,9 +145,9 @@ func TestParseEPOJSONErrorBody_UpstreamNotFound(t *testing.T) {
 func TestParseEPOJSONErrorBody_FallbackToOuterMessage(t *testing.T) {
 	body := []byte(`<?xml-stylesheet type='text/xsl' href='x'?>{"error":{"message":"Something broke","code":"SERVER.Generic"}}`)
 
-	err, ok := parseEPOJSONErrorBody(body)
-	if !ok {
-		t.Fatal("expected ok=true")
+	err := parseEPOJSONErrorBody(body)
+	if err == nil {
+		t.Fatal("expected typed error")
 	}
 
 	var opsErr *OPSError
@@ -166,24 +167,24 @@ func TestParseEPOJSONErrorBody_MapsUpstreamCodes(t *testing.T) {
 		return []byte(fmt.Sprintf(`<?xml-stylesheet href='x'?>{"error":{"details":{"original":{"code":%d,"message":"upstream"}}}}`, code))
 	}
 
-	err, _ := parseEPOJSONErrorBody(body(http.StatusUnauthorized))
+	err := parseEPOJSONErrorBody(body(http.StatusUnauthorized))
 	var authErr *AuthError
 	if !errors.As(err, &authErr) {
 		t.Errorf("401: expected AuthError, got %T", err)
 	}
 
-	err, _ = parseEPOJSONErrorBody(body(http.StatusForbidden))
+	err = parseEPOJSONErrorBody(body(http.StatusForbidden))
 	var quotaErr *QuotaExceededError
 	if !errors.As(err, &quotaErr) {
 		t.Errorf("403: expected QuotaExceededError, got %T", err)
 	}
 
-	err, _ = parseEPOJSONErrorBody(body(http.StatusTooManyRequests))
+	err = parseEPOJSONErrorBody(body(http.StatusTooManyRequests))
 	if !errors.As(err, &quotaErr) {
 		t.Errorf("429: expected QuotaExceededError, got %T", err)
 	}
 
-	err, _ = parseEPOJSONErrorBody(body(http.StatusServiceUnavailable))
+	err = parseEPOJSONErrorBody(body(http.StatusServiceUnavailable))
 	var svcErr *ServiceUnavailableError
 	if !errors.As(err, &svcErr) {
 		t.Errorf("503: expected ServiceUnavailableError, got %T", err)
@@ -193,9 +194,8 @@ func TestParseEPOJSONErrorBody_MapsUpstreamCodes(t *testing.T) {
 func TestParseEPOJSONErrorBody_RejectsNormalXML(t *testing.T) {
 	body := []byte(`<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='x'?><ops:world-patent-data xmlns:ops="http://ops.epo.org"><ops:foo/></ops:world-patent-data>`)
 
-	err, ok := parseEPOJSONErrorBody(body)
-	if ok {
-		t.Errorf("expected ok=false for well-formed XML, got err=%v", err)
+	if err := parseEPOJSONErrorBody(body); err != nil {
+		t.Errorf("expected nil for well-formed XML, got err=%v", err)
 	}
 }
 
@@ -209,8 +209,8 @@ func TestParseEPOJSONErrorBody_RejectsEmptyAndMalformed(t *testing.T) {
 		[]byte(`<?xml-stylesheet href='x'`), // unterminated PI
 	}
 	for i, body := range cases {
-		if _, ok := parseEPOJSONErrorBody(body); ok {
-			t.Errorf("case %d: expected ok=false for %q", i, body)
+		if err := parseEPOJSONErrorBody(body); err != nil {
+			t.Errorf("case %d: expected nil for %q, got %v", i, body, err)
 		}
 	}
 }
@@ -227,7 +227,7 @@ func TestHandleErrorResponse_WithValidErrorXML(t *testing.T) {
   <message>Invalid patent number</message>
 </error>`
 
-	err := client.handleErrorResponse(http.StatusBadRequest, []byte(xml))
+	err := client.handleErrorResponse(http.StatusBadRequest, nil, []byte(xml))
 	if err == nil {
 		t.Fatal("Expected error, got nil")
 	}
@@ -256,7 +256,7 @@ func TestHandleErrorResponse_WithFaultXML(t *testing.T) {
   <description>No published document found for the specified input</description>
 </fault>`
 
-	err := client.handleErrorResponse(http.StatusNotFound, []byte(xml))
+	err := client.handleErrorResponse(http.StatusNotFound, nil, []byte(xml))
 	if err == nil {
 		t.Fatal("Expected error, got nil")
 	}
@@ -280,7 +280,7 @@ func TestHandleErrorResponse_FallbackToPlainText(t *testing.T) {
 
 	plainText := "Document not found"
 
-	err := client.handleErrorResponse(http.StatusNotFound, []byte(plainText))
+	err := client.handleErrorResponse(http.StatusNotFound, nil, []byte(plainText))
 	if err == nil {
 		t.Fatal("Expected error, got nil")
 	}
@@ -308,7 +308,7 @@ func TestHandleErrorResponse_AuthErrorMapping(t *testing.T) {
   <message>The access token is invalid</message>
 </error>`
 
-	err := client.handleErrorResponse(http.StatusUnauthorized, []byte(xml))
+	err := client.handleErrorResponse(http.StatusUnauthorized, nil, []byte(xml))
 	if err == nil {
 		t.Fatal("Expected error, got nil")
 	}
@@ -335,7 +335,7 @@ func TestHandleErrorResponse_QuotaErrorMapping(t *testing.T) {
   <message>Rate limit exceeded</message>
 </error>`
 
-	err := client.handleErrorResponse(http.StatusTooManyRequests, []byte(xml))
+	err := client.handleErrorResponse(http.StatusTooManyRequests, nil, []byte(xml))
 	if err == nil {
 		t.Fatal("Expected error, got nil")
 	}
@@ -385,5 +385,117 @@ func TestOPSError_ErrorMethod(t *testing.T) {
 				t.Errorf("Error() = %s, want %s", got, tt.expected)
 			}
 		})
+	}
+}
+
+func TestHandleErrorResponse_BareForbiddenIsNotQuota(t *testing.T) {
+	client, _ := NewClient(&Config{ConsumerKey: "test", ConsumerSecret: "test"})
+
+	// 403 with a non-quota error code must not be a QuotaExceededError.
+	xml := `<?xml version="1.0" encoding="UTF-8"?>
+<error>
+  <code>CLIENT.AccessDenied</code>
+  <message>Account is not entitled to this resource</message>
+</error>`
+
+	err := client.handleErrorResponse(http.StatusForbidden, nil, []byte(xml))
+
+	var quotaErr *QuotaExceededError
+	if errors.As(err, &quotaErr) {
+		t.Fatalf("bare 403 must not map to QuotaExceededError, got %T", err)
+	}
+	var forbidden *ForbiddenError
+	if !errors.As(err, &forbidden) {
+		t.Fatalf("expected ForbiddenError, got %T: %v", err, err)
+	}
+	if forbidden.Message != "Account is not entitled to this resource" {
+		t.Errorf("unexpected message: %q", forbidden.Message)
+	}
+}
+
+func TestHandleErrorResponse_BarePlainForbiddenIsNotQuota(t *testing.T) {
+	client, _ := NewClient(&Config{ConsumerKey: "test", ConsumerSecret: "test"})
+
+	err := client.handleErrorResponse(http.StatusForbidden, nil, []byte("Forbidden"))
+
+	var quotaErr *QuotaExceededError
+	if errors.As(err, &quotaErr) {
+		t.Fatalf("bare 403 plain body must not map to QuotaExceededError, got %T", err)
+	}
+	var forbidden *ForbiddenError
+	if !errors.As(err, &forbidden) {
+		t.Fatalf("expected ForbiddenError, got %T: %v", err, err)
+	}
+}
+
+func TestHandleErrorResponse_QuotaCodeOn403StillQuota(t *testing.T) {
+	client, _ := NewClient(&Config{ConsumerKey: "test", ConsumerSecret: "test"})
+
+	xml := `<?xml version="1.0" encoding="UTF-8"?>
+<error>
+  <code>SERVER.QuotaPerWeekExceeded</code>
+  <message>Weekly quota exceeded</message>
+</error>`
+
+	err := client.handleErrorResponse(http.StatusForbidden, nil, []byte(xml))
+
+	var quotaErr *QuotaExceededError
+	if !errors.As(err, &quotaErr) {
+		t.Fatalf("403 with quota code must map to QuotaExceededError, got %T: %v", err, err)
+	}
+}
+
+func TestHandleErrorResponse_PopulatesRetryAfter(t *testing.T) {
+	client, _ := NewClient(&Config{ConsumerKey: "test", ConsumerSecret: "test"})
+
+	header := http.Header{}
+	header.Set("Retry-After", "30")
+
+	xml := `<?xml version="1.0" encoding="UTF-8"?>
+<error>
+  <code>HTTP.503</code>
+  <message>Service temporarily unavailable</message>
+</error>`
+
+	err := client.handleErrorResponse(http.StatusServiceUnavailable, header, []byte(xml))
+
+	var svcErr *ServiceUnavailableError
+	if !errors.As(err, &svcErr) {
+		t.Fatalf("expected ServiceUnavailableError, got %T: %v", err, err)
+	}
+	if svcErr.RetryAfter != "30" {
+		t.Errorf("expected RetryAfter '30', got %q", svcErr.RetryAfter)
+	}
+}
+
+func TestParseErrorXML_UnparseableIncludesSample(t *testing.T) {
+	body := []byte("totally not xml or json, just plain text that should be sampled")
+
+	opsErr, err := parseErrorXML(body, http.StatusBadRequest)
+	if opsErr != nil {
+		t.Errorf("expected nil OPSError, got %+v", opsErr)
+	}
+	var xmlErr *XMLParseError
+	if !errors.As(err, &xmlErr) {
+		t.Fatalf("expected XMLParseError, got %T: %v", err, err)
+	}
+	if !strings.Contains(xmlErr.XMLSample, "totally not xml") {
+		t.Errorf("expected body sample in error, got %q", xmlErr.XMLSample)
+	}
+}
+
+func TestParseErrorXML_UnparseableTruncatesSample(t *testing.T) {
+	body := []byte(strings.Repeat("x", 500))
+
+	_, err := parseErrorXML(body, http.StatusBadRequest)
+	var xmlErr *XMLParseError
+	if !errors.As(err, &xmlErr) {
+		t.Fatalf("expected XMLParseError, got %T: %v", err, err)
+	}
+	if !strings.HasSuffix(xmlErr.XMLSample, "...") {
+		t.Errorf("expected truncated sample ending in '...', got len=%d", len(xmlErr.XMLSample))
+	}
+	if len(xmlErr.XMLSample) > 210 {
+		t.Errorf("sample too long: %d", len(xmlErr.XMLSample))
 	}
 }
