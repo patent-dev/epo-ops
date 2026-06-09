@@ -4,10 +4,8 @@ import (
 	_ "embed"
 	"encoding/xml"
 	"fmt"
-	"reflect"
 	"sort"
 	"strings"
-	"sync"
 )
 
 // Embed XSD schemas into the binary at compile time
@@ -122,11 +120,12 @@ type FamilyMember struct {
 
 // ApplicationReference represents the application reference for a family member
 type ApplicationReference struct {
-	Country   string
-	DocNumber string
-	Kind      string
-	Date      string
-	DocID     string
+	Country           string
+	DocNumber         string // docdb-standardised application number
+	Kind              string
+	Date              string
+	DocID             string
+	OriginalDocNumber string // application number as supplied by the originating office (document-id-type="original"); the key national offices look up by
 }
 
 // PriorityClaim represents a priority claim for a family member
@@ -671,8 +670,9 @@ type familyXML struct {
 				} `xml:"document-id"`
 			} `xml:"publication-reference"`
 			ApplicationRef struct {
-				DocID      string `xml:"doc-id,attr"`
-				DocumentID struct {
+				DocID       string `xml:"doc-id,attr"`
+				DocumentIDs []struct {
+					Type      string `xml:"document-id-type,attr"`
 					Country   string `xml:"country"`
 					DocNumber string `xml:"doc-number"`
 					Kind      string `xml:"kind"`
@@ -772,15 +772,24 @@ func ParseFamily(xmlData string) (*FamilyData, error) {
 			familyMember.Date = pubDoc.Date
 		}
 
-		// Parse application reference
-		appDoc := member.ApplicationRef.DocumentID
-		familyMember.ApplicationRef = ApplicationReference{
-			Country:   appDoc.Country,
-			DocNumber: appDoc.DocNumber,
-			Kind:      appDoc.Kind,
-			Date:      appDoc.Date,
-			DocID:     member.ApplicationRef.DocID,
+		// Parse application reference: docdb is the standardised number; "original" is
+		// the originating-office number national offices (e.g. JP/TW) look up by.
+		appRef := ApplicationReference{DocID: member.ApplicationRef.DocID}
+		for _, d := range member.ApplicationRef.DocumentIDs {
+			switch d.Type {
+			case "docdb", "":
+				appRef.Country, appRef.DocNumber, appRef.Kind, appRef.Date = d.Country, d.DocNumber, d.Kind, d.Date
+			case "original":
+				appRef.OriginalDocNumber = d.DocNumber
+			}
 		}
+		// Fallback: if no docdb document-id was present, use the first available one so a
+		// member that only carries epodoc still keeps an application number.
+		if appRef.DocNumber == "" && len(member.ApplicationRef.DocumentIDs) > 0 {
+			d := member.ApplicationRef.DocumentIDs[0]
+			appRef.Country, appRef.DocNumber, appRef.Kind, appRef.Date = d.Country, d.DocNumber, d.Kind, d.Date
+		}
+		familyMember.ApplicationRef = appRef
 
 		// Parse priority claims
 		for _, pc := range member.PriorityClaims {
@@ -878,114 +887,71 @@ type legalXML struct {
 // that vary by event type and jurisdiction. We define a sufficient range
 // (L001EP through L050EP) and use reflection to dynamically extract all non-empty fields.
 type legalEventXML struct {
-	Code     string   `xml:"code,attr"`
-	Desc     string   `xml:"desc,attr"`
-	Infl     string   `xml:"infl,attr"`
-	DateMigr string   `xml:"dateMigr,attr"`
-	Pre      []string `xml:"pre"`
-	// L-fields: Extended to L050EP to support future EPO additions
-	L001EP string `xml:"L001EP"`
-	L002EP string `xml:"L002EP"`
-	L003EP string `xml:"L003EP"`
-	L004EP string `xml:"L004EP"`
-	L005EP string `xml:"L005EP"`
-	L006EP string `xml:"L006EP"`
-	L007EP string `xml:"L007EP"`
-	L008EP string `xml:"L008EP"`
-	L009EP string `xml:"L009EP"`
-	L010EP string `xml:"L010EP"`
-	L011EP string `xml:"L011EP"`
-	L012EP string `xml:"L012EP"`
-	L013EP string `xml:"L013EP"`
-	L014EP string `xml:"L014EP"`
-	L015EP string `xml:"L015EP"`
-	L016EP string `xml:"L016EP"`
-	L017EP string `xml:"L017EP"`
-	L018EP string `xml:"L018EP"`
-	L019EP string `xml:"L019EP"`
-	L020EP string `xml:"L020EP"`
-	L021EP string `xml:"L021EP"`
-	L022EP string `xml:"L022EP"`
-	L023EP string `xml:"L023EP"`
-	L024EP string `xml:"L024EP"`
-	L025EP string `xml:"L025EP"`
-	L026EP string `xml:"L026EP"`
-	L027EP string `xml:"L027EP"`
-	L028EP string `xml:"L028EP"`
-	L029EP string `xml:"L029EP"`
-	L030EP string `xml:"L030EP"`
-	L031EP string `xml:"L031EP"`
-	L032EP string `xml:"L032EP"`
-	L033EP string `xml:"L033EP"`
-	L034EP string `xml:"L034EP"`
-	L035EP string `xml:"L035EP"`
-	L036EP string `xml:"L036EP"`
-	L037EP string `xml:"L037EP"`
-	L038EP string `xml:"L038EP"`
-	L039EP string `xml:"L039EP"`
-	L040EP string `xml:"L040EP"`
-	L041EP string `xml:"L041EP"`
-	L042EP string `xml:"L042EP"`
-	L043EP string `xml:"L043EP"`
-	L044EP string `xml:"L044EP"`
-	L045EP string `xml:"L045EP"`
-	L046EP string `xml:"L046EP"`
-	L047EP string `xml:"L047EP"`
-	L048EP string `xml:"L048EP"`
-	L049EP string `xml:"L049EP"`
-	L050EP string `xml:"L050EP"`
+	Code     string            `xml:"code,attr"`
+	Desc     string            `xml:"desc,attr"`
+	Infl     string            `xml:"infl,attr"`
+	DateMigr string            `xml:"dateMigr,attr"`
+	Pre      []string          `xml:"pre"`
+	Fields   map[string]string // every L-code child element (L001EP..L5xxEP), unbounded
 }
 
-// Cache for legal field metadata to avoid repeated reflection
-var (
-	legalFieldIndices []int     // indices of L*EP fields in legalEventXML
-	legalFieldNames   []string  // corresponding field names
-	legalFieldsOnce   sync.Once // ensures cache is initialized only once
-)
+// UnmarshalXML captures every child element of <legal> dynamically, so any L-code is kept
+// regardless of range. OPS legal status uses codes well beyond L050 (real responses reach
+// L5xxEP); the previous fixed field list silently dropped everything above L050EP.
+func (e *legalEventXML) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	e.Fields = make(map[string]string)
+	for _, a := range start.Attr {
+		switch a.Name.Local {
+		case "code":
+			e.Code = a.Value
+		case "desc":
+			e.Desc = a.Value
+		case "infl":
+			e.Infl = a.Value
+		case "dateMigr":
+			e.DateMigr = a.Value
+		}
+	}
+	return e.walkLegal(d, start)
+}
 
-// initLegalFieldsCache initializes the cache of legal field indices and names.
-// This is called once via sync.Once to avoid repeated reflection overhead.
-func initLegalFieldsCache() {
-	t := reflect.TypeOf(legalEventXML{})
-
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		fieldName := field.Name
-
-		// Check if field name matches L*EP pattern (starts with L, ends with EP)
-		if strings.HasPrefix(fieldName, "L") && strings.HasSuffix(fieldName, "EP") {
-			// Only cache string fields
-			if field.Type.Kind() == reflect.String {
-				legalFieldIndices = append(legalFieldIndices, i)
-				legalFieldNames = append(legalFieldNames, fieldName)
+// walkLegal records the direct text of every descendant element under its local name. OPS
+// nests some L-codes inside others (e.g. L500EP contains L525EP), so a flat walk over direct
+// children misses them; recursing captures every L-code at any depth. <pre> raw lines are
+// collected separately.
+func (e *legalEventXML) walkLegal(d *xml.Decoder, start xml.StartElement) error {
+	var text strings.Builder
+	for {
+		tok, err := d.Token()
+		if err != nil {
+			return err
+		}
+		switch t := tok.(type) {
+		case xml.CharData:
+			text.Write(t)
+		case xml.StartElement:
+			if t.Name.Local == "pre" {
+				var v string
+				if err := d.DecodeElement(&v, &t); err != nil {
+					return err
+				}
+				e.Pre = append(e.Pre, v)
+				continue
 			}
+			if err := e.walkLegal(d, t); err != nil {
+				return err
+			}
+		case xml.EndElement:
+			// Record the element's direct text under its local name. If the same L-code
+			// appears more than once in one event the last value wins (a map cannot hold
+			// repeats); this matches the prior fixed-field behaviour. Repeated raw lines
+			// are preserved separately in Pre.
+			if v := strings.TrimSpace(text.String()); v != "" && start.Name.Local != "legal" {
+				e.Fields[start.Name.Local] = v
+			}
+			return nil
 		}
 	}
-}
-
-// extractLegalFields uses reflection to dynamically extract all L*EP fields
-// from a legalEventXML struct. This automatically handles any number of L-fields
-// without requiring hardcoded field names.
-//
-// Performance: Field metadata is cached on first call using sync.Once, so subsequent
-// calls only perform value extraction without type inspection overhead.
-func extractLegalFields(legal legalEventXML) map[string]string {
-	// Initialize cache on first call
-	legalFieldsOnce.Do(initLegalFieldsCache)
-
-	fields := make(map[string]string)
-	v := reflect.ValueOf(legal)
-
-	// Use cached indices to extract values
-	for i, fieldIdx := range legalFieldIndices {
-		fieldValue := v.Field(fieldIdx)
-		value := fieldValue.String()
-		if value != "" {
-			fields[legalFieldNames[i]] = value
-		}
-	}
-
-	return fields
 }
 
 // ParseLegal parses legal event XML into structured data
@@ -1022,7 +988,7 @@ func ParseLegal(xmlData string) (*LegalData, error) {
 		}
 
 		for _, legal := range member.LegalEvents {
-			fields := extractLegalFields(legal)
+			fields := legal.Fields
 			event := LegalEvent{
 				Code:        strings.TrimSpace(legal.Code),
 				Description: strings.TrimSpace(legal.Desc),

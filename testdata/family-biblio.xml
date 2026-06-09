@@ -1,0 +1,1564 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="../../../../../style/family-biblio.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ops:patent-family legal="false" total-result-count="6">
+        <ops:publication-reference>
+            <document-id document-id-type="epodoc">
+                <doc-number>EP1230000</doc-number>
+            </document-id>
+        </ops:publication-reference>
+        <ops:family-member family-id="23743220">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>1230000</doc-number>
+                    <kind>A1</kind>
+                    <date>20020814</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>EP1230000</doc-number>
+                    <date>20020814</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="15778506">
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>00951009</doc-number>
+                    <kind>A</kind>
+                    <date>20000809</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>43908399</doc-number>
+                    <kind>A</kind>
+                    <date>19991112</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <priority-claim sequence="2" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>0021650</doc-number>
+                    <kind>W</kind>
+                    <date>20000809</date>
+                </document-id>
+                <priority-active-indicator>NO</priority-active-indicator>
+                <priority-linkage-type>W</priority-linkage-type>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="23743220" country="EP" doc-number="1230000" kind="A1">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>EP</country>
+                            <doc-number>1230000</doc-number>
+                            <kind>A1</kind>
+                            <date>20020814</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP1230000</doc-number>
+                            <date>20020814</date>
+                        </document-id>
+                    </publication-reference>
+                    <classification-ipc>
+                        <text>B01D65/08</text>
+                        <text>B01D65/06</text>
+                    </classification-ipc>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>B01D  63/    02            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>B01D  63/    14            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="3">
+                            <text>B01D  65/    06            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="4">
+                            <text>B01D  71/    68            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="5">
+                            <text>C02F   1/    44            A I                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="15778506">
+                        <document-id document-id-type="docdb">
+                            <country>EP</country>
+                            <doc-number>00951009</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP20000951009</doc-number>
+                            <date>20000809</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>00951009</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US19990439083</doc-number>
+                                <date>19991112</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>439083</doc-number>
+                            </document-id>
+                        </priority-claim>
+                        <priority-claim sequence="2" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO2000US21650</doc-number>
+                                <date>20000809</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>US0021650</doc-number>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties>
+                        <applicants>
+                            <applicant sequence="1" data-format="epodoc">
+                                <applicant-name>
+                                    <name>MINNTECH CORP [US]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="1" data-format="original">
+                                <applicant-name>
+                                    <name>MINNTECH CORPORATION</name>
+                                </applicant-name>
+                            </applicant>
+                        </applicants>
+                        <inventors>
+                            <inventor sequence="1" data-format="epodoc">
+                                <inventor-name>
+                                    <name>WENTHOLD RANDAL M [US]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="epodoc">
+                                <inventor-name>
+                                    <name>RASSET CHRISTOPHER G [US]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="epodoc">
+                                <inventor-name>
+                                    <name>WRIGHT SCOTT B [US]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="1" data-format="original">
+                                <inventor-name>
+                                    <name>WENTHOLD, RANDAL, M.</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="original">
+                                <inventor-name>
+                                    <name>RASSET, CHRISTOPHER, G.</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="original">
+                                <inventor-name>
+                                    <name>WRIGHT, SCOTT, B.</name>
+                                </inventor-name>
+                            </inventor>
+                        </inventors>
+                    </parties>
+                    <invention-title lang="de">VERFAHREN ZUR REINIGUNG VON HOHLFASERMATERIAL UND FILTERN</invention-title>
+                    <invention-title lang="fr">PROCEDE DE NETTOYAGE DE MATIERES A FIBRES CREUSES ET DE FILTRES</invention-title>
+                    <invention-title lang="en">METHOD FOR CLEANING HOLLOW FIBER MATERIAL AND FILTER</invention-title>
+                </bibliographic-data>
+            </exchange-document>
+        </ops:family-member>
+        <ops:family-member family-id="23743220">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>1230000</doc-number>
+                    <kind>A4</kind>
+                    <date>20030122</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>EP1230000</doc-number>
+                    <date>20030122</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="15778506">
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>00951009</doc-number>
+                    <kind>A</kind>
+                    <date>20000809</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>43908399</doc-number>
+                    <kind>A</kind>
+                    <date>19991112</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <priority-claim sequence="2" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>0021650</doc-number>
+                    <kind>W</kind>
+                    <date>20000809</date>
+                </document-id>
+                <priority-active-indicator>NO</priority-active-indicator>
+                <priority-linkage-type>W</priority-linkage-type>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="23743220" country="EP" doc-number="1230000" kind="A4">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>EP</country>
+                            <doc-number>1230000</doc-number>
+                            <kind>A4</kind>
+                            <date>20030122</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP1230000</doc-number>
+                            <date>20030122</date>
+                        </document-id>
+                    </publication-reference>
+                    <classification-ipc>
+                        <text>B01D65/08</text>
+                        <text>B01D65/06</text>
+                    </classification-ipc>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>B01D  63/    02            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>B01D  63/    14            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="3">
+                            <text>B01D  65/    06            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="4">
+                            <text>B01D  71/    68            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="5">
+                            <text>C02F   1/    44            A I                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="15778506">
+                        <document-id document-id-type="docdb">
+                            <country>EP</country>
+                            <doc-number>00951009</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>EP20000951009</doc-number>
+                            <date>20000809</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>00951009</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US19990439083</doc-number>
+                                <date>19991112</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>439083</doc-number>
+                            </document-id>
+                        </priority-claim>
+                        <priority-claim sequence="2" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO2000US21650</doc-number>
+                                <date>20000809</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>US0021650</doc-number>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties>
+                        <applicants>
+                            <applicant sequence="1" data-format="epodoc">
+                                <applicant-name>
+                                    <name>MINNTECH CORP [US]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="1" data-format="original">
+                                <applicant-name>
+                                    <name>MINNTECH CORPORATION</name>
+                                </applicant-name>
+                            </applicant>
+                        </applicants>
+                        <inventors>
+                            <inventor sequence="1" data-format="epodoc">
+                                <inventor-name>
+                                    <name>WENTHOLD RANDAL M [US]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="epodoc">
+                                <inventor-name>
+                                    <name>RASSET CHRISTOPHER G [US]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="epodoc">
+                                <inventor-name>
+                                    <name>WRIGHT SCOTT B [US]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="1" data-format="original">
+                                <inventor-name>
+                                    <name>WENTHOLD, RANDAL, M.</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="original">
+                                <inventor-name>
+                                    <name>RASSET, CHRISTOPHER, G.</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="original">
+                                <inventor-name>
+                                    <name>WRIGHT, SCOTT, B.</name>
+                                </inventor-name>
+                            </inventor>
+                        </inventors>
+                    </parties>
+                    <invention-title lang="de">VERFAHREN ZUR REINIGUNG VON HOHLFASERMATERIAL UND FILTERN</invention-title>
+                    <invention-title lang="fr">PROCEDE DE NETTOYAGE DE MATIERES A FIBRES CREUSES ET DE FILTRES</invention-title>
+                    <invention-title lang="en">METHOD FOR CLEANING HOLLOW FIBER MATERIAL AND FILTER</invention-title>
+                    <references-cited>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="1">
+                            <patcit dnum-type="publication number" num="1">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5480565</doc-number>
+                                    <name>N. LEVIN, H.-D. POLASCHEGG</name>
+                                    <date>19960102</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5480565</doc-number>
+                                    <kind>A</kind>
+                                    <name>N. LEVIN, H.-D. POLASCHEGG</name>
+                                    <date>19960102</date>
+                                </document-id>
+                            </patcit>
+                            <category>X</category>
+                            <rel-claims>11,16-23</rel-claims>
+                            <category>Y</category>
+                            <rel-claims>1-10,12-15</rel-claims>
+                            <rel-passage>
+                                <passage>* figure 2, claims 1-21 *</passage>
+                            </rel-passage>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="2">
+                            <patcit dnum-type="publication number" num="2">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5851483</doc-number>
+                                    <name>R. NICOLLE, E. JOURDAN-LAFORTE</name>
+                                    <date>19981222</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5851483</doc-number>
+                                    <kind>A</kind>
+                                    <name>R. NICOLLE, E. JOURDAN-LAFORTE</name>
+                                    <date>19981222</date>
+                                </document-id>
+                            </patcit>
+                            <category>Y</category>
+                            <rel-claims>1-23</rel-claims>
+                            <rel-passage>
+                                <passage>* examples 2,3, claims 1-8 *</passage>
+                            </rel-passage>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="3">
+                            <patcit dnum-type="publication number" num="3">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5279735</doc-number>
+                                    <name>MINNTECH CORP.</name>
+                                    <date>19940118</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5279735</doc-number>
+                                    <kind>A</kind>
+                                    <name>MINNTECH CORP.</name>
+                                    <date>19940118</date>
+                                </document-id>
+                            </patcit>
+                            <category>Y</category>
+                            <rel-claims>1-23</rel-claims>
+                            <rel-passage>
+                                <passage>* column  W *</passage>
+                            </rel-passage>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="4">
+                            <patcit dnum-type="publication number" num="4">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>EP1022050</doc-number>
+                                    <name>ITTO DENKO CORP.</name>
+                                    <date>20000726</date>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>EP</country>
+                                    <doc-number>1022050</doc-number>
+                                    <kind>A2</kind>
+                                    <name>ITTO DENKO CORP.</name>
+                                    <date>20000726</date>
+                                </document-id>
+                            </patcit>
+                            <category>X</category>
+                            <rel-claims>1-23</rel-claims>
+                            <category>P</category>
+                            <rel-claims>1-23</rel-claims>
+                            <rel-passage>
+                                <passage>* the whole document *</passage>
+                            </rel-passage>
+                        </citation>
+                    </references-cited>
+                </bibliographic-data>
+            </exchange-document>
+        </ops:family-member>
+        <ops:family-member family-id="23743220">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>JP</country>
+                    <doc-number>2003513786</doc-number>
+                    <kind>A</kind>
+                    <date>20030415</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>JP2003513786</doc-number>
+                    <date>20030415</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="37585665">
+                <document-id document-id-type="docdb">
+                    <country>JP</country>
+                    <doc-number>2001538060</doc-number>
+                    <kind>A</kind>
+                    <date>20000809</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>43908399</doc-number>
+                    <kind>A</kind>
+                    <date>19991112</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <priority-claim sequence="2" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>0021650</doc-number>
+                    <kind>W</kind>
+                    <date>20000809</date>
+                </document-id>
+                <priority-active-indicator>NO</priority-active-indicator>
+                <priority-linkage-type>W</priority-linkage-type>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="23743220" country="JP" doc-number="2003513786" kind="A">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>JP</country>
+                            <doc-number>2003513786</doc-number>
+                            <kind>A</kind>
+                            <date>20030415</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>JP2003513786</doc-number>
+                            <date>20030415</date>
+                        </document-id>
+                    </publication-reference>
+                    <classification-ipc>
+                        <text>B01D63/02</text>
+                        <text>B01D63/14</text>
+                        <text>B01D65/06</text>
+                        <text>B01D71/68</text>
+                        <text>C02F1/44</text>
+                    </classification-ipc>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>B01D  63/    02            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>B01D  63/    14            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="3">
+                            <text>B01D  65/    06            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="4">
+                            <text>B01D  71/    68            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="5">
+                            <text>C02F   1/    44            A I                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>B01D63/02</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>B01D63/14</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>B01D65/06</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>B01D71/68</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="5">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>C02F1/44&amp;H</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/GA02</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/HA01</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/HA71</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/HA91</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="5">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/JA02C</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="6">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/JA22C</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="7">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/JA27C</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="8">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/KC16</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="9">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/KC27</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="10">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/KD22</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="11">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/KD30</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="12">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/MA01</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="13">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/MC62</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="14">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/PA01</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="15">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/PB06</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="16">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/PB23</classification-symbol>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="37585665">
+                        <document-id document-id-type="docdb">
+                            <country>JP</country>
+                            <doc-number>2001538060</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>JP20010538060</doc-number>
+                            <date>20000809</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>2001538060</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US19990439083</doc-number>
+                                <date>19991112</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>1999    439083</doc-number>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>1999      439083</doc-number>
+                            </document-id>
+                        </priority-claim>
+                        <priority-claim sequence="2" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO2000US21650</doc-number>
+                                <date>20000809</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>2000/21650</doc-number>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>2000/021650</doc-number>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties/>
+                </bibliographic-data>
+            </exchange-document>
+        </ops:family-member>
+        <ops:family-member family-id="23743220">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>JP</country>
+                    <doc-number>3759715</doc-number>
+                    <kind>B2</kind>
+                    <date>20060329</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>JP3759715B</doc-number>
+                    <date>20060329</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="37585665">
+                <document-id document-id-type="docdb">
+                    <country>JP</country>
+                    <doc-number>2001538060</doc-number>
+                    <kind>A</kind>
+                    <date>20000809</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>43908399</doc-number>
+                    <kind>A</kind>
+                    <date>19991112</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <priority-claim sequence="2" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>0021650</doc-number>
+                    <kind>W</kind>
+                    <date>20000809</date>
+                </document-id>
+                <priority-active-indicator>NO</priority-active-indicator>
+                <priority-linkage-type>W</priority-linkage-type>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="23743220" country="JP" doc-number="3759715" kind="B2">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>JP</country>
+                            <doc-number>3759715</doc-number>
+                            <kind>B2</kind>
+                            <date>20060329</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>JP3759715B</doc-number>
+                            <date>20060329</date>
+                        </document-id>
+                    </publication-reference>
+                    <classification-ipc>
+                        <text>B01D63/02</text>
+                        <text>B01D63/14</text>
+                        <text>B01D65/06</text>
+                        <text>B01D71/68</text>
+                        <text>C02F1/44</text>
+                    </classification-ipc>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>B01D  63/    02            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>B01D  63/    14            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="3">
+                            <text>B01D  65/    06            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="4">
+                            <text>B01D  71/    68            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="5">
+                            <text>C02F   1/    44            A I                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>B01D63/02</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>B01D63/14</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>B01D65/06</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>B01D71/68</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="5">
+                            <classification-scheme office="JP" scheme="FI"/>
+                            <classification-symbol>C02F1/44&amp;H</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/GA02</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/HA01</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/HA71</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/HA91</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="5">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/JA02C</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="6">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/JA22C</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="7">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/JA27C</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="8">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/KC16</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="9">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/KC27</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="10">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/KD22</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="11">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/KD30</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="12">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/MA01</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="13">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/MC62</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="14">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/PA01</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="15">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/PB06</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="16">
+                            <classification-scheme office="JP" scheme="FTERM"/>
+                            <classification-symbol>4D006/PB23</classification-symbol>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="37585665">
+                        <document-id document-id-type="docdb">
+                            <country>JP</country>
+                            <doc-number>2001538060</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>JP20010538060</doc-number>
+                            <date>20000809</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>2001538060</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US19990439083</doc-number>
+                                <date>19991112</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>1999    439083</doc-number>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>1999      439083</doc-number>
+                            </document-id>
+                        </priority-claim>
+                        <priority-claim sequence="2" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO2000US21650</doc-number>
+                                <date>20000809</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>2000/21650</doc-number>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>2000/021650</doc-number>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties/>
+                </bibliographic-data>
+            </exchange-document>
+        </ops:family-member>
+        <ops:family-member family-id="23743220">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>6261457</doc-number>
+                    <kind>B1</kind>
+                    <date>20010717</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>US6261457</doc-number>
+                    <date>20010717</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="50894442">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>43908399</doc-number>
+                    <kind>A</kind>
+                    <date>19991112</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>43908399</doc-number>
+                    <kind>A</kind>
+                    <date>19991112</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="23743220" country="US" doc-number="6261457" kind="B1">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>US</country>
+                            <doc-number>6261457</doc-number>
+                            <kind>B1</kind>
+                            <date>20010717</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>US6261457</doc-number>
+                            <date>20010717</date>
+                        </document-id>
+                    </publication-reference>
+                    <classification-ipc>
+                        <text>B01D65/06</text>
+                    </classification-ipc>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>B01D  63/    02            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>B01D  63/    14            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="3">
+                            <text>B01D  65/    06            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="4">
+                            <text>B01D  71/    68            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="5">
+                            <text>C02F   1/    44            A I                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="US" scheme="UC"/>
+                            <classification-symbol>134/22.19</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="US" scheme="UC"/>
+                            <classification-symbol>210/500.41</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="3">
+                            <classification-scheme office="US" scheme="UC"/>
+                            <classification-symbol>210/636</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="4">
+                            <classification-scheme office="US" scheme="UC"/>
+                            <classification-symbol>210/650</classification-symbol>
+                        </patent-classification>
+                        <patent-classification sequence="5">
+                            <classification-scheme office="US" scheme="UC"/>
+                            <classification-symbol>562/607</classification-symbol>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="50894442">
+                        <document-id document-id-type="docdb">
+                            <country>US</country>
+                            <doc-number>43908399</doc-number>
+                            <kind>A</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>US19990439083</doc-number>
+                            <date>19991112</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>09439083</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US19990439083</doc-number>
+                                <date>19991112</date>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties>
+                        <applicants>
+                            <applicant sequence="1" data-format="epodoc">
+                                <applicant-name>
+                                    <name>MINNTECH CORP [US]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="1" data-format="original">
+                                <applicant-name>
+                                    <name>MINNTECH CORPORATION</name>
+                                </applicant-name>
+                            </applicant>
+                        </applicants>
+                        <inventors>
+                            <inventor sequence="1" data-format="epodoc">
+                                <inventor-name>
+                                    <name>WENTHOLD RANDAL MARVIN [US]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="epodoc">
+                                <inventor-name>
+                                    <name>RASSET CHRISTOPHER GARY [US]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="epodoc">
+                                <inventor-name>
+                                    <name>WRIGHT SCOTT BLAIR [US]</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="1" data-format="original">
+                                <inventor-name>
+                                    <name>WENTHOLD RANDAL MARVIN</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="original">
+                                <inventor-name>
+                                    <name>RASSET CHRISTOPHER GARY</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="original">
+                                <inventor-name>
+                                    <name>WRIGHT SCOTT BLAIR</name>
+                                </inventor-name>
+                            </inventor>
+                        </inventors>
+                    </parties>
+                    <invention-title lang="en">Method and product for cleaning hollow fiber material and filter</invention-title>
+                    <references-cited>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="1">
+                            <patcit dnum-type="publication number" num="1">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US4517081</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>4517081</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="2">
+                            <patcit dnum-type="publication number" num="2">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US4721123</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>4721123</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="3">
+                            <patcit dnum-type="publication number" num="3">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5112487</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5112487</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="4">
+                            <patcit dnum-type="publication number" num="4">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5279735</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5279735</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="5">
+                            <patcit dnum-type="publication number" num="5">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5310524</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5310524</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="6">
+                            <patcit dnum-type="publication number" num="6">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5344652</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5344652</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="7">
+                            <patcit dnum-type="publication number" num="7">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5400818</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5400818</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="8">
+                            <patcit dnum-type="publication number" num="8">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5431817</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5431817</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="9">
+                            <patcit dnum-type="publication number" num="9">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5508046</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5508046</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="10">
+                            <patcit dnum-type="publication number" num="10">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5605627</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5605627</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="11">
+                            <patcit dnum-type="publication number" num="11">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5635195</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5635195</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="12">
+                            <patcit dnum-type="publication number" num="12">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5656302</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5656302</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="13">
+                            <patcit dnum-type="publication number" num="13">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5762798</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5762798</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="14">
+                            <patcit dnum-type="publication number" num="14">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5840343</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5840343</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="15">
+                            <nplcit num="1">
+                                <text>- Ouseph et al., "Maintaining Blood Compartment Volume in Dialyzers Reprocessed With Peracetic Acid Maintains Kt/V But Not beta2-Microglobulin Removal", AJKD American Journal of Kidney Diseases, vol. 30, No. 4, Oct. 1997, pp. 501-506.</text>
+                            </nplcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="16">
+                            <nplcit num="2">
+                                <text>- Cappelli et al., "Retention of Limulus Amoebocyte Lysate Reactive Bacterial Products by Polysulfone Dialyzers Is Affected by the Type of Disinfectant", ASAIO Journal, 1998, pp. M587-M591.</text>
+                            </nplcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="17">
+                            <nplcit num="3">
+                                <text>- Cheung et al., "Effects of Hemodialyzer Reuse of Clearances of Urea and beta2-Microglubulin", Journal of the American Society of Nephrology, vol. 10, No. 1, Jan., 1999, pp. 117-127.</text>
+                            </nplcit>
+                        </citation>
+                        <citation cited-phase="undefined" cited-by="applicant" sequence="18">
+                            <nplcit num="4">
+                                <text>- Brochure for RENATRON II Dialyzer Reprocessing System, Renal Systems, Division of Minntech Corporation, 4 pages, 1996.</text>
+                            </nplcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="1">
+                            <patcit dnum-type="publication number" num="1">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5851483</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5851483</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="2">
+                            <patcit dnum-type="publication number" num="2">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6077435</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6077435</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                        <citation cited-phase="national-search-report" cited-by="examiner" sequence="3">
+                            <patcit dnum-type="publication number" num="3">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6110369</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6110369</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                        </citation>
+                    </references-cited>
+                </bibliographic-data>
+                <abstract lang="en">
+                    <p>A peracetic acid disinfectant is used to clean particulate inorganic materials such as calcium and magnesium from fibers and filters. The method allows polysulfone filtens in particulate to be reused after soaking for at least about 18 hours, and most preferably at least about 24 hours, in the peracetic acid based solution. The cleaned filters have been shown to have a reuse life of in excess of 30% and up to about 60-80% of the original life of the filter. The peracetic acid solution and method may be used to clean both hollow fiber and pleated polysulfone filters.</p>
+                </abstract>
+            </exchange-document>
+        </ops:family-member>
+        <ops:family-member family-id="23743220">
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>WO</country>
+                    <doc-number>0136076</doc-number>
+                    <kind>A1</kind>
+                    <date>20010525</date>
+                </document-id>
+                <document-id document-id-type="epodoc">
+                    <doc-number>WO0136076</doc-number>
+                    <date>20010525</date>
+                </document-id>
+            </publication-reference>
+            <application-reference doc-id="45586205" is-representative="YES">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>0021650</doc-number>
+                    <kind>W</kind>
+                    <date>20000809</date>
+                </document-id>
+            </application-reference>
+            <priority-claim sequence="1" kind="national">
+                <document-id document-id-type="docdb">
+                    <country>US</country>
+                    <doc-number>43908399</doc-number>
+                    <kind>A</kind>
+                    <date>19991112</date>
+                </document-id>
+                <priority-active-indicator>YES</priority-active-indicator>
+            </priority-claim>
+            <exchange-document system="ops.epo.org" family-id="23743220" country="WO" doc-number="0136076" kind="A1">
+                <bibliographic-data>
+                    <publication-reference>
+                        <document-id document-id-type="docdb">
+                            <country>WO</country>
+                            <doc-number>0136076</doc-number>
+                            <kind>A1</kind>
+                            <date>20010525</date>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>WO0136076</doc-number>
+                            <date>20010525</date>
+                        </document-id>
+                    </publication-reference>
+                    <classification-ipc>
+                        <text>B01D65/08</text>
+                    </classification-ipc>
+                    <classifications-ipcr>
+                        <classification-ipcr sequence="1">
+                            <text>B01D  63/    02            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="2">
+                            <text>B01D  63/    14            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="3">
+                            <text>B01D  65/    06            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="4">
+                            <text>B01D  71/    68            A I                    </text>
+                        </classification-ipcr>
+                        <classification-ipcr sequence="5">
+                            <text>C02F   1/    44            A I                    </text>
+                        </classification-ipcr>
+                    </classifications-ipcr>
+                    <patent-classifications>
+                        <patent-classification sequence="1">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>US</generating-office>
+                        </patent-classification>
+                        <patent-classification sequence="2">
+                            <classification-scheme office="EP" scheme="CPCI"/>
+                            <section>B</section>
+                            <class>01</class>
+                            <subclass>D</subclass>
+                            <main-group>65</main-group>
+                            <subgroup>02</subgroup>
+                            <classification-value>I</classification-value>
+                            <generating-office>EP</generating-office>
+                        </patent-classification>
+                    </patent-classifications>
+                    <application-reference doc-id="45586205">
+                        <document-id document-id-type="docdb">
+                            <country>US</country>
+                            <doc-number>0021650</doc-number>
+                            <kind>W</kind>
+                        </document-id>
+                        <document-id document-id-type="epodoc">
+                            <doc-number>WO2000US21650</doc-number>
+                            <date>20000809</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>US0021650</doc-number>
+                        </document-id>
+                    </application-reference>
+                    <priority-claims>
+                        <priority-claim sequence="1" kind="national">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US19990439083</doc-number>
+                                <date>19991112</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>09/439,083</doc-number>
+                            </document-id>
+                        </priority-claim>
+                    </priority-claims>
+                    <parties>
+                        <applicants>
+                            <applicant sequence="1" data-format="epodoc">
+                                <applicant-name>
+                                    <name>MINNTECH CORP [US]</name>
+                                </applicant-name>
+                            </applicant>
+                            <applicant sequence="1" data-format="original">
+                                <applicant-name>
+                                    <name>MINNTECH CORPORATION</name>
+                                </applicant-name>
+                            </applicant>
+                        </applicants>
+                        <inventors>
+                            <inventor sequence="1" data-format="epodoc">
+                                <inventor-name>
+                                    <name>WENTHOLD RANDAL M</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="epodoc">
+                                <inventor-name>
+                                    <name>RASSET CHRISTOPHER G</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="epodoc">
+                                <inventor-name>
+                                    <name>WRIGHT SCOTT B</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="1" data-format="original">
+                                <inventor-name>
+                                    <name>WENTHOLD, RANDAL, M.</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="2" data-format="original">
+                                <inventor-name>
+                                    <name>RASSET, CHRISTOPHER, G.</name>
+                                </inventor-name>
+                            </inventor>
+                            <inventor sequence="3" data-format="original">
+                                <inventor-name>
+                                    <name>WRIGHT, SCOTT, B.</name>
+                                </inventor-name>
+                            </inventor>
+                        </inventors>
+                    </parties>
+                    <invention-title lang="fr">PROCEDE ET PRODUIT DE NETTOYAGE DE MATIERES A FIBRES CREUSES ET DE FILTRES</invention-title>
+                    <invention-title lang="en">METHOD AND PRODUCT FOR CLEANING HOLLOW FIBER MATERIAL AND FILTER</invention-title>
+                    <references-cited>
+                        <citation cited-phase="international-search-report" cited-by="examiner" sequence="1" office="US">
+                            <patcit dnum-type="publication number" num="1">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6110369</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6110369</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                            <category>YE</category>
+                        </citation>
+                        <citation cited-phase="international-search-report" cited-by="examiner" sequence="2" office="US">
+                            <patcit dnum-type="publication number" num="2">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US6077435</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>6077435</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                            <category>YP</category>
+                        </citation>
+                        <citation cited-phase="international-search-report" cited-by="examiner" sequence="3" office="US">
+                            <patcit dnum-type="publication number" num="3">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5851483</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5851483</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                            <category>Y</category>
+                        </citation>
+                        <citation cited-phase="international-search-report" cited-by="examiner" sequence="4" office="US">
+                            <patcit dnum-type="publication number" num="4">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5762798</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5762798</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                            <category>Y</category>
+                        </citation>
+                        <citation cited-phase="international-search-report" cited-by="examiner" sequence="5" office="US">
+                            <patcit dnum-type="publication number" num="5">
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>US5279735</doc-number>
+                                </document-id>
+                                <document-id document-id-type="docdb">
+                                    <country>US</country>
+                                    <doc-number>5279735</doc-number>
+                                    <kind>A</kind>
+                                </document-id>
+                            </patcit>
+                            <category>Y</category>
+                        </citation>
+                    </references-cited>
+                </bibliographic-data>
+                <abstract lang="en">
+                    <p>A peracetic acid disinfectant has been shown to be effective in cleaning particulate inorganic materials such as calcium and magnesium from fibers and filters. The disinfectant is used in solution form in a method allowing filters, especially those made up of polysulfone, to be soaked for at least 18 hours, preferably at least about 24 hours, and then reused. This method has shown filters cleaned by the solution to have a reuse life in excess of 30 % and up to about 60-80 % of the original life of the filters. The peracetic acid based disinfecting solution may be used to clean polysulfone filters in both hollow fiber and pleated form.</p>
+                </abstract>
+                <abstract lang="fr">
+                    <p>selon la présente invention, un désinfectant à acide péracétique s'est avéré efficace pour nettoyer des matières minérales particulaires tels que le calcium et le magnésium de fibres et de filtres. Le désinfectant est utilisé sous forme d'une solution selon un procédé permettant à des filtres, en particulier aux filtres constitués de polysulfone, d'être trempés pendant au moins 18 heures, de préférence pendant au moins environ 24 heures, puis réutilisés. Ce procédé s'est avéré donner aux filtres nettoyés au moyen de la solution une durée de réutilisation qui dépasse de 30 % et jusqu'à environ 60-80 % de la durée d'origine des filtres. La solution de désinfection se basant sur l'acide péracétique peut être utilisée pour nettoyer des filtres polysulfone à la fois sous forme de fibres creuses et sous forme plissée.</p>
+                </abstract>
+            </exchange-document>
+        </ops:family-member>
+    </ops:patent-family>
+</ops:world-patent-data>

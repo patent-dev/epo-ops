@@ -1,6 +1,7 @@
 package epo_ops
 
 import (
+	"encoding/xml"
 	"testing"
 )
 
@@ -137,78 +138,55 @@ func TestParseLegal_DynamicFields(t *testing.T) {
 	t.Logf("\nOK Dynamic field extraction successfully handles L001EP through L050EP")
 }
 
-// TestExtractLegalFields_EdgeCases tests edge cases in the reflection-based field extraction
-func TestExtractLegalFields_EdgeCases(t *testing.T) {
+// TestLegalEvent_UnmarshalXML tests the dynamic capture: empty values are skipped, and
+// L-codes are captured regardless of range (including codes well beyond the old L050EP cap).
+func TestLegalEvent_UnmarshalXML(t *testing.T) {
 	tests := []struct {
 		name     string
-		event    legalEventXML
+		xml      string
 		expected map[string]string
 	}{
 		{
-			name: "No L fields",
-			event: legalEventXML{
-				Code: "TEST",
-				Desc: "Test",
-			},
+			name:     "No L fields",
+			xml:      `<legal code="TEST" desc="Test"></legal>`,
 			expected: map[string]string{},
 		},
 		{
-			name: "Empty L fields",
-			event: legalEventXML{
-				Code:   "TEST",
-				L001EP: "",
-				L002EP: "",
-				L003EP: "",
-			},
+			name:     "Empty values skipped",
+			xml:      `<legal code="T"><L001EP></L001EP><L002EP>  </L002EP></legal>`,
 			expected: map[string]string{},
 		},
 		{
 			name: "Mixed empty and non-empty",
-			event: legalEventXML{
-				Code:   "TEST",
-				L001EP: "Value",
-				L002EP: "",
-				L003EP: "Another",
-				L004EP: "",
-			},
+			xml:  `<legal code="T"><L001EP>Value</L001EP><L002EP></L002EP><L003EP>Another</L003EP></legal>`,
 			expected: map[string]string{
 				"L001EP": "Value",
 				"L003EP": "Another",
 			},
 		},
 		{
-			name: "First and last fields only",
-			event: legalEventXML{
-				L001EP: "First",
-				L050EP: "Last",
-			},
+			name: "Codes beyond the old L050EP cap",
+			xml:  `<legal code="T"><L001EP>a</L001EP><L520EP>b</L520EP><L525EP>c</L525EP></legal>`,
 			expected: map[string]string{
-				"L001EP": "First",
-				"L050EP": "Last",
+				"L001EP": "a",
+				"L520EP": "b",
+				"L525EP": "c",
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := extractLegalFields(tt.event)
-
-			if len(result) != len(tt.expected) {
-				t.Errorf("Expected %d fields, got %d: %v", len(tt.expected), len(result), result)
+			var ev legalEventXML
+			if err := xml.Unmarshal([]byte(tt.xml), &ev); err != nil {
+				t.Fatalf("unmarshal: %v", err)
 			}
-
-			for field, expectedValue := range tt.expected {
-				if value, ok := result[field]; !ok {
-					t.Errorf("Field %s not found", field)
-				} else if value != expectedValue {
-					t.Errorf("Field %s = %q, want %q", field, value, expectedValue)
-				}
+			if len(ev.Fields) != len(tt.expected) {
+				t.Errorf("got %d fields %v, want %d %v", len(ev.Fields), ev.Fields, len(tt.expected), tt.expected)
 			}
-
-			// Verify no unexpected fields
-			for field := range result {
-				if _, ok := tt.expected[field]; !ok {
-					t.Errorf("Unexpected field %s = %q", field, result[field])
+			for field, want := range tt.expected {
+				if got := ev.Fields[field]; got != want {
+					t.Errorf("field %s = %q, want %q", field, got, want)
 				}
 			}
 		})
