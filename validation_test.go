@@ -22,6 +22,8 @@ func TestValidateDocdbFormat(t *testing.T) {
 		{"Missing dots", "EP1000000B1", true},
 		{"No kind code EP", "EP.1000000.", false},
 		{"No kind code US", "US.7654321.", false},
+		{"No kind code, no trailing dot", "EP.1404685", false},
+		{"Bare CC.number US", "US.7654321", false},
 		{"Lowercase country", "ep.1000000.B1", true},
 		{"Invalid kind code", "EP.1000000.B12", true},
 		{"No country code", ".1000000.B1", true},

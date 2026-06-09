@@ -8,9 +8,12 @@ import (
 
 // Regular expressions for patent number format validation
 var (
-	// Docdb format: CC.number.KC (e.g., EP.1000000.B1) - kind code is optional
-	// Country code (2 letters), dot, number (digits), dot, optional kind code (letter + optional digit)
-	docdbPattern = regexp.MustCompile(`^[A-Z]{2}\.\d+\.([A-Z]\d?)?$`)
+	// Docdb format: CC.number[.KC] (e.g., EP.1000000.B1) - the kind code, and its separating
+	// dot, are optional. The OPS family/register endpoints are kind-agnostic and resolve the
+	// bare "CC.number" form (e.g. EP.1404685 -> 200) while 404ing on some kind-coded
+	// publications, so the bare form must validate.
+	// Country code (2 letters), dot, number (digits), optionally a dot + optional kind code.
+	docdbPattern = regexp.MustCompile(`^[A-Z]{2}\.\d+(\.([A-Z]\d?)?)?$`)
 
 	// Epodoc format: CCnumber or CCnumberKC (e.g., EP1000000 or EP1000000B1)
 	// Country code (2 letters), number (digits), optional kind code (letter + optional digit)
