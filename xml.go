@@ -534,20 +534,14 @@ func ParseClaims(xmlData string) (*ClaimsData, error) {
 
 // imageInquiryXML is the internal structure for unmarshaling image inquiry XML.
 //
-// Note on Link field structure:
-// The EPO OPS API returns the image link as a nested element, not an attribute:
+// The EPO OPS image inquiry returns the image link as a "link" attribute on
+// document-instance:
 //
-//	<ops:document-instance desc="Drawing" ...>
-//	  <ops:document-instance-link href="/rest-services/..."/>
-//	</ops:document-instance>
+//	<ops:document-instance desc="FullDocument" number-of-pages="11"
+//	    link="published-data/images/EP/1000000/B1/fullimage"/>
 //
-// Previous versions of this library incorrectly used:
-//
-//	Link string `xml:"link,attr"`
-//
-// The correct structure is:
-//
-//	Link struct { Href string `xml:"href,attr"` } `xml:"document-instance-link"`
+// LinkAttr captures that. LinkElem is kept as a fallback for the nested
+// document-instance-link/@href form in case any response uses it.
 type imageInquiryXML struct {
 	XMLName         xml.Name `xml:"world-patent-data"`
 	DocumentInquiry struct {
@@ -556,7 +550,8 @@ type imageInquiryXML struct {
 				Desc          string `xml:"desc,attr"`
 				NumberOfPages int    `xml:"number-of-pages,attr"`
 				DocType       string `xml:"doc-type,attr"`
-				Link          struct {
+				LinkAttr      string `xml:"link,attr"`
+				LinkElem      struct {
 					Href string `xml:"href,attr"`
 				} `xml:"document-instance-link"`
 				FormatOptions struct {
@@ -605,14 +600,17 @@ func ParseImageInquiry(xmlData string) (*ImageInquiry, error) {
 		DocumentInstances: make([]DocumentInstance, 0, len(raw.DocumentInquiry.InquiryResult.DocumentInstances)),
 	}
 
-	for i, inst := range raw.DocumentInquiry.InquiryResult.DocumentInstances {
-		// Validate required fields
-		if inst.Link.Href == "" {
-			return nil, &DataValidationError{
-				Parser:       "ParseImageInquiry",
-				MissingField: fmt.Sprintf("DocumentInstances[%d].Link.Href", i),
-				Message:      "document-instance-link href is required but was empty",
-			}
+	for _, inst := range raw.DocumentInquiry.InquiryResult.DocumentInstances {
+		// The link is a "link" attribute on document-instance; tolerate the nested
+		// document-instance-link/@href form as a fallback.
+		link := strings.TrimSpace(inst.LinkAttr)
+		if link == "" {
+			link = strings.TrimSpace(inst.LinkElem.Href)
+		}
+		if link == "" {
+			// An instance without a resolvable link cannot be fetched; skip it
+			// rather than failing the whole inquiry.
+			continue
 		}
 
 		// Extract formats
@@ -626,7 +624,7 @@ func ParseImageInquiry(xmlData string) (*ImageInquiry, error) {
 
 		result.DocumentInstances = append(result.DocumentInstances, DocumentInstance{
 			Description:   inst.Desc,
-			Link:          inst.Link.Href,
+			Link:          link,
 			NumberOfPages: inst.NumberOfPages,
 			Formats:       formats,
 			DocType:       inst.DocType,
