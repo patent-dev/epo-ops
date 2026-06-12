@@ -177,13 +177,41 @@ func (c *Client) GetAbstractRaw(ctx context.Context, refType, format, number str
 //   - format: Number format (e.g., "docdb", "epodoc")
 //   - number: Patent number (e.g., "EP1000000")
 //
-// Returns parsed fulltext data including biblio, abstract, description, and claims.
+// Returns parsed fulltext data including abstract, description, and claims.
+//
+// The OPS fulltext endpoint is an *inquiry* that only lists which parts exist, not
+// the text itself, so the actual full text is assembled from the individual
+// constituents (claims, description, abstract). It is best-effort: a publication
+// missing some parts still returns the parts that are available. Use GetFulltextRaw
+// for the raw inquiry response.
 func (c *Client) GetFulltext(ctx context.Context, refType, format, number string) (*FulltextData, error) {
-	xmlData, err := c.GetFulltextRaw(ctx, refType, format, number)
-	if err != nil {
-		return nil, err
+	ft := &FulltextData{}
+	var firstErr error
+
+	if claims, err := c.GetClaims(ctx, refType, format, number); err == nil {
+		ft.Claims = claims
+		ft.Country, ft.DocNumber, ft.Kind, ft.Language = claims.Country, claims.DocNumber, claims.Kind, claims.Language
+	} else {
+		firstErr = err
 	}
-	return ParseFulltext(xmlData)
+	if desc, err := c.GetDescription(ctx, refType, format, number); err == nil {
+		ft.Description = desc
+		if ft.Country == "" {
+			ft.Country, ft.DocNumber, ft.Kind, ft.Language = desc.Country, desc.DocNumber, desc.Kind, desc.Language
+		}
+	} else if firstErr == nil {
+		firstErr = err
+	}
+	if abs, err := c.GetAbstract(ctx, refType, format, number); err == nil {
+		ft.Abstract = abs
+	} else if firstErr == nil {
+		firstErr = err
+	}
+
+	if ft.Claims == nil && ft.Description == nil && ft.Abstract == nil {
+		return nil, firstErr
+	}
+	return ft, nil
 }
 
 // GetFulltextRaw retrieves full text as raw XML.
@@ -377,35 +405,33 @@ func (c *Client) GetAbstractMultiple(ctx context.Context, refType, format string
 	})
 }
 
-// GetFulltextMultiple retrieves fulltext data for multiple patents (bulk operation).
+// GetFulltextMultiple retrieves the full text for several publications, returning
+// one FulltextData per input number, in order.
+//
+// The OPS bulk fulltext endpoint is an inquiry only (it lists available parts, not
+// the text), so each entry is assembled from its constituents via GetFulltext -
+// that is N sets of requests, not a single bulk call.
 //
 // Parameters:
 //   - refType: Reference type (e.g., RefTypePublication, RefTypeApplication, RefTypePriority)
 //   - format: Number format (e.g., FormatDocDB, FormatEPODOC)
 //   - numbers: Slice of patent numbers (max 100)
-//
-// Returns parsed fulltext data including biblio, abstract, description, and claims for all requested patents.
-func (c *Client) GetFulltextMultiple(ctx context.Context, refType, format string, numbers []string) (*FulltextData, error) {
+func (c *Client) GetFulltextMultiple(ctx context.Context, refType, format string, numbers []string) ([]*FulltextData, error) {
 	if err := ValidateRefType(refType); err != nil {
 		return nil, err
 	}
-
 	if err := ValidateBulkNumbers(numbers, format); err != nil {
 		return nil, err
 	}
-
-	// Use generated POST method
-	body := formatBulkBody(numbers)
-	xmlData, err := c.makeRequest(ctx, func() (*http.Response, error) {
-		return c.generated.PublishedDataFulltextInquiryServicePOSTWithTextBody(ctx,
-			generated.PublishedDataFulltextInquiryServicePOSTParamsType(refType),
-			generated.PublishedDataFulltextInquiryServicePOSTParamsFormat(format),
-			body)
-	})
-	if err != nil {
-		return nil, err
+	results := make([]*FulltextData, 0, len(numbers))
+	for _, n := range numbers {
+		ft, err := c.GetFulltext(ctx, refType, format, n)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, ft)
 	}
-	return ParseFulltext(xmlData)
+	return results, nil
 }
 
 // GetPublishedEquivalents retrieves equivalent publications for a patent (simple family).

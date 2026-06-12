@@ -223,8 +223,8 @@ func TestIntegrationGetAbstract(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetAbstract: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil abstract")
+	if d == nil || d.Text == "" {
+		t.Fatal("no abstract text")
 	}
 }
 
@@ -325,8 +325,8 @@ func TestIntegrationGetDescriptionMultiple(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetDescriptionMultiple: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil description batch")
+	if d == nil || len(d.Paragraphs) == 0 {
+		t.Fatal("no description paragraphs")
 	}
 }
 
@@ -341,6 +341,12 @@ func TestIntegrationGetFulltext(t *testing.T) {
 	}
 	if d == nil {
 		t.Fatal("nil fulltext")
+	}
+	if d.Claims == nil || len(d.Claims.Claims) == 0 {
+		t.Fatal("no claims in fulltext")
+	}
+	if d.Description == nil || len(d.Description.Paragraphs) == 0 {
+		t.Fatal("no description in fulltext")
 	}
 }
 
@@ -365,8 +371,18 @@ func TestIntegrationGetFulltextMultiple(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetFulltextMultiple: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil fulltext batch")
+	if len(d) == 0 {
+		t.Fatal("no fulltext results")
+	}
+	hasClaims := false
+	for _, ft := range d {
+		if ft != nil && ft.Claims != nil && len(ft.Claims.Claims) > 0 {
+			hasClaims = true
+			break
+		}
+	}
+	if !hasClaims {
+		t.Fatal("no claims in any fulltext result")
 	}
 }
 
@@ -391,8 +407,8 @@ func TestIntegrationGetPublishedEquivalents(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetPublishedEquivalents: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil equivalents")
+	if d == nil || len(d.Equivalents) == 0 {
+		t.Fatal("no equivalents")
 	}
 }
 
@@ -417,8 +433,8 @@ func TestIntegrationGetPublishedEquivalentsMultiple(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetPublishedEquivalentsMultiple: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil equivalents batch")
+	if d == nil || len(d.Equivalents) == 0 {
+		t.Fatal("no equivalents")
 	}
 }
 
@@ -474,8 +490,8 @@ func TestIntegrationSearchWithConstituent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("SearchWithConstituent: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil search results")
+	if d == nil || d.TotalCount == 0 {
+		t.Fatal("no search results")
 	}
 }
 
@@ -530,8 +546,8 @@ func TestIntegrationGetFamilyWithBiblioMultiple(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetFamilyWithBiblioMultiple: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil family batch")
+	if d == nil || len(d.Members) == 0 {
+		t.Fatal("no family members")
 	}
 }
 
@@ -544,8 +560,8 @@ func TestIntegrationGetFamilyWithLegal(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetFamilyWithLegal: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil family-with-legal")
+	if d == nil || len(d.Members) == 0 {
+		t.Fatal("no family members")
 	}
 }
 
@@ -558,8 +574,8 @@ func TestIntegrationGetFamilyWithLegalMultiple(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetFamilyWithLegalMultiple: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil family-with-legal batch")
+	if d == nil || len(d.Members) == 0 {
+		t.Fatal("no family members")
 	}
 }
 
@@ -600,8 +616,8 @@ func TestIntegrationGetLegalMultiple(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetLegalMultiple: %v", err)
 	}
-	if d == nil {
-		t.Fatal("nil legal batch")
+	if d == nil || len(d.LegalEvents) == 0 {
+		t.Fatal("no legal events")
 	}
 }
 
@@ -731,7 +747,9 @@ func TestIntegrationGetRegisterUNIP(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetRegisterUNIP: %v", err)
 	}
-	_ = docs
+	if len(docs) == 0 {
+		t.Fatal("no register documents")
+	}
 }
 
 func TestIntegrationGetRegisterUNIPRaw(t *testing.T) {
@@ -1016,6 +1034,8 @@ func TestIntegrationGetUsageStats(t *testing.T) {
 	if d == nil {
 		t.Fatal("nil usage stats")
 	}
+	// Entries depend on the account's activity in the window and are legitimately
+	// empty for a quiet account, so content cannot be asserted without flakiness.
 }
 
 // isTIFF reports whether b begins with a TIFF byte-order mark (II / MM).

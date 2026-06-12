@@ -1168,38 +1168,6 @@ func TestGetAbstractMultiple(t *testing.T) {
 	}
 }
 
-// TestGetFulltextMultiple tests bulk fulltext retrieval
-func TestGetFulltextMultiple(t *testing.T) {
-	authServer := newMockAuthServer(t)
-	defer authServer.Close()
-
-	opsServer := newMockOPSServer(t, func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "POST" {
-			t.Errorf("Expected POST request, got %s", r.Method)
-		}
-		w.Header().Set("Content-Type", "application/xml")
-		_, _ = w.Write(loadTestData("claims.xml")) // Use claims.xml as fulltext proxy
-	})
-	defer opsServer.Close()
-
-	config := DefaultConfig()
-	config.ConsumerKey = "test"
-	config.ConsumerSecret = "test"
-	config.BaseURL = opsServer.URL
-	config.AuthURL = authServer.URL + "/auth/accesstoken"
-
-	client, _ := NewClient(config)
-	ctx := context.Background()
-
-	xml, err := client.GetFulltextMultiple(ctx, RefTypePublication, FormatDocDB, []string{"EP.1000000.B1"})
-	if err != nil {
-		t.Fatalf("GetFulltextMultiple failed: %v", err)
-	}
-
-	if xml == nil {
-		t.Fatal("Expected parsed fulltext data, got nil")
-	}
-	if xml.Claims == nil || len(xml.Claims.Claims) == 0 {
-		t.Error("Expected claims in fulltext data")
-	}
-}
+// GetFulltextMultiple is exercised against real OPS data in the integration suite
+// (TestIntegrationGetFulltextMultiple); a mock returning a claims fixture would not
+// reflect that the bulk endpoint carries no text.
