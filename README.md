@@ -180,8 +180,10 @@ results, err = client.SearchWithConstituent(ctx, "biblio", "pa=Siemens", "1-10")
 xmlData, err := client.SearchRaw(ctx, "ti=battery", "1-25")
 ```
 
-CQL examples: `ti=plastic` (title), `pa=Siemens` (applicant), `de` (country code DE),
-`ti=plastic and pa=Siemens` (combined). Range format: `"1-25"` (default), `"1-100"`, etc.
+CQL examples: `ti=plastic` (title), `pa=Siemens` (applicant), `ic=H04W` (IPC class),
+`pd>=2020` (publication date), `ti=plastic and pa=Siemens` (combined), and the
+proximity form `ti=green prox/distance<=3 ti=energy`. Range format: `"1-25"`
+(default), `"1-100"`, etc.
 
 ### Family retrieval
 

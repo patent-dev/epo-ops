@@ -218,9 +218,17 @@ func TestIsValidField(t *testing.T) {
 		{"ap", true},
 		{"pr", true},
 		{"pd", true},
-		{"ad", true},
 		{"ic", true},
 		{"cpc", true},
+		{"prd", true}, // not live-confirmable (API returns 500); retained, see fields.go
+		// Fields the live OPS API rejects with CLIENT.InvalidIndex "Invalid index
+		// name X" - the validator must treat them as invalid (verified 2026-06-12).
+		{"ad", false},
+		{"de", false},
+		{"ep", false},
+		{"pc", false},
+		{"ecla", false},
+		{"ctc", false},
 		{"invalid", false},
 		{"title", false},
 		{"", false},
@@ -264,6 +272,20 @@ func TestIsValidOperator(t *testing.T) {
 				t.Errorf("IsValidOperator(%q) = %v, want %v", tt.op, got, tt.want)
 			}
 		})
+	}
+}
+
+func TestProximityModifierAccepted(t *testing.T) {
+	// The proximity modifier form prox/distance<=N is valid CQL: verified live
+	// 2026-06-12, "ti=green prox/distance<=3 ti=energy" returns results (HTTP 200).
+	// The validator must NOT treat "prox/distance" as a field name and reject it.
+	q := "ti=green prox/distance<=3 ti=energy"
+	parsed, err := ParseCQL(q)
+	if err != nil {
+		t.Fatalf("ParseCQL(%q): %v", q, err)
+	}
+	if err := parsed.Validate(); err != nil {
+		t.Errorf("Validate(%q) = %v, want nil (proximity modifier wrongly rejected as a field)", q, err)
 	}
 }
 
@@ -461,21 +483,21 @@ func TestGetFieldDescription(t *testing.T) {
 
 func TestGetValidFields(t *testing.T) {
 	fields := GetValidFields()
-
-	if len(fields) < 20 {
-		t.Errorf("GetValidFields() returned %d fields, expected at least 20", len(fields))
-	}
-
-	// Check that some known fields are present
-	knownFields := []string{"ti", "ab", "pa", "in", "pn", "ic", "cpc"}
 	fieldMap := make(map[string]bool)
 	for _, f := range fields {
 		fieldMap[f] = true
 	}
 
-	for _, known := range knownFields {
+	// Known-valid fields must be present.
+	for _, known := range []string{"ti", "ab", "ta", "txt", "pa", "in", "ia", "pn", "ap", "pr", "num", "pd", "prd", "ic", "cpc", "ct", "rf"} {
 		if !fieldMap[known] {
-			t.Errorf("GetValidFields() missing known field %q", known)
+			t.Errorf("GetValidFields() missing valid field %q", known)
+		}
+	}
+	// Fields the live OPS API rejects (CLIENT.InvalidIndex) must NOT be advertised.
+	for _, invalid := range []string{"ad", "de", "ep", "pc", "ecla", "ctc"} {
+		if fieldMap[invalid] {
+			t.Errorf("GetValidFields() advertises API-invalid field %q", invalid)
 		}
 	}
 }

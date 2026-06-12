@@ -23,25 +23,26 @@ var validFields = map[string]string{
 	"num": "any number (pn, ap, or pr)",
 
 	// Dates
-	"pd":  "publication date",
-	"ad":  "application date",
+	"pd": "publication date",
+	// prd (priority date) is not in the OPS CQL index catalogue and is not
+	// live-confirmable - the API returns 500 SERVER.DomainAccess (not a clean
+	// result), so it is retained pending confirmation rather than dropped.
 	"prd": "priority date",
 
 	// Classifications
-	"ic":   "IPC classification",
-	"cpc":  "CPC classification",
-	"ecla": "ECLA classification",
+	"ic":  "IPC classification",
+	"cpc": "CPC classification",
 
 	// Citations
-	"ct":  "cited patent",
-	"rf":  "reference",
-	"ctc": "cited category",
-
-	// Designations
-	"de": "designated states",
-	"ep": "European states",
-	"pc": "PCT contracting states",
+	"ct": "cited patent",
+	"rf": "reference",
 }
+
+// Removed 2026-06-12 - the live OPS API rejects these with HTTP 400
+// CLIENT.InvalidIndex "Invalid index name X", so the validator must not accept
+// them: ad (application date), ecla (ECLA, retired), ctc (cited category),
+// and the designated-states indices de, ep, pc (not in the published-data CQL
+// catalogue). The Register service has its own separate index set.
 
 // validOperators maps CQL operators to whether they're valid.
 // EPO OPS supports standard boolean operators and proximity operators.

@@ -38,7 +38,7 @@ type CQLValidationKind string
 
 const (
 	// CQLValidationUnknownField - the query referenced a field name that
-	// is not in the EPO field list (ti, ab, pa, in, pn, ic, cpc, pd, ad).
+	// is not in the EPO field list (ti, ab, pa, in, pn, ic, cpc, pd).
 	CQLValidationUnknownField CQLValidationKind = "unknown_field"
 	// CQLValidationUnclosedParens - more '(' than ')' in the query.
 	CQLValidationUnclosedParens CQLValidationKind = "unclosed_parens"
@@ -282,6 +282,18 @@ func classifyToken(value string) TokenType {
 	return TokenValue
 }
 
+// isOperatorModifier reports whether value is a CQL operator carrying a modifier,
+// e.g. "prox/distance" or "prox/unit" (modifier separated by '/'). Such a token is
+// followed by a relation ("prox/distance<=3") but is not a field name and must not
+// be validated or enumerated as one.
+func isOperatorModifier(value string) bool {
+	base := value
+	if i := strings.IndexByte(value, '/'); i >= 0 {
+		base = value[:i]
+	}
+	return IsValidOperator(base) || IsValidOperator(strings.ToUpper(base))
+}
+
 // validate performs validation checks on the parsed CQL query.
 func (q *CQLQuery) validate() {
 	q.checkBracketMatching()
@@ -334,6 +346,12 @@ func (q *CQLQuery) checkFieldNames() {
 	for i, token := range q.Tokens {
 		// Check if this is a field name (token before '=')
 		if i+1 < len(q.Tokens) && q.Tokens[i+1].Type == TokenEquals {
+			// A proximity operator carrying a modifier (e.g. "prox/distance" in
+			// "prox/distance<=3") is followed by a relation but is not a field -
+			// do not validate it as one.
+			if isOperatorModifier(token.Value) {
+				continue
+			}
 			if !IsValidField(token.Value) {
 				q.addFailure(&CQLValidationFailure{
 					Kind:  CQLValidationUnknownField,
@@ -343,7 +361,7 @@ func (q *CQLQuery) checkFieldNames() {
 						"invalid field '%s' at position %d (valid fields: %s)",
 						token.Value,
 						token.Pos,
-						strings.Join([]string{"ti", "ab", "pa", "in", "pn", "ic", "cpc", "pd", "ad"}, ", "),
+						strings.Join([]string{"ti", "ab", "pa", "in", "pn", "ic", "cpc", "pd"}, ", "),
 					),
 				})
 			}
@@ -426,7 +444,7 @@ func (q *CQLQuery) HasField(field string) bool {
 func (q *CQLQuery) GetFields() []string {
 	fields := make(map[string]bool)
 	for i, token := range q.Tokens {
-		if i+1 < len(q.Tokens) && q.Tokens[i+1].Type == TokenEquals {
+		if i+1 < len(q.Tokens) && q.Tokens[i+1].Type == TokenEquals && !isOperatorModifier(token.Value) {
 			fields[token.Value] = true
 		}
 	}
