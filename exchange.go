@@ -160,15 +160,37 @@ type Nplcit struct {
 
 // Citation is one references-cited/citation: a cited document with its search category
 // (X / Y / A ...), the claims it was applied to, and the relevant passages.
+//
+// A single cited document can carry MORE THAN ONE <category>/<rel-claims> pair when
+// it was applied with different relevance to different claim sets (e.g. category Y
+// against claims 1-12,15 AND category A against claims 13,14). Categories and
+// RelClaims are therefore slices that keep every occurrence; the Category() and
+// RelClaims() helpers return the first for the common single-category case.
 type Citation struct {
-	Sequence    string   `xml:"sequence,attr"`
-	CitedPhase  string   `xml:"cited-phase,attr"`
-	CitedBy     string   `xml:"cited-by,attr"`
-	Category    string   `xml:"category"`
-	RelClaims   string   `xml:"rel-claims"`
-	RelPassages []string `xml:"rel-passage>passage"`
-	Patcit      *Patcit  `xml:"patcit"`
-	Nplcit      *Nplcit  `xml:"nplcit"`
+	Sequence     string   `xml:"sequence,attr"`
+	CitedPhase   string   `xml:"cited-phase,attr"`
+	CitedBy      string   `xml:"cited-by,attr"`
+	Categories   []string `xml:"category"`
+	RelClaimsAll []string `xml:"rel-claims"`
+	RelPassages  []string `xml:"rel-passage>passage"`
+	Patcit       *Patcit  `xml:"patcit"`
+	Nplcit       *Nplcit  `xml:"nplcit"`
+}
+
+// Category returns the citation's first (often only) search category, or "".
+func (c Citation) Category() string {
+	if len(c.Categories) == 0 {
+		return ""
+	}
+	return c.Categories[0]
+}
+
+// RelClaims returns the claim range for the citation's first category, or "".
+func (c Citation) RelClaims() string {
+	if len(c.RelClaimsAll) == 0 {
+		return ""
+	}
+	return c.RelClaimsAll[0]
 }
 
 // DesignationOfStates captures designated contracting/extension/validation states.

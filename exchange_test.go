@@ -76,11 +76,11 @@ func TestParseExchangeDocuments_Citations(t *testing.T) {
 		t.Fatal("no citations parsed (references-cited was previously dropped entirely)")
 	}
 	c := d.Biblio.Citations[0]
-	if c.Category != "A" {
-		t.Errorf("citation category = %q, want A", c.Category)
+	if c.Category() != "A" {
+		t.Errorf("citation category = %q, want A", c.Category())
 	}
-	if c.RelClaims != "1-15" {
-		t.Errorf("rel-claims = %q, want 1-15", c.RelClaims)
+	if c.RelClaims() != "1-15" {
+		t.Errorf("rel-claims = %q, want 1-15", c.RelClaims())
 	}
 	if len(c.RelPassages) != 5 {
 		t.Errorf("rel-passages = %d, want 5", len(c.RelPassages))

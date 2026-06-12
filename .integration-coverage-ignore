@@ -1,0 +1,7 @@
+# Non-endpoint Client methods (accessors, not OPS API calls).
+#
+# GetLastQuota returns the quota snapshot captured from the most recent response's
+# headers; it makes no request of its own. It IS still exercised live by
+# TestIntegrationGetLastQuota, but it is not an endpoint, so it is listed here so
+# the coverage check does not require a dedicated per-endpoint test for it.
+GetLastQuota

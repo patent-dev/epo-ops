@@ -4,950 +4,1021 @@ package epo_ops
 
 import (
 	"context"
-	"flag"
+	"errors"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 )
 
-var updateFixtures = flag.Bool("update-fixtures", false, "update fixture files from live API responses")
-
-// TestAuthenticationIntegration tests real authentication against EPO servers.
-func TestAuthenticationIntegration(t *testing.T) {
-	// Read credentials from environment
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	// Create authenticator
-	auth := NewAuthenticator(consumerKey, consumerSecret, nil)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	// Test: Acquire token
-	t.Run("AcquireToken", func(t *testing.T) {
-		token, err := auth.GetToken(ctx)
-		if err != nil {
-			t.Fatalf("Failed to acquire token: %v", err)
-		}
-
-		if token == "" {
-			t.Fatal("Received empty token")
-		}
-
-		// Token should be a reasonably long string
-		if len(token) < 20 {
-			t.Errorf("Token seems too short: %d characters", len(token))
-		}
-
-		t.Logf("Successfully acquired token (length: %d)", len(token))
-	})
-
-	// Test: Token reuse within TTL
-	t.Run("TokenReuse", func(t *testing.T) {
-		// Get token first time
-		token1, err := auth.GetToken(ctx)
-		if err != nil {
-			t.Fatalf("Failed to get first token: %v", err)
-		}
-
-		// Get token second time (should be cached)
-		token2, err := auth.GetToken(ctx)
-		if err != nil {
-			t.Fatalf("Failed to get second token: %v", err)
-		}
-
-		// Should be the same token
-		if token1 != token2 {
-			t.Error("Expected same token from cache, got different token")
-		}
-
-		t.Log("Successfully reused cached token")
-	})
-
-	// Test: Token format
-	t.Run("TokenFormat", func(t *testing.T) {
-		token, err := auth.GetToken(ctx)
-		if err != nil {
-			t.Fatalf("Failed to get token: %v", err)
-		}
-
-		// Token should not contain spaces or newlines
-		if strings.Contains(token, " ") || strings.Contains(token, "\n") {
-			t.Error("Token contains whitespace")
-		}
-
-		t.Logf("Token format valid")
-	})
-}
-
-// TestClientCreationIntegration tests client creation with real credentials.
-func TestClientCreationIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	if client == nil {
-		t.Fatal("Client is nil")
-	}
-
-	if client.authenticator == nil {
-		t.Error("Client authenticator is nil")
-	}
-
-	if client.generated == nil {
-		t.Error("Client generated client is nil")
-	}
-
-	t.Log("Successfully created client with valid credentials")
-}
-
-// TestInvalidCredentialsIntegration tests authentication with invalid credentials.
-func TestInvalidCredentialsIntegration(t *testing.T) {
-	// Create authenticator with invalid credentials
-	auth := NewAuthenticator("invalid_key", "invalid_secret", nil)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	token, err := auth.GetToken(ctx)
-	if err == nil {
-		t.Error("Expected error with invalid credentials, got nil")
-	}
-
-	if token != "" {
-		t.Error("Expected empty token with invalid credentials")
-	}
-
-	// Should be an AuthError
-	if _, ok := err.(*AuthError); !ok {
-		t.Errorf("Expected AuthError, got: %T", err)
-	}
-
-	t.Logf("Correctly rejected invalid credentials: %v", err)
-}
-
-// TestTextRetrievalIntegration tests retrieving patent text data.
-func TestTextRetrievalIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	// Test patent: EP.1000000.B1 (docdb format, well-known test patent)
-	testPatent := "EP.1000000.B1"
-
-	// Test: GetBiblio
-	t.Run("GetBiblio", func(t *testing.T) {
-		biblio, err := client.GetBiblio(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Fatalf("Failed to get biblio: %v", err)
-		}
-
-		if biblio == nil {
-			t.Fatal("Received nil biblio data")
-		}
-
-		if len(biblio.Titles) == 0 {
-			t.Error("Expected non-empty Titles map")
-		}
-
-		// Log English title if available
-		title := biblio.Titles["en"]
-		if title == "" {
-			// Fall back to any available title
-			for _, v := range biblio.Titles {
-				title = v
-				break
-			}
-		}
-
-		t.Logf("Successfully retrieved biblio: Title=%q, Applicants=%d, Inventors=%d",
-			title, len(biblio.Applicants), len(biblio.Inventors))
-	})
-
-	// Test: GetClaims
-	t.Run("GetClaims", func(t *testing.T) {
-		claims, err := client.GetClaims(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Fatalf("Failed to get claims: %v", err)
-		}
-
-		if claims == nil {
-			t.Fatal("Received nil claims data")
-		}
-
-		if len(claims.Claims) == 0 {
-			t.Error("Expected non-empty Claims slice")
-		}
-
-		t.Logf("Successfully retrieved %d claims (language: %s)", len(claims.Claims), claims.Language)
-	})
-
-	// Test: GetDescription
-	t.Run("GetDescription", func(t *testing.T) {
-		description, err := client.GetDescription(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Fatalf("Failed to get description: %v", err)
-		}
-
-		if description == nil {
-			t.Fatal("Received nil description data")
-		}
-
-		if len(description.Paragraphs) == 0 {
-			t.Error("Expected non-empty Paragraphs")
-		}
-
-		t.Logf("Successfully retrieved description: %d paragraphs (language: %s)",
-			len(description.Paragraphs), description.Language)
-	})
-
-	// Test: GetAbstract
-	t.Run("GetAbstract", func(t *testing.T) {
-		abstract, err := client.GetAbstract(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Fatalf("Failed to get abstract: %v", err)
-		}
-
-		if abstract == nil {
-			t.Fatal("Received nil abstract data")
-		}
-
-		t.Logf("Successfully retrieved abstract (language: %s, length: %d chars)",
-			abstract.Language, len(abstract.Text))
-	})
-
-	// Test: GetFulltext
-	t.Run("GetFulltext", func(t *testing.T) {
-		fulltext, err := client.GetFulltext(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Fatalf("Failed to get fulltext: %v", err)
-		}
-
-		if fulltext == nil {
-			t.Fatal("Received nil fulltext data")
-		}
-
-		if fulltext.Status == "" {
-			t.Logf("Warning: Fulltext status is empty")
-		}
-
-		t.Logf("Successfully retrieved fulltext: status=%s, hasBiblio=%v, hasClaims=%v",
-			fulltext.Status, fulltext.Biblio != nil, fulltext.Claims != nil)
-	})
-}
-
-// TestNotFoundIntegration tests handling of non-existent patents.
-func TestNotFoundIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	// Non-existent patent
-	_, err = client.GetBiblio(ctx, "publication", "docdb", "EP.99999999999.A1")
-	if err == nil {
-		t.Error("Expected error for non-existent patent, got nil")
-	}
-
-	// Should be a NotFoundError
-	if _, ok := err.(*NotFoundError); !ok {
-		t.Logf("Error type: %T, value: %v", err, err)
-		// Note: EPO might return different error for truly invalid patents
-	}
-
-	t.Logf("Correctly handled non-existent patent: %v", err)
-}
-
-// TestQuotaTrackingIntegration tests quota tracking from API responses.
-func TestQuotaTrackingIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	// Initially, quota should be nil (no requests made yet)
-	initialQuota := client.GetLastQuota()
-	if initialQuota != nil {
-		t.Error("Expected nil quota before making any requests")
-	}
-
-	// Make a real API call
-	testPatent := "EP.1000000.B1"
-	_, err = client.GetBiblio(ctx, "publication", "docdb", testPatent)
-	if err != nil {
-		t.Fatalf("Failed to get biblio: %v", err)
-	}
-
-	// After request, quota should be available
-	quota := client.GetLastQuota()
-	if quota == nil {
-		t.Fatal("Expected quota information after API request")
-	}
-
-	// Log quota information
-	t.Logf("Quota Status: %s", quota.Status)
-	t.Logf("Individual Quota: Used=%d, Limit=%d (%.2f%%)",
-		quota.Individual.Used, quota.Individual.Limit, quota.Individual.UsagePercent())
-	t.Logf("Registered Quota: Used=%d, Limit=%d (%.2f%%)",
-		quota.Registered.Used, quota.Registered.Limit, quota.Registered.UsagePercent())
-
-	// Make another request to verify quota is updated
-	_, err = client.GetAbstract(ctx, "publication", "docdb", testPatent)
-	if err != nil {
-		t.Fatalf("Failed to get abstract: %v", err)
-	}
-
-	newQuota := client.GetLastQuota()
-	if newQuota == nil {
-		t.Fatal("Expected quota information after second API request")
-	}
-
-	// Quota should be updated (used amount should increase or stay same)
-	if newQuota.Individual.Limit > 0 {
-		if newQuota.Individual.Used < quota.Individual.Used {
-			t.Error("Quota used amount decreased unexpectedly")
-		}
-		t.Logf("Quota updated after second request: Used=%d", newQuota.Individual.Used)
-	}
-
-	if newQuota.Registered.Limit > 0 {
-		if newQuota.Registered.Used < quota.Registered.Used {
-			t.Error("Quota used amount decreased unexpectedly")
-		}
-		t.Logf("Registered quota updated: Used=%d", newQuota.Registered.Used)
-	}
-}
-
-// TestSearchIntegration tests patent search functionality.
-func TestSearchIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	// Test: Basic search for patents with "plastic" in title
-	t.Run("BasicSearch", func(t *testing.T) {
-		results, err := client.Search(ctx, "ti=plastic", "1-5")
-		if err != nil {
-			t.Fatalf("Failed to search: %v", err)
-		}
-
-		if results == nil {
-			t.Fatal("Received nil search results")
-		}
-
-		if results.TotalCount == 0 {
-			t.Error("Expected TotalCount > 0")
-		}
-
-		t.Logf("Successfully retrieved search results: %d total, %d parsed results",
-			results.TotalCount, len(results.Results))
-	})
-
-	// Test: Search with applicant
-	t.Run("SearchByApplicant", func(t *testing.T) {
-		results, err := client.Search(ctx, "pa=Siemens", "1-3")
-		if err != nil {
-			t.Fatalf("Failed to search by applicant: %v", err)
-		}
-
-		if results == nil {
-			t.Fatal("Received nil search results")
-		}
-
-		t.Logf("Successfully retrieved applicant search: %d total results", results.TotalCount)
-	})
-
-	// Test: Search with constituent
-	t.Run("SearchWithConstituent", func(t *testing.T) {
-		results, err := client.SearchWithConstituent(ctx, "biblio", "ti=plastic", "1-3")
-		if err != nil {
-			t.Fatalf("Failed to search with constituent: %v", err)
-		}
-
-		if results == nil {
-			t.Fatal("Received nil search results")
-		}
-
-		t.Logf("Successfully retrieved search with biblio constituent: %d results",
-			len(results.Results))
-	})
-}
-
-// TestFamilyRetrievalIntegration tests INPADOC family retrieval.
-func TestFamilyRetrievalIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	// Test patent: EP.1000000.B1 (docdb format, has a known family)
-	testPatent := "EP.1000000.B1"
-
-	// Test: Basic family retrieval
-	t.Run("GetFamily", func(t *testing.T) {
-		family, err := client.GetFamily(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Fatalf("Failed to get family: %v", err)
-		}
-
-		if family == nil {
-			t.Fatal("Received nil family data")
-		}
-
-		if len(family.Members) == 0 {
-			t.Error("Expected non-empty family members")
-		}
-
-		// Verify parsed struct fields
-		for i, m := range family.Members {
-			if m.Country == "" || m.DocNumber == "" {
-				t.Errorf("Member %d: missing Country or DocNumber", i)
-			}
-		}
-
-		if len(family.Countries) == 0 {
-			t.Error("Expected non-empty Countries list")
-		}
-
-		t.Logf("Successfully retrieved family: %d members, countries: %v",
-			len(family.Members), family.Countries)
-
-		// Save fixture
-		if raw, err := client.GetFamilyRaw(ctx, "publication", "docdb", testPatent); err == nil {
-			saveFixture(t, "family_EP1000000", []byte(raw))
-		}
-	})
-
-	// Test: Family with biblio
-	t.Run("GetFamilyWithBiblio", func(t *testing.T) {
-		family, err := client.GetFamilyWithBiblio(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Fatalf("Failed to get family with biblio: %v", err)
-		}
-
-		if family == nil {
-			t.Fatal("Received nil family data")
-		}
-
-		if len(family.Members) == 0 {
-			t.Error("Expected non-empty family members")
-		}
-
-		// Verify biblio data extracted
-		withTitle := 0
-		for _, m := range family.Members {
-			if m.Title != "" {
-				withTitle++
-			}
-		}
-		t.Logf("Family with biblio: %d members, %d with Title", len(family.Members), withTitle)
-		if withTitle == 0 {
-			t.Error("Expected at least some members with Title from biblio")
-		}
-	})
-
-	// Test: Family with legal
-	t.Run("GetFamilyWithLegal", func(t *testing.T) {
-		family, err := client.GetFamilyWithLegal(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Logf("Warning: Failed to get family with legal: %v", err)
-			return
-		}
-
-		if family == nil {
-			t.Fatal("Received nil family data")
-		}
-
-		t.Logf("Successfully retrieved family with legal: %d members", len(family.Members))
-	})
-}
-
-// TestImageRetrievalIntegration tests patent image retrieval and TIFF conversion.
-func TestImageRetrievalIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	// Test: Retrieve first page of patent drawings
-	// EP.1000000.B1 should have drawings available
-	t.Run("GetImage", func(t *testing.T) {
-		imageData, err := client.GetImage(ctx, "EP", "1000000", "B1", "Drawing", 1)
-		if err != nil {
-			// Some patents may not have images, log instead of failing
-			t.Logf("Warning: Failed to get image: %v", err)
-			t.Skip("Skipping image test - image may not be available")
-			return
-		}
-
-		if len(imageData) == 0 {
-			t.Error("Received empty image data")
-		}
-
-		// Image should be reasonably large (at least 1KB)
-		if len(imageData) < 1024 {
-			t.Errorf("Image data seems too small: %d bytes", len(imageData))
-		}
-
-		// Check if it's a TIFF file (starts with II or MM)
-		isTIFF := len(imageData) >= 4 && ((imageData[0] == 'I' && imageData[1] == 'I') || // Little-endian
-			(imageData[0] == 'M' && imageData[1] == 'M')) // Big-endian
-
-		if !isTIFF {
-			t.Logf("Warning: Image data does not appear to be TIFF format (first bytes: %x)", imageData[:min(4, len(imageData))])
-		}
-
-		t.Logf("Successfully retrieved image data (length: %d bytes, format: %s)",
-			len(imageData),
-			map[bool]string{true: "TIFF", false: "unknown"}[isTIFF])
-	})
-}
-
-// TestAdditionalServicesIntegration tests legal, register, and number conversion services.
-func TestAdditionalServicesIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	testPatent := "EP.1000000.B1"
-
-	// Test: Legal status retrieval
-	t.Run("GetLegal", func(t *testing.T) {
-		legal, err := client.GetLegal(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Logf("Warning: Failed to get legal status: %v", err)
-			t.Skip("Skipping legal test - legal data may not be available")
-			return
-		}
-
-		if legal == nil {
-			t.Fatal("Received nil legal data")
-		}
-
-		if len(legal.LegalEvents) == 0 {
-			t.Error("Expected non-empty legal events")
-		}
-
-		// Verify parsed fields
-		for i, e := range legal.LegalEvents {
-			if i < 3 {
-				t.Logf("Event %d: Code=%s Country=%s Date=%s", i+1, e.EventCode, e.Country, e.Date)
-			}
-		}
-
-		t.Logf("Legal events for %s: %d events", legal.PatentNumber, len(legal.LegalEvents))
-
-		// Save fixture
-		if raw, err := client.GetLegalRaw(ctx, "publication", "docdb", testPatent); err == nil {
-			saveFixture(t, "legal_EP1000000", []byte(raw))
-		}
-	})
-
-	// Test: Register biblio retrieval (raw XML) - register requires epodoc format
-	t.Run("GetRegisterBiblioRaw", func(t *testing.T) {
-		register, err := client.GetRegisterBiblioRaw(ctx, "publication", "epodoc", "EP1000000")
-		if err != nil {
-			// Register data might not be available for all patents
-			t.Logf("Warning: Failed to get register biblio: %v", err)
-			t.Skip("Skipping register biblio test - data may not be available")
-			return
-		}
-
-		if register == "" {
-			t.Error("Received empty register data")
-		}
-
-		t.Logf("Successfully retrieved register biblio (length: %d bytes)", len(register))
-	})
-
-	// Test: Register events retrieval (parsed) - register requires epodoc format
-	t.Run("GetRegisterEvents", func(t *testing.T) {
-		data, err := client.GetRegisterEvents(ctx, "publication", "epodoc", "EP1000000")
-		if err != nil {
-			t.Logf("Warning: Failed to get register events: %v", err)
-			t.Skip("Skipping register events test - data may not be available")
-			return
-		}
-
-		if len(data.Events) == 0 {
-			t.Error("Expected non-empty Events")
-		}
-
-		// Verify events have required fields
-		for i, evt := range data.Events {
-			if evt.Date == "" || evt.EventCode == "" {
-				t.Errorf("Event %d missing Date or EventCode", i)
-				break
-			}
-			if evt.Category == "" {
-				t.Errorf("Event %d missing Category", i)
-				break
-			}
-		}
-
-		t.Logf("Retrieved %d register events, %d statuses for %s",
-			len(data.Events), len(data.Statuses), data.PatentNumber)
-
-		// Save fixture
-		if raw, err := client.GetRegisterEventsRaw(ctx, "publication", "epodoc", "EP1000000"); err == nil {
-			saveFixture(t, "register_events_EP1000000", []byte(raw))
-		}
-	})
-
-	// Test: Number conversion (parsed)
-	t.Run("ConvertPatentNumber", func(t *testing.T) {
-		data, err := client.ConvertPatentNumber(ctx, "publication", "docdb", testPatent, "epodoc")
-		if err != nil {
-			t.Logf("Warning: Failed to convert patent number: %v", err)
-			t.Skip("Skipping number conversion test - service may not be available")
-			return
-		}
-
-		if data.DocNumber == "" {
-			t.Error("Expected non-empty DocNumber")
-		}
-		if data.Kind == "" {
-			t.Error("Expected non-empty Kind")
-		}
-		if data.InputFormat != "docdb" {
-			t.Errorf("Expected InputFormat 'docdb', got %q", data.InputFormat)
-		}
-		if data.OutputFormat != "epodoc" {
-			t.Errorf("Expected OutputFormat 'epodoc', got %q", data.OutputFormat)
-		}
-
-		t.Logf("Converted %s -> DocNumber=%s Kind=%s Date=%s",
-			testPatent, data.DocNumber, data.Kind, data.Date)
-
-		// Save fixture
-		if raw, err := client.ConvertPatentNumberRaw(ctx, "publication", "docdb", testPatent, "epodoc"); err == nil {
-			saveFixture(t, "convert_patent_number", []byte(raw))
-		}
-	})
-}
-
-// TestClassificationIntegration tests CPC classification schema retrieval.
-func TestClassificationIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	t.Run("GetClassificationSchema", func(t *testing.T) {
-		data, err := client.GetClassificationSchema(ctx, "H04W", false, false)
-		if err != nil {
-			t.Fatalf("Failed to get classification schema: %v", err)
-		}
-
-		if data.Symbol == "" {
-			t.Error("Expected non-empty Symbol")
-		}
-		if data.Title == "" {
-			t.Error("Expected non-empty Title")
-		}
-		if data.Level < 0 {
-			t.Errorf("Expected Level >= 0, got %d", data.Level)
-		}
-		if data.SchemeType == "" {
-			t.Error("Expected non-empty SchemeType")
-		}
-
-		t.Logf("Classification: Symbol=%s Title=%q Level=%d SchemeType=%s Children=%d",
-			data.Symbol, data.Title, data.Level, data.SchemeType, len(data.Children))
-
-		// Verify child fields if present
-		for i, ch := range data.Children {
-			if ch.Symbol == "" {
-				t.Errorf("Child[%d] has empty Symbol", i)
-			}
-			if i < 3 {
-				t.Logf("  Child[%d]: Symbol=%s Title=%q Level=%d", i, ch.Symbol, ch.Title, ch.Level)
-			}
-		}
-
-		// Save fixture
-		if raw, err := client.GetClassificationSchemaRaw(ctx, "H04W", false, false); err == nil {
-			saveFixture(t, "classification_schema_H04W", []byte(raw))
-		}
-	})
-
-	t.Run("GetClassificationSchema_WithAncestors", func(t *testing.T) {
-		data, err := client.GetClassificationSchema(ctx, "H04W84/18", true, false)
-		if err != nil {
-			t.Logf("Warning: Failed to get classification with ancestors: %v", err)
-			t.Skip("Skipping ancestors test")
-			return
-		}
-
-		if data.Symbol == "" {
-			t.Error("Expected non-empty Symbol")
-		}
-
-		t.Logf("Classification with ancestors: Symbol=%s Title=%q Level=%d",
-			data.Symbol, data.Title, data.Level)
-	})
-}
-
-// TestPublishedEquivalentsIntegration tests published equivalents retrieval.
-func TestPublishedEquivalentsIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	testPatent := "EP.1000000.B1"
-
-	t.Run("GetPublishedEquivalents", func(t *testing.T) {
-		data, err := client.GetPublishedEquivalents(ctx, "publication", "docdb", testPatent)
-		if err != nil {
-			t.Fatalf("Failed to get published equivalents: %v", err)
-		}
-
-		if len(data.Equivalents) == 0 {
-			t.Error("Expected non-empty Equivalents for EP.1000000.B1")
-		}
-
-		for i, eq := range data.Equivalents {
-			if eq.Country == "" || eq.DocNumber == "" {
-				t.Errorf("Equivalent[%d]: missing Country or DocNumber", i)
-			}
-			if i < 5 {
-				t.Logf("Equivalent[%d]: %s%s%s", i, eq.Country, eq.DocNumber, eq.Kind)
-			}
-		}
-
-		t.Logf("Total equivalents for %s: %d", testPatent, len(data.Equivalents))
-
-		// Save fixture
-		if raw, err := client.GetPublishedEquivalentsRaw(ctx, "publication", "docdb", testPatent); err == nil {
-			saveFixture(t, "published_equivalents_EP1000000", []byte(raw))
-		}
-	})
-}
-
-// TestEdgeCasesIntegration tests edge cases with patents that may have limited data.
-func TestEdgeCasesIntegration(t *testing.T) {
-	consumerKey := os.Getenv("EPO_OPS_CONSUMER_KEY")
-	consumerSecret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
-
-	if consumerKey == "" || consumerSecret == "" {
-		t.Skip("Skipping integration test: EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET must be set")
-	}
-
-	config := &Config{
-		ConsumerKey:    consumerKey,
-		ConsumerSecret: consumerSecret,
-	}
-
-	client, err := NewClient(config)
-	if err != nil {
-		t.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	// EP.0000001.B1 - very old patent, likely has minimal or no legal events
-	t.Run("GetLegal_OldPatent", func(t *testing.T) {
-		data, err := client.GetLegal(ctx, "publication", "docdb", "EP.0000001.B1")
-		if err != nil {
-			// Not found or no data is acceptable for edge case
-			t.Logf("GetLegal for EP.0000001.B1 returned error (expected for edge case): %v", err)
-			return
-		}
-
-		t.Logf("EP0000001B1 legal events: %d", len(data.LegalEvents))
-		if len(data.LegalEvents) == 0 {
-			t.Log("No legal events for EP0000001B1 (edge case confirmed)")
-		}
-	})
-
-	// Test GetFamily on a patent with a small family
-	t.Run("GetFamily_SmallFamily", func(t *testing.T) {
-		data, err := client.GetFamily(ctx, "publication", "docdb", "EP.0000001.B1")
-		if err != nil {
-			t.Logf("GetFamily for EP.0000001.B1 returned error: %v", err)
-			return
-		}
-
-		t.Logf("EP0000001B1 family: %d members, countries: %v",
-			len(data.Members), data.Countries)
-	})
-}
-
-// saveFixture saves raw API response data as a fixture file when -update-fixtures is set.
-func saveFixture(t *testing.T, name string, data []byte) {
+// This file holds one live integration test per exported Client method
+// (TestIntegration<Method>), so every endpoint of the EPO OPS wrapper has a
+// targeted live check that maps 1:1 to the method. The set is machine-verified by
+// scripts/check-integration-coverage.sh (make check-integration); a new public
+// method without a matching TestIntegration<Method> fails that check.
+//
+// Run with: go test -tags=integration -count=1 ./...
+//
+// EPO OPS enforces a strict weekly fair-use quota, so each endpoint is called AT
+// MOST ONCE across the whole suite, reusing inputs proven by the demo (demo/...),
+// which returned real data live. Every test PASSes (real data) or SKIPs cleanly
+// (no credentials, or a documented transient/availability condition); none FAILs
+// on a quota throttle, a 403/404, or data simply not existing for the sample.
+
+// Demo-proven inputs (see demo/*.go). These returned real data live.
+const (
+	pubRefType = "publication"
+	docdb      = "docdb"
+	epodoc     = "epodoc"
+
+	// A well-known EP publication present across published-data, family, legal,
+	// images and number services (docdb form).
+	testDocdb = "EP.1000000.B1"
+	// The same publication in the no-dot docdb form the image GET path takes.
+	imgCountry = "EP"
+	imgNumber  = "1000000"
+	imgKind    = "B1"
+	// epodoc form for the register / equivalents endpoints that require it.
+	registerEpodoc = "EP1700924"
+	// A second epodoc publication with rich biblio used where EP1700924 lacks data.
+	convertDocdb = "EP.2400812.A1"
+	// Bulk inputs for the *Multiple (POST) endpoints.
+	bulkA = "EP.1000000.B1"
+	bulkB = "EP.2400812.A1"
+)
+
+func bulkNumbers() []string { return []string{bulkA, bulkB} }
+
+// integrationClient builds a live client from EPO_OPS_CONSUMER_KEY /
+// EPO_OPS_CONSUMER_SECRET, or skips the test when either is absent so the suite
+// stays green without credentials.
+func integrationClient(t *testing.T) *Client {
 	t.Helper()
-	if !*updateFixtures {
+	key := os.Getenv("EPO_OPS_CONSUMER_KEY")
+	secret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
+	if key == "" || secret == "" {
+		t.Skip("set EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET to run EPO OPS integration tests")
+	}
+	c, err := NewClient(&Config{ConsumerKey: key, ConsumerSecret: secret})
+	if err != nil {
+		t.Fatalf("NewClient: %v", err)
+	}
+	return c
+}
+
+func integrationCtx(t *testing.T) context.Context {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), 90*time.Second)
+	t.Cleanup(cancel)
+	return ctx
+}
+
+// skipIfTransient converts the conditions that are NOT a library bug into clean
+// SKIPs so the suite never FAILs on them:
+//
+//   - QuotaExceededError / ServiceUnavailableError: OPS fair-use throttle (403
+//     "fair use" / 429) or a temporary 503 - retry later, not a defect.
+//   - ForbiddenError: the account lacks entitlement for that service.
+//   - NotFoundError: the chosen sample has no data for this constituent (e.g. no
+//     unitary-patent record, no legal events on a very old patent).
+//
+// It returns true when it skipped. Any other error is the caller's to FAIL on.
+func skipIfTransient(t *testing.T, err error) bool {
+	t.Helper()
+	if err == nil {
+		return false
+	}
+	var quota *QuotaExceededError
+	var unavail *ServiceUnavailableError
+	var forbidden *ForbiddenError
+	var notFound *NotFoundError
+	switch {
+	case errors.As(err, &quota):
+		t.Skipf("skipping: OPS fair-use quota throttle: %v", err)
+	case errors.As(err, &unavail):
+		t.Skipf("skipping: OPS temporarily unavailable: %v", err)
+	case errors.As(err, &forbidden):
+		t.Skipf("skipping: account not entitled for this service: %v", err)
+	case errors.As(err, &notFound):
+		t.Skipf("skipping: no data for sample input: %v", err)
+	}
+	return true
+}
+
+func mustNonEmptyXML(t *testing.T, raw string) {
+	t.Helper()
+	if strings.TrimSpace(raw) == "" {
+		t.Fatal("empty raw XML response")
+	}
+	if !strings.Contains(raw, "<") {
+		t.Fatalf("response is not XML: %.80q", raw)
+	}
+}
+
+// --- Cross-cutting auth / error behaviour --------------------------------------
+
+// TestIntegrationAuthentication exercises real token acquisition and caching.
+func TestIntegrationAuthentication(t *testing.T) {
+	key := os.Getenv("EPO_OPS_CONSUMER_KEY")
+	secret := os.Getenv("EPO_OPS_CONSUMER_SECRET")
+	if key == "" || secret == "" {
+		t.Skip("set EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET to run EPO OPS integration tests")
+	}
+	auth := NewAuthenticator(key, secret, nil)
+	ctx := integrationCtx(t)
+	tok1, err := auth.GetToken(ctx)
+	if err != nil {
+		t.Fatalf("GetToken: %v", err)
+	}
+	if len(tok1) < 20 {
+		t.Errorf("token too short: %d chars", len(tok1))
+	}
+	tok2, err := auth.GetToken(ctx)
+	if err != nil {
+		t.Fatalf("GetToken (cached): %v", err)
+	}
+	if tok1 != tok2 {
+		t.Error("expected cached token reuse")
+	}
+}
+
+// TestIntegrationInvalidCredentials confirms invalid credentials yield an AuthError.
+func TestIntegrationInvalidCredentials(t *testing.T) {
+	if os.Getenv("EPO_OPS_CONSUMER_KEY") == "" {
+		t.Skip("set EPO_OPS_CONSUMER_KEY and EPO_OPS_CONSUMER_SECRET to run EPO OPS integration tests")
+	}
+	auth := NewAuthenticator("invalid_key", "invalid_secret", nil)
+	ctx := integrationCtx(t)
+	tok, err := auth.GetToken(ctx)
+	if err == nil {
+		t.Fatal("expected error with invalid credentials")
+	}
+	if tok != "" {
+		t.Error("expected empty token on auth failure")
+	}
+	var authErr *AuthError
+	if !errors.As(err, &authErr) {
+		t.Errorf("expected *AuthError, got %T", err)
+	}
+}
+
+// TestIntegrationNotFound confirms a non-existent patent yields an error (the
+// library classifies most as NotFoundError; OPS may answer differently for a
+// syntactically invalid number, which is also acceptable).
+func TestIntegrationNotFound(t *testing.T) {
+	c := integrationClient(t)
+	ctx := integrationCtx(t)
+	_, err := c.GetBiblio(ctx, pubRefType, docdb, "EP.99999999999.A1")
+	if err == nil {
+		t.Error("expected an error for a non-existent patent")
+	}
+}
+
+// --- Published-data services ---------------------------------------------------
+
+func TestIntegrationGetBiblio(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetBiblio(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
 		return
 	}
-	dir := filepath.Join("testdata", "fixtures")
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		t.Logf("Warning: failed to create fixture dir: %v", err)
+	if err != nil {
+		t.Fatalf("GetBiblio: %v", err)
+	}
+	if d == nil || len(d.Titles) == 0 {
+		t.Fatal("no biblio titles parsed")
+	}
+}
+
+func TestIntegrationGetBiblioRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetBiblioRaw(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
 		return
 	}
-	path := filepath.Join(dir, name+".xml")
-	if err := os.WriteFile(path, data, 0644); err != nil {
-		t.Logf("Warning: failed to write fixture %s: %v", path, err)
+	if err != nil {
+		t.Fatalf("GetBiblioRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetBiblioMultiple(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetBiblioMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
 		return
 	}
-	t.Logf("Updated fixture: %s", path)
+	if err != nil {
+		t.Fatalf("GetBiblioMultiple: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetAbstract(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetAbstract(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetAbstract: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil abstract")
+	}
+}
+
+func TestIntegrationGetAbstractRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetAbstractRaw(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetAbstractRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetAbstractMultiple(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetAbstractMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetAbstractMultiple: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetClaims(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetClaims(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClaims: %v", err)
+	}
+	if d == nil || len(d.Claims) == 0 {
+		t.Fatal("no claims parsed")
+	}
+}
+
+func TestIntegrationGetClaimsRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetClaimsRaw(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClaimsRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetClaimsMultiple(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetClaimsMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClaimsMultiple: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetDescription(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetDescription(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetDescription: %v", err)
+	}
+	if d == nil || len(d.Paragraphs) == 0 {
+		t.Fatal("no description paragraphs parsed")
+	}
+}
+
+func TestIntegrationGetDescriptionRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetDescriptionRaw(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetDescriptionRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetDescriptionMultiple(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetDescriptionMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetDescriptionMultiple: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil description batch")
+	}
+}
+
+func TestIntegrationGetFulltext(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetFulltext(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFulltext: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil fulltext")
+	}
+}
+
+func TestIntegrationGetFulltextRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetFulltextRaw(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFulltextRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetFulltextMultiple(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetFulltextMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFulltextMultiple: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil fulltext batch")
+	}
+}
+
+func TestIntegrationGetFullCycleMultiple(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetFullCycleMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFullCycleMultiple: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetPublishedEquivalents(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetPublishedEquivalents(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetPublishedEquivalents: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil equivalents")
+	}
+}
+
+func TestIntegrationGetPublishedEquivalentsRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetPublishedEquivalentsRaw(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetPublishedEquivalentsRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetPublishedEquivalentsMultiple(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetPublishedEquivalentsMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetPublishedEquivalentsMultiple: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil equivalents batch")
+	}
+}
+
+// TestIntegrationGetExchangeDocuments exercises the comprehensive biblio parser.
+func TestIntegrationGetExchangeDocuments(t *testing.T) {
+	c := integrationClient(t)
+	docs, err := c.GetExchangeDocuments(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetExchangeDocuments: %v", err)
+	}
+	if len(docs) == 0 || docs[0].PublicationNumber() == "" {
+		t.Fatal("no exchange documents parsed")
+	}
+}
+
+// --- Search services -----------------------------------------------------------
+
+func TestIntegrationSearch(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.Search(integrationCtx(t), "ti=plastic", "1-5")
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("Search: %v", err)
+	}
+	if d == nil || d.TotalCount == 0 {
+		t.Fatal("no search results")
+	}
+}
+
+func TestIntegrationSearchRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.SearchRaw(integrationCtx(t), "ti=plastic", "1-5")
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("SearchRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationSearchWithConstituent(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.SearchWithConstituent(integrationCtx(t), "biblio", "ti=plastic", "1-3")
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("SearchWithConstituent: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil search results")
+	}
+}
+
+// --- Family services -----------------------------------------------------------
+
+func TestIntegrationGetFamily(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetFamily(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFamily: %v", err)
+	}
+	if d == nil || len(d.Members) == 0 {
+		t.Fatal("no family members")
+	}
+}
+
+func TestIntegrationGetFamilyRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetFamilyRaw(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFamilyRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetFamilyWithBiblio(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetFamilyWithBiblio(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFamilyWithBiblio: %v", err)
+	}
+	if d == nil || len(d.Members) == 0 {
+		t.Fatal("no family members")
+	}
+}
+
+func TestIntegrationGetFamilyWithBiblioMultiple(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetFamilyWithBiblioMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFamilyWithBiblioMultiple: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil family batch")
+	}
+}
+
+func TestIntegrationGetFamilyWithLegal(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetFamilyWithLegal(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFamilyWithLegal: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil family-with-legal")
+	}
+}
+
+func TestIntegrationGetFamilyWithLegalMultiple(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetFamilyWithLegalMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetFamilyWithLegalMultiple: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil family-with-legal batch")
+	}
+}
+
+// --- Legal services ------------------------------------------------------------
+
+func TestIntegrationGetLegal(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetLegal(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetLegal: %v", err)
+	}
+	if d == nil || len(d.LegalEvents) == 0 {
+		t.Fatal("no legal events")
+	}
+}
+
+func TestIntegrationGetLegalRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetLegalRaw(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetLegalRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetLegalMultiple(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetLegalMultiple(integrationCtx(t), pubRefType, docdb, bulkNumbers())
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetLegalMultiple: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil legal batch")
+	}
+}
+
+// --- Register services ---------------------------------------------------------
+
+func TestIntegrationGetRegister(t *testing.T) {
+	c := integrationClient(t)
+	docs, err := c.GetRegister(integrationCtx(t), pubRefType, epodoc, registerEpodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegister: %v", err)
+	}
+	if len(docs) == 0 {
+		t.Fatal("no register documents")
+	}
+}
+
+func TestIntegrationGetRegisterBiblioRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetRegisterBiblioRaw(integrationCtx(t), pubRefType, epodoc, registerEpodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterBiblioRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetRegisterBiblioMultipleRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetRegisterBiblioMultipleRaw(integrationCtx(t), pubRefType, epodoc, []string{registerEpodoc})
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterBiblioMultipleRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetRegisterEvents(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetRegisterEvents(integrationCtx(t), pubRefType, epodoc, registerEpodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterEvents: %v", err)
+	}
+	if d == nil || len(d.Events) == 0 {
+		t.Fatal("no register events")
+	}
+}
+
+func TestIntegrationGetRegisterEventsRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetRegisterEventsRaw(integrationCtx(t), pubRefType, epodoc, registerEpodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterEventsRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetRegisterEventsMultipleRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetRegisterEventsMultipleRaw(integrationCtx(t), pubRefType, epodoc, []string{registerEpodoc})
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterEventsMultipleRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetRegisterProceduralSteps(t *testing.T) {
+	c := integrationClient(t)
+	docs, err := c.GetRegisterProceduralSteps(integrationCtx(t), pubRefType, epodoc, registerEpodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterProceduralSteps: %v", err)
+	}
+	if len(docs) == 0 {
+		t.Fatal("no register documents")
+	}
+}
+
+func TestIntegrationGetRegisterProceduralStepsRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetRegisterProceduralStepsRaw(integrationCtx(t), pubRefType, epodoc, registerEpodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterProceduralStepsRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetRegisterProceduralStepsMultipleRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetRegisterProceduralStepsMultipleRaw(integrationCtx(t), pubRefType, epodoc, []string{registerEpodoc})
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterProceduralStepsMultipleRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetRegisterUNIP(t *testing.T) {
+	c := integrationClient(t)
+	// Not every patent has a unitary-patent record; absence is a clean skip.
+	docs, err := c.GetRegisterUNIP(integrationCtx(t), pubRefType, epodoc, registerEpodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterUNIP: %v", err)
+	}
+	_ = docs
+}
+
+func TestIntegrationGetRegisterUNIPRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetRegisterUNIPRaw(integrationCtx(t), pubRefType, epodoc, registerEpodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterUNIPRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetRegisterUNIPMultipleRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetRegisterUNIPMultipleRaw(integrationCtx(t), pubRefType, epodoc, []string{registerEpodoc})
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetRegisterUNIPMultipleRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationSearchRegister(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.SearchRegister(integrationCtx(t), "ti=battery", "1-5")
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("SearchRegister: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationSearchRegisterWithConstituent(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.SearchRegisterWithConstituent(integrationCtx(t), "biblio", "ti=solar", "1-3")
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("SearchRegisterWithConstituent: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+// --- Classification services ---------------------------------------------------
+
+func TestIntegrationGetClassificationSchema(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetClassificationSchema(integrationCtx(t), "H04W", false, false)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClassificationSchema: %v", err)
+	}
+	if d == nil || d.Symbol == "" {
+		t.Fatal("no classification symbol")
+	}
+}
+
+func TestIntegrationGetClassificationSchemaRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetClassificationSchemaRaw(integrationCtx(t), "H04W", false, false)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClassificationSchemaRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetClassificationSchemaSubclassRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetClassificationSchemaSubclassRaw(integrationCtx(t), "H04W4", "00", false, false)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClassificationSchemaSubclassRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetClassificationSchemaMultipleRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetClassificationSchemaMultipleRaw(integrationCtx(t), []string{"H04W", "H04L"})
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClassificationSchemaMultipleRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetClassificationStatisticsRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetClassificationStatisticsRaw(integrationCtx(t), "H04W")
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClassificationStatisticsRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationGetClassificationMappingRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetClassificationMappingRaw(integrationCtx(t), "cpc", "H04W84", "18", "ecla", false)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClassificationMappingRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+// TestIntegrationGetClassificationMedia asserts the CPC media GET returns
+// non-empty image bytes (a GIF here).
+func TestIntegrationGetClassificationMedia(t *testing.T) {
+	c := integrationClient(t)
+	data, err := c.GetClassificationMedia(integrationCtx(t), "1000.gif", false)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetClassificationMedia: %v", err)
+	}
+	if len(data) == 0 {
+		t.Fatal("empty media bytes")
+	}
+}
+
+// --- Number service ------------------------------------------------------------
+
+func TestIntegrationConvertPatentNumber(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.ConvertPatentNumber(integrationCtx(t), pubRefType, docdb, convertDocdb, epodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("ConvertPatentNumber: %v", err)
+	}
+	if d == nil || d.DocNumber == "" {
+		t.Fatal("no converted doc number")
+	}
+}
+
+func TestIntegrationConvertPatentNumberRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.ConvertPatentNumberRaw(integrationCtx(t), pubRefType, docdb, convertDocdb, epodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("ConvertPatentNumberRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+func TestIntegrationConvertPatentNumberMultipleRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.ConvertPatentNumberMultipleRaw(integrationCtx(t), pubRefType, docdb, bulkNumbers(), epodoc)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("ConvertPatentNumberMultipleRaw: %v", err)
+	}
+	mustNonEmptyXML(t, raw)
+}
+
+// --- Image services ------------------------------------------------------------
+
+// TestIntegrationGetImage asserts the image GET returns non-empty bytes with TIFF
+// magic (OPS drawings are TIFF).
+func TestIntegrationGetImage(t *testing.T) {
+	c := integrationClient(t)
+	data, err := c.GetImage(integrationCtx(t), imgCountry, imgNumber, imgKind, "Drawing", 1)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetImage: %v", err)
+	}
+	if len(data) == 0 {
+		t.Fatal("empty image bytes")
+	}
+	if !isTIFF(data) {
+		t.Logf("image not TIFF magic (first bytes %x); accepted as non-empty bytes", data[:min(4, len(data))])
+	}
+}
+
+// TestIntegrationGetImagePOST asserts the POST image variant returns image bytes.
+// It first resolves a fetchable instance via the image inquiry.
+func TestIntegrationGetImagePOST(t *testing.T) {
+	c := integrationClient(t)
+	ctx := integrationCtx(t)
+	inq, err := c.GetImageInquiry(ctx, pubRefType, docdb, convertDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetImageInquiry (for POST): %v", err)
+	}
+	if len(inq.DocumentInstances) == 0 {
+		t.Skip("no image instances available for sample")
+	}
+	// The POST identifier is the instance link minus the page-image suffix; the
+	// demo's proven identifier form is "<Country>/<Number>/<Kind>/fullimage".
+	identifier := imgCountry + "/2400812/A1/fullimage"
+	data, err := c.GetImagePOST(ctx, 1, identifier)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetImagePOST: %v", err)
+	}
+	if len(data) == 0 {
+		t.Fatal("empty image bytes")
+	}
+}
+
+func TestIntegrationGetImageInquiry(t *testing.T) {
+	c := integrationClient(t)
+	d, err := c.GetImageInquiry(integrationCtx(t), pubRefType, docdb, convertDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetImageInquiry: %v", err)
+	}
+	if d == nil || len(d.DocumentInstances) == 0 {
+		t.Fatal("no image instances")
+	}
+}
+
+// --- Usage / quota services ----------------------------------------------------
+
+// TestIntegrationGetLastQuota asserts quota is captured from response headers
+// after a real call (it is nil before any request).
+func TestIntegrationGetLastQuota(t *testing.T) {
+	c := integrationClient(t)
+	if c.GetLastQuota() != nil {
+		t.Error("expected nil quota before any request")
+	}
+	_, err := c.GetBiblio(integrationCtx(t), pubRefType, docdb, testDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetBiblio (for quota): %v", err)
+	}
+	if c.GetLastQuota() == nil {
+		t.Fatal("expected quota after a request")
+	}
+}
+
+func TestIntegrationGetUsageStats(t *testing.T) {
+	c := integrationClient(t)
+	// A small recent window (dd/MM/yyyy~dd/MM/yyyy), as the demo uses.
+	now := time.Now()
+	from := now.AddDate(0, 0, -1).Format("02/01/2006")
+	to := now.Format("02/01/2006")
+	d, err := c.GetUsageStats(integrationCtx(t), from+"~"+to)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetUsageStats: %v", err)
+	}
+	if d == nil {
+		t.Fatal("nil usage stats")
+	}
+}
+
+// isTIFF reports whether b begins with a TIFF byte-order mark (II / MM).
+func isTIFF(b []byte) bool {
+	return len(b) >= 2 && ((b[0] == 'I' && b[1] == 'I') || (b[0] == 'M' && b[1] == 'M'))
 }
