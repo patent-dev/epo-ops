@@ -21,6 +21,15 @@ type EPStatus struct {
 	Text       string `xml:",chardata"`
 }
 
+// UnitaryStatus is one unitary-patent-status entry from the unitary-patent (UPP)
+// constituent: the timeline of the request for unitary effect (filed, registered,
+// rejected, ...). Present only on the GetRegisterUNIP record.
+type UnitaryStatus struct {
+	ChangeDate string `xml:"change-date,attr"`
+	Code       string `xml:"status-code,attr"`
+	Text       string `xml:",chardata"`
+}
+
 // ProceduralStep is one procedural-data/procedural-step (the prosecution step log).
 type ProceduralStep struct {
 	ID    string   `xml:"id,attr"`
@@ -116,6 +125,10 @@ type RegisterDocument struct {
 	Statuses        []EPStatus       `xml:"ep-patent-statuses>ep-patent-status"`
 	Biblio          RegisterBiblio   `xml:"bibliographic-data"`
 	ProceduralSteps []ProceduralStep `xml:"procedural-data>procedural-step"`
+
+	// UnitaryStatuses is the unitary-patent (UPP) status timeline, populated only
+	// on the GetRegisterUNIP record (empty for non-unitary patents).
+	UnitaryStatuses []UnitaryStatus `xml:"unitary-patent>unitary-patent-statuses>unitary-patent-status"`
 }
 
 // GetRegister retrieves the full EP Register record (bibliographic data, EP patent statuses,
