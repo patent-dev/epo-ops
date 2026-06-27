@@ -176,6 +176,9 @@ func NewClient(config *Config) (*Client, error) {
 		authenticator.authURL = config.AuthURL
 	}
 
+	// Wire the optional token store so tokens persist across clients.
+	authenticator.store = config.TokenStore
+
 	// Create HTTP client with auth transport
 	httpClient := &http.Client{
 		Timeout: config.Timeout,

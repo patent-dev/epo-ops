@@ -72,6 +72,11 @@ type Config struct {
 	// Timeout is the HTTP client timeout.
 	// Default: 30 seconds
 	Timeout time.Duration
+
+	// TokenStore optionally persists the OAuth2 token across clients (e.g. across
+	// CLI invocations or stateless server requests) so the token endpoint is not hit
+	// on every new client. Nil = in-memory only.
+	TokenStore TokenStore
 }
 
 // DefaultConfig returns a Config with default values.

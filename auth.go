@@ -22,6 +22,17 @@ const (
 	tokenRefreshBuffer = 5 * time.Minute
 )
 
+// TokenStore persists an OAuth2 access token and its expiry across Authenticator
+// instances (e.g. across separate CLI invocations or stateless server requests) so
+// the token endpoint is not hit on every new client. Implementations must be safe
+// for concurrent use. Nil = in-memory only.
+type TokenStore interface {
+	// Load returns a cached token and its expiry; ok is false when absent.
+	Load() (token string, expiry time.Time, ok bool)
+	// Save records a freshly obtained token and its expiry.
+	Save(token string, expiry time.Time)
+}
+
 // Authenticator handles OAuth2 authentication for the EPO OPS API.
 type Authenticator struct {
 	authURL        string
@@ -30,6 +41,7 @@ type Authenticator struct {
 	token          string
 	tokenExpiry    time.Time
 	httpClient     *http.Client
+	store          TokenStore
 	mu             sync.RWMutex
 }
 
@@ -74,6 +86,15 @@ func (a *Authenticator) GetToken(ctx context.Context) (string, error) {
 	// Double-check after acquiring write lock (another goroutine might have refreshed)
 	if a.token != "" && time.Now().Add(tokenRefreshBuffer).Before(a.tokenExpiry) {
 		return a.token, nil
+	}
+
+	// Try a persisted token (warm across processes/requests) before hitting the
+	// token endpoint.
+	if a.store != nil {
+		if tok, exp, ok := a.store.Load(); ok && tok != "" && time.Now().Add(tokenRefreshBuffer).Before(exp) {
+			a.token, a.tokenExpiry = tok, exp
+			return a.token, nil
+		}
 	}
 
 	// Request new token
@@ -147,6 +168,9 @@ func (a *Authenticator) requestToken(ctx context.Context) (string, error) {
 	// Cache token with expiry
 	a.token = tokenResp.AccessToken
 	a.tokenExpiry = time.Now().Add(time.Duration(expiresInSeconds) * time.Second)
+	if a.store != nil {
+		a.store.Save(a.token, a.tokenExpiry)
+	}
 
 	return a.token, nil
 }
