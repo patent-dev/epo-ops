@@ -280,7 +280,11 @@ func parseEPOJSONErrorBody(body []byte) error {
 		return &NotFoundError{Message: message}
 	case http.StatusUnauthorized:
 		return &AuthError{StatusCode: code, Message: message}
-	case http.StatusForbidden, http.StatusTooManyRequests:
+	case http.StatusForbidden:
+		// A bare 403 is a forbidden/access error, not a quota error - mirror the
+		// XML path so callers can treat 403 as non-retryable.
+		return &ForbiddenError{StatusCode: code, Message: message}
+	case http.StatusTooManyRequests:
 		return &QuotaExceededError{Message: message}
 	case http.StatusServiceUnavailable:
 		return &ServiceUnavailableError{StatusCode: code, Message: message}

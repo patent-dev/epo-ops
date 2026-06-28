@@ -174,12 +174,13 @@ func TestParseEPOJSONErrorBody_MapsUpstreamCodes(t *testing.T) {
 	}
 
 	err = parseEPOJSONErrorBody(body(http.StatusForbidden))
-	var quotaErr *QuotaExceededError
-	if !errors.As(err, &quotaErr) {
-		t.Errorf("403: expected QuotaExceededError, got %T", err)
+	var forbiddenErr *ForbiddenError
+	if !errors.As(err, &forbiddenErr) {
+		t.Errorf("403: expected ForbiddenError, got %T", err)
 	}
 
 	err = parseEPOJSONErrorBody(body(http.StatusTooManyRequests))
+	var quotaErr *QuotaExceededError
 	if !errors.As(err, &quotaErr) {
 		t.Errorf("429: expected QuotaExceededError, got %T", err)
 	}
