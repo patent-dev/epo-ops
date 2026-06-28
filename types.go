@@ -83,6 +83,8 @@ type Config struct {
 
 	// Transport optionally wraps outbound HTTP for both API and token requests
 	// (e.g. to add rate limiting or egress pacing). Nil = http.DefaultTransport.
+	// Note: any delay the transport adds counts against Timeout, so a heavily
+	// paced request can be cut by the client timeout - size Timeout accordingly.
 	Transport http.RoundTripper
 }
 
