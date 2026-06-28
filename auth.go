@@ -26,11 +26,19 @@ const (
 // instances (e.g. across separate CLI invocations or stateless server requests) so
 // the token endpoint is not hit on every new client. Implementations must be safe
 // for concurrent use. Nil = in-memory only.
+//
+// In-process, the Authenticator serializes Load/Save under its lock, so only one
+// fetch happens on a cold start. Across processes there is no coordination: N cold
+// clients can each Load-miss and fetch concurrently (last Save wins) - acceptable
+// for OAuth client_credentials, but not a distributed single-flight.
 type TokenStore interface {
 	// Load returns a cached token and its expiry; ok is false when absent.
 	Load() (token string, expiry time.Time, ok bool)
 	// Save records a freshly obtained token and its expiry.
 	Save(token string, expiry time.Time)
+	// Delete removes any persisted token. Called when a token is rejected (401)
+	// so a revoked-but-unexpired token is not re-served from the store on refresh.
+	Delete()
 }
 
 // Authenticator handles OAuth2 authentication for the EPO OPS API.
@@ -181,4 +189,7 @@ func (a *Authenticator) ClearToken() {
 	defer a.mu.Unlock()
 	a.token = ""
 	a.tokenExpiry = time.Time{}
+	if a.store != nil {
+		a.store.Delete()
+	}
 }

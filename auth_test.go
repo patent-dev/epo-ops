@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 	"time"
 )
@@ -20,19 +21,34 @@ func newTokenServer(body string, callCount *int) *httptest.Server {
 	}))
 }
 
-// fakeStore is an in-memory TokenStore for tests.
+// fakeStore is a concurrency-safe in-memory TokenStore for tests.
 type fakeStore struct {
-	token  string
-	expiry time.Time
-	has    bool
-	saves  int
+	mu      sync.Mutex
+	token   string
+	expiry  time.Time
+	has     bool
+	saves   int
+	deletes int
 }
 
-func (s *fakeStore) Load() (string, time.Time, bool) { return s.token, s.expiry, s.has }
+func (s *fakeStore) Load() (string, time.Time, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.token, s.expiry, s.has
+}
 
 func (s *fakeStore) Save(token string, expiry time.Time) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	s.token, s.expiry, s.has = token, expiry, true
 	s.saves++
+}
+
+func (s *fakeStore) Delete() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.token, s.has = "", false
+	s.deletes++
 }
 
 func TestGetToken_UsesStoredTokenWithoutHittingEndpoint(t *testing.T) {
@@ -100,6 +116,54 @@ func TestGetToken_IgnoresExpiredStoredToken(t *testing.T) {
 	}
 	if calls != 1 || store.saves != 1 {
 		t.Errorf("calls=%d saves=%d, want 1/1", calls, store.saves)
+	}
+}
+
+func TestClearToken_InvalidatesStore(t *testing.T) {
+	calls := 0
+	server := newTokenServer(`{"access_token":"fresh","expires_in":"3600"}`, &calls)
+	defer server.Close()
+
+	store := &fakeStore{token: "stale", expiry: time.Now().Add(time.Hour), has: true}
+	auth := NewAuthenticator("key", "secret", nil)
+	auth.authURL = server.URL
+	auth.store = store
+
+	// On a rejected token the client calls ClearToken; it must invalidate the store
+	// too, so the next fetch cannot re-serve the revoked-but-unexpired token.
+	auth.ClearToken()
+	if store.deletes != 1 {
+		t.Fatalf("store deletes = %d, want 1 (ClearToken must invalidate the store)", store.deletes)
+	}
+	tok, err := auth.GetToken(context.Background())
+	if err != nil {
+		t.Fatalf("GetToken: %v", err)
+	}
+	if tok != "fresh" {
+		t.Errorf("token = %q, want fresh (the stale store token must not be re-served)", tok)
+	}
+	if calls != 1 {
+		t.Errorf("token endpoint calls = %d, want 1 (a fresh token was fetched)", calls)
+	}
+}
+
+func TestGetToken_ConcurrentWithStore(t *testing.T) {
+	calls := 0
+	server := newTokenServer(`{"access_token":"t","expires_in":"3600"}`, &calls)
+	defer server.Close()
+
+	auth := NewAuthenticator("key", "secret", nil)
+	auth.authURL = server.URL
+	auth.store = &fakeStore{}
+
+	var wg sync.WaitGroup
+	for range 20 {
+		wg.Add(1)
+		go func() { defer wg.Done(); _, _ = auth.GetToken(context.Background()) }()
+	}
+	wg.Wait()
+	if calls != 1 {
+		t.Errorf("token endpoint calls = %d, want 1 (in-process fetch must be single-flighted)", calls)
 	}
 }
 
