@@ -163,9 +163,17 @@ func NewClient(config *Config) (*Client, error) {
 		config.Timeout = 30 * time.Second
 	}
 
-	// Create base HTTP client
+	// Resolve the base transport shared by API and token requests, so an injected
+	// transport (e.g. egress rate limiting) governs all outbound EPO traffic.
+	base := config.Transport
+	if base == nil {
+		base = http.DefaultTransport
+	}
+
+	// Create base HTTP client (used for token requests)
 	baseClient := &http.Client{
-		Timeout: config.Timeout,
+		Timeout:   config.Timeout,
+		Transport: base,
 	}
 
 	// Create authenticator
@@ -183,7 +191,7 @@ func NewClient(config *Config) (*Client, error) {
 	httpClient := &http.Client{
 		Timeout: config.Timeout,
 		Transport: &authTransport{
-			base:          http.DefaultTransport,
+			base:          base,
 			authenticator: authenticator,
 		},
 	}

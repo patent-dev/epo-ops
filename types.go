@@ -1,6 +1,9 @@
 package epo_ops
 
-import "time"
+import (
+	"net/http"
+	"time"
+)
 
 // Reference types for API requests
 const (
@@ -77,6 +80,10 @@ type Config struct {
 	// CLI invocations or stateless server requests) so the token endpoint is not hit
 	// on every new client. Nil = in-memory only.
 	TokenStore TokenStore
+
+	// Transport optionally wraps outbound HTTP for both API and token requests
+	// (e.g. to add rate limiting or egress pacing). Nil = http.DefaultTransport.
+	Transport http.RoundTripper
 }
 
 // DefaultConfig returns a Config with default values.
