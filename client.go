@@ -37,6 +37,12 @@ import (
 	"github.com/patent-dev/epo-ops/generated"
 )
 
+// Version is the library version. It surfaces through the default User-Agent.
+const Version = "1.6.1"
+
+// DefaultUserAgent identifies this library in outbound requests.
+const DefaultUserAgent = "epo-ops-go/" + Version + " (patent.dev; +https://github.com/patent-dev/epo-ops)"
+
 // Client is the main EPO OPS API client.
 type Client struct {
 	config        *Config
@@ -107,6 +113,18 @@ func getEndpointFromPath(path string) string {
 	return ""
 }
 
+// uaTransport adds the User-Agent header to every outgoing request.
+type uaTransport struct {
+	base      http.RoundTripper
+	userAgent string
+}
+
+func (t *uaTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	r := req.Clone(req.Context())
+	r.Header.Set("User-Agent", t.userAgent)
+	return t.base.RoundTrip(r)
+}
+
 // authTransport wraps an http.RoundTripper to add OAuth2 Bearer token to requests.
 type authTransport struct {
 	base          http.RoundTripper
@@ -163,12 +181,21 @@ func NewClient(config *Config) (*Client, error) {
 		config.Timeout = 30 * time.Second
 	}
 
+	// Resolve the default User-Agent for all outbound traffic.
+	userAgent := config.UserAgent
+	if userAgent == "" {
+		userAgent = DefaultUserAgent
+	}
+
 	// Resolve the base transport shared by API and token requests, so an injected
-	// transport (e.g. egress rate limiting) governs all outbound EPO traffic.
+	// transport (e.g. egress rate limiting) governs all outbound EPO traffic. The
+	// User-Agent is applied at this shared layer so token, data, and retry requests
+	// all carry it while still funnelling through any injected transport.
 	base := config.Transport
 	if base == nil {
 		base = http.DefaultTransport
 	}
+	base = &uaTransport{base: base, userAgent: userAgent}
 
 	// Create base HTTP client (used for token requests)
 	baseClient := &http.Client{

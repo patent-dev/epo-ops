@@ -81,6 +81,9 @@ type Config struct {
 	// on every new client. Nil = in-memory only.
 	TokenStore TokenStore
 
+	// UserAgent overrides the outbound User-Agent header.
+	UserAgent string
+
 	// Transport optionally wraps outbound HTTP for both API and token requests
 	// (e.g. to add rate limiting or egress pacing). Nil = http.DefaultTransport.
 	// Note: any delay the transport adds counts against Timeout, so a heavily
