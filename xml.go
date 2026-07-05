@@ -297,9 +297,9 @@ type abstractXML struct {
 		Country   string `xml:"country,attr"`
 		DocNumber string `xml:"doc-number,attr"`
 		Kind      string `xml:"kind,attr"`
-		Abstract  struct {
-			Lang string `xml:"lang,attr"`
-			P    string `xml:"p"`
+		Abstracts []struct {
+			Lang       string   `xml:"lang,attr"`
+			Paragraphs []string `xml:"p"`
 		} `xml:"abstract"`
 	} `xml:"exchange-documents>exchange-document"`
 }
@@ -380,7 +380,10 @@ type claimsXML struct {
 	} `xml:"fulltext-documents"`
 }
 
-// ParseAbstract parses abstract XML into structured data
+// ParseAbstract parses abstract XML into structured data.
+// When abstracts exist in several languages, the English one is preferred;
+// otherwise the first abstract in document order is used. All paragraphs of
+// the chosen abstract are joined (newline-separated).
 func ParseAbstract(xmlData string) (*AbstractData, error) {
 	var raw abstractXML
 	if err := xml.Unmarshal([]byte(xmlData), &raw); err != nil {
@@ -391,8 +394,19 @@ func ParseAbstract(xmlData string) (*AbstractData, error) {
 		Country:   raw.ExchangeDocument.Country,
 		DocNumber: raw.ExchangeDocument.DocNumber,
 		Kind:      raw.ExchangeDocument.Kind,
-		Language:  raw.ExchangeDocument.Abstract.Lang,
-		Text:      strings.TrimSpace(raw.ExchangeDocument.Abstract.P),
+	}
+
+	abstracts := raw.ExchangeDocument.Abstracts
+	if len(abstracts) > 0 {
+		chosen := abstracts[0]
+		for _, a := range abstracts {
+			if strings.EqualFold(a.Lang, "en") {
+				chosen = a
+				break
+			}
+		}
+		data.Language = chosen.Lang
+		data.Text = strings.TrimSpace(strings.Join(chosen.Paragraphs, "\n"))
 	}
 
 	// Construct patent number
@@ -1434,33 +1448,34 @@ func ParseRegisterEvents(xmlData string) (*RegisterEventsData, error) {
 		return data, nil
 	}
 
-	// Use the first register document
-	doc := docs[0]
-
-	// Extract patent statuses
-	for _, s := range doc.Statuses.Entries {
-		data.Statuses = append(data.Statuses, PatentStatus{
-			Date:        strings.TrimSpace(s.ChangeDate),
-			Code:        strings.TrimSpace(s.StatusCode),
-			Description: strings.TrimSpace(s.Text),
-		})
-	}
-
-	// Extract dossier events
-	for _, ed := range doc.EventsData {
-		evt := ed.DossierEvent
-		code := strings.TrimSpace(evt.EventCode)
-		desc := strings.TrimSpace(evt.EventText.Text)
-		regEvent := RegisterEvent{
-			ID:          strings.TrimSpace(evt.ID),
-			Date:        strings.TrimSpace(evt.EventDate.Date),
-			EventCode:   code,
-			Description: desc,
-			Category:    categorizeRegisterEvent(code, desc),
-			GazetteNum:  strings.TrimSpace(evt.GazetteRef.GazetteNum),
-			GazetteDate: strings.TrimSpace(evt.GazetteRef.Date),
+	// Aggregate statuses and events across every register document in the
+	// response (a query can match more than one register entry).
+	for _, doc := range docs {
+		// Extract patent statuses
+		for _, s := range doc.Statuses.Entries {
+			data.Statuses = append(data.Statuses, PatentStatus{
+				Date:        strings.TrimSpace(s.ChangeDate),
+				Code:        strings.TrimSpace(s.StatusCode),
+				Description: strings.TrimSpace(s.Text),
+			})
 		}
-		data.Events = append(data.Events, regEvent)
+
+		// Extract dossier events
+		for _, ed := range doc.EventsData {
+			evt := ed.DossierEvent
+			code := strings.TrimSpace(evt.EventCode)
+			desc := strings.TrimSpace(evt.EventText.Text)
+			regEvent := RegisterEvent{
+				ID:          strings.TrimSpace(evt.ID),
+				Date:        strings.TrimSpace(evt.EventDate.Date),
+				EventCode:   code,
+				Description: desc,
+				Category:    categorizeRegisterEvent(code, desc),
+				GazetteNum:  strings.TrimSpace(evt.GazetteRef.GazetteNum),
+				GazetteDate: strings.TrimSpace(evt.GazetteRef.Date),
+			}
+			data.Events = append(data.Events, regEvent)
+		}
 	}
 
 	// Sort events chronologically (oldest first)

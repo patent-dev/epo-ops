@@ -66,6 +66,10 @@ var validOperators = map[string]bool{
 	// With prefix (for searching within fields)
 	"WITH": true,
 	"with": true,
+
+	// Range relation (e.g. pd within "20200101 20241231")
+	"WITHIN": true,
+	"within": true,
 }
 
 // IsValidField checks if a field name is valid in EPO CQL.

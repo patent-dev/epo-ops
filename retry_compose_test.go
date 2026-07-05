@@ -2,6 +2,7 @@ package epo_ops
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -105,6 +106,132 @@ func TestRetry_HonorsRetryAfterHeader(t *testing.T) {
 	}
 	if elapsed := time.Since(start); elapsed < time.Second {
 		t.Errorf("expected to wait at least 1s for Retry-After, waited %v", elapsed)
+	}
+}
+
+// TestRetry_429RetriedThenSuccess verifies that a transient 429 is retried
+// (with Retry-After honored by the backoff path) and the call succeeds once
+// the throttle clears.
+func TestRetry_429RetriedThenSuccess(t *testing.T) {
+	authServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"access_token":"test_token_12345","expires_in":"3600"}`))
+	}))
+	defer authServer.Close()
+
+	requestCount := 0
+	opsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		requestCount++
+		if requestCount == 1 {
+			w.WriteHeader(http.StatusTooManyRequests)
+			_, _ = w.Write(loadTestData("error_429.xml"))
+			return
+		}
+		w.Header().Set("Content-Type", "application/xml")
+		_, _ = w.Write(loadTestData("biblio.xml"))
+	}))
+	defer opsServer.Close()
+
+	config := &Config{
+		ConsumerKey:    "test",
+		ConsumerSecret: "test",
+		BaseURL:        opsServer.URL,
+		MaxRetries:     2,
+		RetryDelay:     time.Nanosecond,
+	}
+	config.AuthURL = authServer.URL + "/auth/accesstoken"
+
+	client, err := NewClient(config)
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
+
+	if _, err := client.GetBiblio(context.Background(), "publication", "docdb", "EP.1000000.B1"); err != nil {
+		t.Fatalf("expected success after 429->200, got: %v", err)
+	}
+	if requestCount != 2 {
+		t.Errorf("expected 2 API requests (429, 200), got %d", requestCount)
+	}
+}
+
+// TestRetry_ExhaustedReturnsTypedErrorFromBody verifies that when retries are
+// exhausted on a retryable status, the server's own error body is surfaced as
+// a typed error instead of a generic "retryable status code" error.
+func TestRetry_ExhaustedReturnsTypedErrorFromBody(t *testing.T) {
+	authServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"access_token":"test_token_12345","expires_in":"3600"}`))
+	}))
+	defer authServer.Close()
+
+	tests := []struct {
+		name       string
+		statusCode int
+		body       []byte
+		check      func(t *testing.T, err error)
+	}{
+		{
+			name:       "429 surfaces QuotaExceededError with server message",
+			statusCode: http.StatusTooManyRequests,
+			body:       loadTestData("error_429.xml"),
+			check: func(t *testing.T, err error) {
+				var quotaErr *QuotaExceededError
+				if !errors.As(err, &quotaErr) {
+					t.Fatalf("expected QuotaExceededError, got %T: %v", err, err)
+				}
+				if !strings.Contains(quotaErr.Message, "fair use limit") {
+					t.Errorf("expected server body message, got %q", quotaErr.Message)
+				}
+			},
+		},
+		{
+			name:       "503 with structured error surfaces OPSError message",
+			statusCode: http.StatusServiceUnavailable,
+			body: []byte(`<?xml version="1.0" encoding="UTF-8"?>
+<error>
+  <code>SERVER.BackendUnavailable</code>
+  <message>backend maintenance window</message>
+</error>`),
+			check: func(t *testing.T, err error) {
+				var opsErr *OPSError
+				if !errors.As(err, &opsErr) {
+					t.Fatalf("expected OPSError, got %T: %v", err, err)
+				}
+				if opsErr.Message != "backend maintenance window" {
+					t.Errorf("expected server body message, got %q", opsErr.Message)
+				}
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			opsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				w.WriteHeader(tt.statusCode)
+				_, _ = w.Write(tt.body)
+			}))
+			defer opsServer.Close()
+
+			config := &Config{
+				ConsumerKey:    "test",
+				ConsumerSecret: "test",
+				BaseURL:        opsServer.URL,
+				MaxRetries:     1,
+				RetryDelay:     time.Nanosecond,
+			}
+			config.AuthURL = authServer.URL + "/auth/accesstoken"
+
+			client, err := NewClient(config)
+			if err != nil {
+				t.Fatalf("Failed to create client: %v", err)
+			}
+
+			_, err = client.GetBiblio(context.Background(), "publication", "docdb", "EP.1000000.B1")
+			if err == nil {
+				t.Fatal("expected error after exhausting retries")
+			}
+			tt.check(t, err)
+		})
 	}
 }
 

@@ -12,12 +12,21 @@ var (
 	// dot, are optional. The OPS family/register endpoints are kind-agnostic and resolve the
 	// bare "CC.number" form (e.g. EP.1404685 -> 200) while 404ing on some kind-coded
 	// publications, so the bare form must validate.
-	// Country code (2 letters), dot, number (digits), optionally a dot + optional kind code.
-	docdbPattern = regexp.MustCompile(`^[A-Z]{2}\.\d+(\.([A-Z]\d?)?)?$`)
+	// Country code (2 letters), dot, optional US series prefix (RE reissue, PP plant,
+	// AI additional improvement, D design, H statutory invention registration, T defensive
+	// publication), number (digits), optionally a dot + optional kind code.
+	// The series prefix covers e.g. US.D854278.S and US.RE46921.E.
+	docdbPattern = regexp.MustCompile(`^[A-Z]{2}\.(RE|PP|AI|D|H|T)?\d+(\.([A-Z]\d?)?)?$`)
 
 	// Epodoc format: CCnumber or CCnumberKC (e.g., EP1000000 or EP1000000B1)
-	// Country code (2 letters), number (digits), optional kind code (letter + optional digit)
-	epodocPattern = regexp.MustCompile(`^[A-Z]{2}\d+([A-Z]\d?)?$`)
+	// Country code (2 letters), optional US series prefix (see docdbPattern),
+	// number (digits), optional kind code (letter + optional digit).
+	// The series prefix covers e.g. USRE46921E and USPP12345P2.
+	epodocPattern = regexp.MustCompile(`^[A-Z]{2}(RE|PP|AI|D|H|T)?\d+([A-Z]\d?)?$`)
+
+	// Kind-less epodoc form: CC + optional US series prefix + digits (e.g. EP1000000).
+	// Used by NormalizeToDocdb to map to the kind-less docdb form CC.number.
+	kindlessEpodocPattern = regexp.MustCompile(`^[A-Z]{2}(RE|PP|AI|D|H|T)?\d+$`)
 
 	// Date format: YYYYMMDD (e.g., 20231015)
 	datePattern = regexp.MustCompile(`^\d{8}$`)
@@ -121,6 +130,17 @@ func ValidateOriginalFormat(number string) error {
 			Format:  "original",
 			Value:   number,
 			Message: "number exceeds maximum length of 100 characters",
+		}
+	}
+
+	// Reject line breaks: the bulk POST endpoints use a newline-separated body,
+	// so an embedded CR/LF would smuggle extra entries past validation.
+	if strings.ContainsAny(number, "\r\n") {
+		return &ValidationError{
+			Field:   "number",
+			Format:  "original",
+			Value:   number,
+			Message: "number must not contain line breaks",
 		}
 	}
 
@@ -265,6 +285,11 @@ func NormalizeToDocdb(number string) (string, error) {
 
 	// Check if parsing was successful
 	if parsed.Country == "" || parsed.Number == "" || parsed.Kind == "" {
+		// Kind-less epodoc fallback: a bare CCnumber (e.g. EP1000000) maps to the
+		// kind-less docdb form CC.number, which the OPS endpoints resolve.
+		if kindlessEpodocPattern.MatchString(cleanedStr) {
+			return cleanedStr[:2] + "." + cleanedStr[2:], nil
+		}
 		return "", &ValidationError{
 			Field:   "number",
 			Value:   number,
@@ -299,6 +324,25 @@ func NormalizeToDocdb(number string) (string, error) {
 //   - numbers slice has more than 100 entries
 //   - any individual number fails format validation
 func ValidateBulkNumbers(numbers []string, format string) error {
+	if err := validateBulkNumberList(numbers); err != nil {
+		return err
+	}
+
+	// Validate each patent number
+	for i, number := range numbers {
+		if err := ValidateFormat(format, number); err != nil {
+			return fmt.Errorf("numbers[%d]: %w", i, err)
+		}
+	}
+
+	return nil
+}
+
+// validateBulkNumberList checks the list-level constraints shared by every bulk
+// endpoint: 1-100 entries, no empty entries, and no CR/LF characters. The bulk
+// POST body is newline-separated, so an embedded line break in one entry would
+// smuggle extra entries past validation.
+func validateBulkNumberList(numbers []string) error {
 	if len(numbers) == 0 {
 		return &ValidationError{
 			Field:   "numbers",
@@ -314,10 +358,19 @@ func ValidateBulkNumbers(numbers []string, format string) error {
 		}
 	}
 
-	// Validate each patent number
 	for i, number := range numbers {
-		if err := ValidateFormat(format, number); err != nil {
-			return fmt.Errorf("numbers[%d]: %w", i, err)
+		if strings.TrimSpace(number) == "" {
+			return &ValidationError{
+				Field:   fmt.Sprintf("numbers[%d]", i),
+				Message: "patent number cannot be empty",
+			}
+		}
+		if strings.ContainsAny(number, "\r\n") {
+			return &ValidationError{
+				Field:   fmt.Sprintf("numbers[%d]", i),
+				Value:   number,
+				Message: "patent number must not contain line breaks",
+			}
 		}
 	}
 

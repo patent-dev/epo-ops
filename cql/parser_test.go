@@ -103,6 +103,30 @@ func TestParseCQL_ValidQueries(t *testing.T) {
 			wantValid:  true,
 			wantTokens: 1,
 		},
+		{
+			name:       "Lone quoted phrase",
+			query:      "\"wireless mesh\"",
+			wantValid:  true,
+			wantTokens: 3, // ", wireless mesh, "
+		},
+		{
+			name:       "Date range via within relation",
+			query:      "pd within \"20200101 20241231\"",
+			wantValid:  true,
+			wantTokens: 5, // pd, within, ", 20200101 20241231, "
+		},
+		{
+			name:       "within combined with field=value",
+			query:      "ti=bluetooth AND pd within \"20200101 20241231\"",
+			wantValid:  true,
+			wantTokens: 9,
+		},
+		{
+			name:       "Multibyte value",
+			query:      "pa=müller",
+			wantValid:  true,
+			wantTokens: 3, // pa, =, müller
+		},
 	}
 
 	for _, tt := range tests {
@@ -435,6 +459,16 @@ func TestTokenize(t *testing.T) {
 			query:      "ti=bluetooth  AND  pa=ericsson",
 			wantTokens: []string{"ti", "=", "bluetooth", "AND", "pa", "=", "ericsson"},
 		},
+		{
+			name:       "Multibyte value survives intact",
+			query:      "pa=müller",
+			wantTokens: []string{"pa", "=", "müller"},
+		},
+		{
+			name:       "Multibyte inside quotes",
+			query:      "pa=\"Müller GmbH\" AND ti=größe",
+			wantTokens: []string{"pa", "=", "\"", "Müller GmbH", "\"", "AND", "ti", "=", "größe"},
+		},
 	}
 
 	for _, tt := range tests {
@@ -455,6 +489,27 @@ func TestTokenize(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+// TestTokenize_MultibytePosIsByteOffset pins the Pos semantics: positions are
+// byte offsets into the raw query, also after multibyte runes.
+func TestTokenize_MultibytePosIsByteOffset(t *testing.T) {
+	// "pa=müller AND ti=x": "müller" starts at byte 3 and spans 7 bytes
+	// ("ü" is 2 bytes), so "AND" starts at byte 11 and "ti" at byte 15.
+	tokens := tokenize("pa=müller AND ti=x")
+
+	wantPos := map[string]int{
+		"pa":     0,
+		"müller": 3,
+		"AND":    11,
+		"ti":     15,
+		"x":      18,
+	}
+	for _, tok := range tokens {
+		if want, ok := wantPos[tok.Value]; ok && tok.Pos != want {
+			t.Errorf("token %q Pos = %d, want byte offset %d", tok.Value, tok.Pos, want)
+		}
 	}
 }
 

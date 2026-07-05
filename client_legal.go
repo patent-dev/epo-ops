@@ -2,7 +2,6 @@ package epo_ops
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -110,19 +109,8 @@ func (c *Client) GetRegisterBiblioMultipleRaw(ctx context.Context, refType, form
 		return "", err
 	}
 
-	if len(numbers) == 0 {
-		return "", &ValidationError{
-			Field:   "numbers",
-			Message: "at least one patent number required",
-		}
-	}
-
-	if len(numbers) > 100 {
-		return "", &ValidationError{
-			Field:   "numbers",
-			Value:   fmt.Sprintf("%d", len(numbers)),
-			Message: "maximum 100 patent numbers per request",
-		}
+	if err := validateBulkNumberList(numbers); err != nil {
+		return "", err
 	}
 
 	// Use generated POST method
@@ -181,19 +169,8 @@ func (c *Client) GetRegisterEventsMultipleRaw(ctx context.Context, refType, form
 		return "", err
 	}
 
-	if len(numbers) == 0 {
-		return "", &ValidationError{
-			Field:   "numbers",
-			Message: "at least one patent number required",
-		}
-	}
-
-	if len(numbers) > 100 {
-		return "", &ValidationError{
-			Field:   "numbers",
-			Value:   fmt.Sprintf("%d", len(numbers)),
-			Message: "maximum 100 patent numbers per request",
-		}
+	if err := validateBulkNumberList(numbers); err != nil {
+		return "", err
 	}
 
 	// Use generated POST method
@@ -204,6 +181,24 @@ func (c *Client) GetRegisterEventsMultipleRaw(ctx context.Context, refType, form
 			generated.RegisterEventsServicePOSTParamsFormat(format),
 			body)
 	})
+}
+
+// validateRegisterRefType validates the reference type for the register
+// procedural-steps and UNIP services. Their generated enums only define
+// publication and application, so "priority" fails loudly here instead of
+// being silently remapped to application.
+func validateRegisterRefType(refType string) error {
+	if err := ValidateRefType(refType); err != nil {
+		return err
+	}
+	if refType == RefTypePriority {
+		return &ValidationError{
+			Field:   "refType",
+			Value:   refType,
+			Message: "must be 'publication' or 'application' (this register service does not support 'priority')",
+		}
+	}
+	return nil
 }
 
 // GetRegisterProceduralStepsRaw retrieves procedural steps from the EPO Register.
@@ -230,7 +225,7 @@ func (c *Client) GetRegisterEventsMultipleRaw(ctx context.Context, refType, form
 //	    log.Fatal(err)
 //	}
 func (c *Client) GetRegisterProceduralStepsRaw(ctx context.Context, refType, _, number string) (string, error) {
-	if err := ValidateRefType(refType); err != nil {
+	if err := validateRegisterRefType(refType); err != nil {
 		return "", err
 	}
 	// Note: Register endpoints accept both docdb format (EP.1000000.B1) and epodoc without kind (EP1000000)
@@ -269,13 +264,10 @@ func (c *Client) GetRegisterProceduralStepsRaw(ctx context.Context, refType, _, 
 //	numbers := []string{"EP1000000", "EP1000001", "EP1000002"}
 //	steps, err := client.GetRegisterProceduralStepsMultiple(ctx, "publication", "epodoc", numbers)
 func (c *Client) GetRegisterProceduralStepsMultipleRaw(ctx context.Context, refType, _ string, numbers []string) (string, error) {
-	if len(numbers) == 0 {
-		return "", &ConfigError{Message: "numbers list cannot be empty"}
+	if err := validateBulkNumberList(numbers); err != nil {
+		return "", err
 	}
-	if len(numbers) > 100 {
-		return "", &ConfigError{Message: "maximum 100 numbers allowed per request"}
-	}
-	if err := ValidateRefType(refType); err != nil {
+	if err := validateRegisterRefType(refType); err != nil {
 		return "", err
 	}
 
@@ -315,7 +307,7 @@ func (c *Client) GetRegisterProceduralStepsMultipleRaw(ctx context.Context, refT
 //	unip, err := client.GetRegisterUNIP(ctx, epo_ops.RefTypePublication, "epodoc", "EP3000000")
 func (c *Client) GetRegisterUNIPRaw(ctx context.Context, refType, _, number string) (string, error) {
 	// Validate reference type
-	if err := ValidateRefType(refType); err != nil {
+	if err := validateRegisterRefType(refType); err != nil {
 		return "", err
 	}
 
@@ -353,7 +345,7 @@ func (c *Client) GetRegisterUNIPRaw(ctx context.Context, refType, _, number stri
 //	unip, err := client.GetRegisterUNIPMultiple(ctx, epo_ops.RefTypePublication, "epodoc", numbers)
 func (c *Client) GetRegisterUNIPMultipleRaw(ctx context.Context, refType, format string, numbers []string) (string, error) {
 	// Validate reference type
-	if err := ValidateRefType(refType); err != nil {
+	if err := validateRegisterRefType(refType); err != nil {
 		return "", err
 	}
 
@@ -363,12 +355,8 @@ func (c *Client) GetRegisterUNIPMultipleRaw(ctx context.Context, refType, format
 	}
 
 	// Validate numbers list
-	if len(numbers) == 0 {
-		return "", &ConfigError{Message: "numbers list cannot be empty"}
-	}
-
-	if len(numbers) > 100 {
-		return "", &ConfigError{Message: "maximum 100 numbers allowed per request"}
+	if err := validateBulkNumberList(numbers); err != nil {
+		return "", err
 	}
 
 	// Convert refType string to generated enum

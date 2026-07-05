@@ -69,12 +69,60 @@ type Applicant struct {
 	Residence  string `xml:"residence>country"`
 }
 
+// UnmarshalXML decodes an applicant from either party serialization: the exchange
+// format (applicant-name>name) or the register format (addressbook>name). The
+// exchange name wins when both are present; the addressbook name is the fallback.
+func (a *Applicant) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var aux struct {
+		Sequence        string `xml:"sequence,attr"`
+		DataFormat      string `xml:"data-format,attr"`
+		Name            string `xml:"applicant-name>name"`
+		AddressbookName string `xml:"addressbook>name"`
+		Residence       string `xml:"residence>country"`
+	}
+	if err := d.DecodeElement(&aux, &start); err != nil {
+		return err
+	}
+	a.Sequence = aux.Sequence
+	a.DataFormat = aux.DataFormat
+	a.Name = aux.Name
+	if a.Name == "" {
+		a.Name = aux.AddressbookName
+	}
+	a.Residence = aux.Residence
+	return nil
+}
+
 // Inventor is one inventor party (repeated per data-format).
 type Inventor struct {
 	Sequence   string `xml:"sequence,attr"`
 	DataFormat string `xml:"data-format,attr"`
 	Name       string `xml:"inventor-name>name"`
 	Residence  string `xml:"residence>country"`
+}
+
+// UnmarshalXML decodes an inventor from either party serialization: the exchange
+// format (inventor-name>name) or the register format (addressbook>name). The
+// exchange name wins when both are present; the addressbook name is the fallback.
+func (n *Inventor) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var aux struct {
+		Sequence        string `xml:"sequence,attr"`
+		DataFormat      string `xml:"data-format,attr"`
+		Name            string `xml:"inventor-name>name"`
+		AddressbookName string `xml:"addressbook>name"`
+		Residence       string `xml:"residence>country"`
+	}
+	if err := d.DecodeElement(&aux, &start); err != nil {
+		return err
+	}
+	n.Sequence = aux.Sequence
+	n.DataFormat = aux.DataFormat
+	n.Name = aux.Name
+	if n.Name == "" {
+		n.Name = aux.AddressbookName
+	}
+	n.Residence = aux.Residence
+	return nil
 }
 
 // Agent is one representative/agent.

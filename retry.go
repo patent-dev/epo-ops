@@ -17,6 +17,10 @@ import (
 // the configured base delay or any Retry-After value.
 const maxBackoff = 60 * time.Second
 
+// maxErrorBodyBytes bounds how much of an error response body is read when the
+// final retry attempt converts a retryable status into a typed error.
+const maxErrorBodyBytes = 64 * 1024
+
 // retryableRequest executes a function with retry logic and exponential backoff.
 //
 // A 401 response triggers exactly one token clear + refresh + retry (without a
@@ -51,6 +55,17 @@ func (c *Client) retryableRequest(ctx context.Context, fn func() (*http.Response
 				return resp, nil
 			}
 
+			// Final attempt for a retryable status: surface the server's own
+			// error body as a typed error instead of a generic one.
+			if attempt >= c.config.MaxRetries {
+				var body []byte
+				if resp.Body != nil {
+					body, _ = io.ReadAll(io.LimitReader(resp.Body, maxErrorBodyBytes))
+					_ = resp.Body.Close() // Ignore close error, the request is over
+				}
+				return nil, c.handleErrorResponse(resp.StatusCode, resp.Header, body)
+			}
+
 			// Honor Retry-After before closing the body.
 			retryAfter := parseRetryAfter(resp.Header.Get("Retry-After"))
 
@@ -64,10 +79,8 @@ func (c *Client) retryableRequest(ctx context.Context, fn func() (*http.Response
 				RetryAfter: resp.Header.Get("Retry-After"),
 			}
 
-			if attempt < c.config.MaxRetries {
-				if err := c.waitBeforeRetry(ctx, attempt, retryAfter); err != nil {
-					return nil, err
-				}
+			if err := c.waitBeforeRetry(ctx, attempt, retryAfter); err != nil {
+				return nil, err
 			}
 			continue
 		}
@@ -226,6 +239,7 @@ func isRetryableError(err error) bool {
 func isRetryableStatusCode(statusCode int) bool {
 	switch statusCode {
 	case http.StatusRequestTimeout, // 408
+		http.StatusTooManyRequests,     // 429 (Retry-After is honored, backoff capped at maxBackoff)
 		http.StatusInternalServerError, // 500
 		http.StatusBadGateway,          // 502
 		http.StatusServiceUnavailable,  // 503

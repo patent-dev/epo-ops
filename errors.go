@@ -38,6 +38,9 @@ func (e *NotFoundError) Error() string {
 // QuotaExceededError represents a fair use quota limit error.
 type QuotaExceededError struct {
 	Message string
+	// RetryAfter is the raw Retry-After header value from the throttled
+	// response, when the server sent one; empty otherwise.
+	RetryAfter string
 }
 
 func (e *QuotaExceededError) Error() string {

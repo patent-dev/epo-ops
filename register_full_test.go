@@ -49,6 +49,52 @@ func TestParseRegister_Biblio(t *testing.T) {
 		len(d.Biblio.MilestoneDates), len(d.Biblio.SearchReports))
 }
 
+// TestParseRegister_PartyNames verifies that applicant and inventor names are
+// populated from the register serialization (addressbook>name), which differs
+// from the exchange serialization (applicant-name>name / inventor-name>name).
+func TestParseRegister_PartyNames(t *testing.T) {
+	b, err := os.ReadFile("testdata/register-biblio.xml")
+	if err != nil {
+		t.Skipf("no register biblio example: %v", err)
+	}
+	docs, err := ParseRegister(string(b))
+	if err != nil {
+		t.Fatalf("ParseRegister: %v", err)
+	}
+	if len(docs) == 0 {
+		t.Fatal("no register-document parsed")
+	}
+	d := docs[0]
+
+	if len(d.Biblio.Applicants) == 0 {
+		t.Fatal("no applicants parsed from register biblio")
+	}
+	foundApplicant := false
+	for _, a := range d.Biblio.Applicants {
+		if a.Name == "9Solutions Oy" {
+			foundApplicant = true
+		}
+	}
+	if !foundApplicant {
+		t.Errorf("expected applicant name '9Solutions Oy' in %d applicants (register names were previously empty)",
+			len(d.Biblio.Applicants))
+	}
+
+	if len(d.Biblio.Inventors) == 0 {
+		t.Fatal("no inventors parsed from register biblio")
+	}
+	foundInventor := false
+	for _, in := range d.Biblio.Inventors {
+		if in.Name == "Herrala, Sami" {
+			foundInventor = true
+		}
+	}
+	if !foundInventor {
+		t.Errorf("expected inventor name 'Herrala, Sami' in %d inventors (register names were previously empty)",
+			len(d.Biblio.Inventors))
+	}
+}
+
 func TestParseRegister_ProceduralSteps(t *testing.T) {
 	b, err := os.ReadFile("testdata/register-procedural-steps.xml")
 	if err != nil {

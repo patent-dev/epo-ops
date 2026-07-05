@@ -33,8 +33,10 @@ func (c *Client) GetImage(ctx context.Context, country, number, kind, imageType 
 		Range: page,
 	}
 
+	// Use the download client: image pages can stream longer than the
+	// whole-request Timeout, which only bounds the response headers here.
 	return c.makeBinaryRequest(ctx, func() (*http.Response, error) {
-		return c.generated.PublishedImagesRetrievalService(ctx, country, number, kind, imageType, params)
+		return c.generatedDownload.PublishedImagesRetrievalService(ctx, country, number, kind, imageType, params)
 	})
 }
 
@@ -68,10 +70,11 @@ func (c *Client) GetImagePOST(ctx context.Context, page int, identifier string) 
 		Range: page,
 	}
 
-	// Use generated POST method with single identifier
+	// Use generated POST method with single identifier, routed through the
+	// download client so streaming a large page is not cut by Timeout.
 	body := identifier
 	return c.makeBinaryRequest(ctx, func() (*http.Response, error) {
-		return c.generated.PublishedImagesRetrievalServicePOSTWithTextBody(ctx, params, body)
+		return c.generatedDownload.PublishedImagesRetrievalServicePOSTWithTextBody(ctx, params, body)
 	})
 }
 

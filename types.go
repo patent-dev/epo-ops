@@ -65,15 +65,18 @@ type Config struct {
 	ConsumerSecret string
 
 	// MaxRetries is the maximum number of retries for failed requests.
-	// Default: 3
+	// 0 means "use the default" (3); use -1 to disable retries entirely.
 	MaxRetries int
 
 	// RetryDelay is the base delay between retries.
 	// Default: 1 second
 	RetryDelay time.Duration
 
-	// Timeout is the HTTP client timeout.
-	// Default: 30 seconds
+	// Timeout is the HTTP client timeout for API and token requests. Image
+	// downloads are not subject to this whole-request timeout; for them it
+	// bounds only the wait for response headers.
+	// 0 means "use the default" (30 seconds); use -1 to disable the client
+	// timeout entirely.
 	Timeout time.Duration
 
 	// TokenStore optionally persists the OAuth2 token across clients (e.g. across

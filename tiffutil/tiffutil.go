@@ -20,6 +20,35 @@ import (
 	"github.com/hhrutter/tiff"
 )
 
+// maxDecodePixels caps the pixel count (width * height) accepted for decoding.
+// A crafted or corrupt TIFF header can claim enormous dimensions and make the
+// decoder allocate unbounded memory; 100 megapixels is far beyond any real
+// patent scan.
+const maxDecodePixels = 100_000_000
+
+// decodeCapped decodes TIFF data after checking the declared dimensions
+// against maxDecodePixels, so a hostile header cannot trigger a huge
+// allocation. All decoding in this package goes through it.
+func decodeCapped(tiffData []byte) (image.Image, error) {
+	cfg, err := tiff.DecodeConfig(bytes.NewReader(tiffData))
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode TIFF: %w", err)
+	}
+	if cfg.Width <= 0 || cfg.Height <= 0 {
+		return nil, fmt.Errorf("invalid TIFF dimensions %dx%d", cfg.Width, cfg.Height)
+	}
+	if int64(cfg.Width)*int64(cfg.Height) > maxDecodePixels {
+		return nil, fmt.Errorf("TIFF dimensions %dx%d exceed the %d pixel decode limit",
+			cfg.Width, cfg.Height, maxDecodePixels)
+	}
+
+	img, err := tiff.Decode(bytes.NewReader(tiffData))
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode TIFF: %w", err)
+	}
+	return img, nil
+}
+
 // TIFFToPNG converts TIFF image data to PNG format.
 //
 // This function handles various TIFF formats commonly used in patent images:
@@ -38,9 +67,9 @@ func TIFFToPNG(tiffData []byte) ([]byte, error) {
 	}
 
 	// Decode TIFF using hhrutter/tiff (supports CMYK, CCITT, LZW)
-	img, err := tiff.Decode(bytes.NewReader(tiffData))
+	img, err := decodeCapped(tiffData)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode TIFF: %w", err)
+		return nil, err
 	}
 
 	// Rotate if landscape orientation (width > height)
@@ -70,9 +99,9 @@ func TIFFToPNGNoRotate(tiffData []byte) ([]byte, error) {
 	}
 
 	// Decode TIFF
-	img, err := tiff.Decode(bytes.NewReader(tiffData))
+	img, err := decodeCapped(tiffData)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode TIFF: %w", err)
+		return nil, err
 	}
 
 	// Encode to PNG
@@ -93,9 +122,9 @@ func DecodeTIFF(tiffData []byte) (image.Image, error) {
 		return nil, fmt.Errorf("empty TIFF data")
 	}
 
-	img, err := tiff.Decode(bytes.NewReader(tiffData))
+	img, err := decodeCapped(tiffData)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode TIFF: %w", err)
+		return nil, err
 	}
 
 	return img, nil

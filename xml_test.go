@@ -43,6 +43,73 @@ func TestParseAbstract(t *testing.T) {
 	t.Logf("Abstract text: %.100s...", data.Text)
 }
 
+func TestParseAbstract_LanguageSelection(t *testing.T) {
+	const multiLang = `<?xml version="1.0" encoding="UTF-8"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org">
+    <exchange-documents>
+        <exchange-document country="EP" doc-number="1000000" kind="B1">
+            <abstract lang="de">
+                <p>Deutscher Absatz.</p>
+            </abstract>
+            <abstract lang="en">
+                <p>First English paragraph.</p>
+                <p>Second English paragraph.</p>
+            </abstract>
+        </exchange-document>
+    </exchange-documents>
+</ops:world-patent-data>`
+
+	const noEnglish = `<?xml version="1.0" encoding="UTF-8"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org">
+    <exchange-documents>
+        <exchange-document country="EP" doc-number="1000000" kind="B1">
+            <abstract lang="de">
+                <p>Erster Absatz.</p>
+                <p>Zweiter Absatz.</p>
+            </abstract>
+            <abstract lang="fr">
+                <p>Paragraphe francais.</p>
+            </abstract>
+        </exchange-document>
+    </exchange-documents>
+</ops:world-patent-data>`
+
+	tests := []struct {
+		name     string
+		xml      string
+		wantLang string
+		wantText string
+	}{
+		{
+			name:     "prefers English over earlier language",
+			xml:      multiLang,
+			wantLang: "en",
+			wantText: "First English paragraph.\nSecond English paragraph.",
+		},
+		{
+			name:     "falls back to first abstract in document order",
+			xml:      noEnglish,
+			wantLang: "de",
+			wantText: "Erster Absatz.\nZweiter Absatz.",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data, err := ParseAbstract(tt.xml)
+			if err != nil {
+				t.Fatalf("ParseAbstract failed: %v", err)
+			}
+			if data.Language != tt.wantLang {
+				t.Errorf("Language: got %q, want %q", data.Language, tt.wantLang)
+			}
+			if data.Text != tt.wantText {
+				t.Errorf("Text: got %q, want %q", data.Text, tt.wantText)
+			}
+		})
+	}
+}
+
 func TestParseBiblio(t *testing.T) {
 	xmlData, err := xmlTestData.ReadFile("testdata/biblio.xml")
 	if err != nil {

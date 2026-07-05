@@ -106,9 +106,9 @@ func TestIsRetryableStatusCode(t *testing.T) {
 			expected:   true,
 		},
 		{
-			name:       "429 Too Many Requests not retryable",
+			name:       "429 Too Many Requests retryable",
 			statusCode: http.StatusTooManyRequests,
-			expected:   false,
+			expected:   true,
 		},
 		{
 			name:       "500 Internal Server Error retryable",

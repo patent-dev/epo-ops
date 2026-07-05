@@ -28,6 +28,10 @@ func TestValidateDocdbFormat(t *testing.T) {
 		{"Invalid kind code", "EP.1000000.B12", true},
 		{"No country code", ".1000000.B1", true},
 		{"Letters in number", "EP.100A000.B1", true},
+		{"US design with D prefix", "US.D854278.S", false},
+		{"US reissue with RE prefix", "US.RE46921.E", false},
+		{"US plant with PP prefix", "US.PP12345.P2", false},
+		{"Unknown series prefix", "US.XX854278.S", true},
 	}
 
 	for _, tt := range tests {
@@ -69,6 +73,10 @@ func TestValidateEpodocFormat(t *testing.T) {
 		{"Letters in number", "EP100A000B1", true},
 		{"Invalid kind code", "EP1000000B12", true},
 		{"Single letter country", "E1000000B1", true},
+		{"US design with D prefix", "USD854278S", false},
+		{"US reissue with RE prefix", "USRE46921E", false},
+		{"US plant with PP prefix", "USPP12345P2", false},
+		{"Unknown series prefix", "USXX854278S", true},
 	}
 
 	for _, tt := range tests {
@@ -105,6 +113,8 @@ func TestValidateOriginalFormat(t *testing.T) {
 		{"Very flexible", "Patent#123-456/789", false},
 		{"Empty number", "", true},
 		{"Too long", string(make([]byte, 101)), true},
+		{"Embedded LF", "EP1000000\nEP1000001", true},
+		{"Embedded CR", "EP1000000\rEP1000001", true},
 	}
 
 	for _, tt := range tests {
@@ -431,10 +441,9 @@ func TestNormalizeToDocdb(t *testing.T) {
 			errorMsg:  "unable to parse",
 		},
 		{
-			name:      "Missing kind code",
-			input:     "EP2884620",
-			wantError: true,
-			errorMsg:  "unable to parse",
+			name:  "Missing kind code falls back to kind-less docdb",
+			input: "EP2884620",
+			want:  "EP.2884620",
 		},
 		{
 			name:      "Invalid DOCDB format",
@@ -653,6 +662,27 @@ func TestValidateBulkNumbers(t *testing.T) {
 			numbers:   []string{"EP.1000000.B1", "EP1000001"}, // docdb then epodoc
 			format:    FormatDocDB,
 			wantError: true,
+		},
+		{
+			name:      "Empty entry rejected",
+			numbers:   []string{"EP.1000000.B1", "   "},
+			format:    FormatDocDB,
+			wantError: true,
+			errField:  "numbers[1]",
+		},
+		{
+			name:      "Embedded newline rejected even for original format",
+			numbers:   []string{"EP 1000000 B1", "EP1000001\nEP1000002"},
+			format:    FormatOriginal,
+			wantError: true,
+			errField:  "numbers[1]",
+		},
+		{
+			name:      "Embedded carriage return rejected",
+			numbers:   []string{"EP.1000000.B1\r.EP.1000001.B1"},
+			format:    FormatDocDB,
+			wantError: true,
+			errField:  "numbers[0]",
 		},
 	}
 

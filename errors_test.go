@@ -469,6 +469,85 @@ func TestHandleErrorResponse_PopulatesRetryAfter(t *testing.T) {
 	}
 }
 
+func TestHandleErrorResponse_QuotaRetryAfterField(t *testing.T) {
+	client, _ := NewClient(&Config{ConsumerKey: "test", ConsumerSecret: "test"})
+
+	header := http.Header{}
+	header.Set("Retry-After", "60")
+
+	tests := []struct {
+		name string
+		body []byte
+	}{
+		{
+			name: "parsed fault XML",
+			body: []byte(`<?xml version="1.0" encoding="UTF-8"?>
+<fault xmlns="http://ops.epo.org">
+  <code>429</code>
+  <message>Fair use limit exceeded</message>
+</fault>`),
+		},
+		{
+			name: "unparseable plain text body",
+			body: []byte("too many requests"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := client.handleErrorResponse(http.StatusTooManyRequests, header, tt.body)
+
+			var quotaErr *QuotaExceededError
+			if !errors.As(err, &quotaErr) {
+				t.Fatalf("expected QuotaExceededError, got %T: %v", err, err)
+			}
+			if quotaErr.RetryAfter != "60" {
+				t.Errorf("expected RetryAfter '60', got %q", quotaErr.RetryAfter)
+			}
+		})
+	}
+}
+
+func TestHandleErrorResponse_413TypedNonRetryable(t *testing.T) {
+	client, _ := NewClient(&Config{ConsumerKey: "test", ConsumerSecret: "test"})
+
+	tests := []struct {
+		name string
+		body []byte
+	}{
+		{
+			name: "plain text body",
+			body: []byte("Request Entity Too Large"),
+		},
+		{
+			name: "structured error XML with unmapped code",
+			body: []byte(`<?xml version="1.0" encoding="UTF-8"?>
+<error>
+  <code>SERVER.ResponseTooLarge</code>
+  <message>The response exceeds the maximum size</message>
+</error>`),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := client.handleErrorResponse(http.StatusRequestEntityTooLarge, nil, tt.body)
+
+			var opsErr *OPSError
+			if !errors.As(err, &opsErr) {
+				t.Fatalf("expected typed OPSError for 413, got %T: %v", err, err)
+			}
+			if opsErr.HTTPStatus != http.StatusRequestEntityTooLarge {
+				t.Errorf("expected HTTPStatus 413, got %d", opsErr.HTTPStatus)
+			}
+		})
+	}
+
+	if isRetryableStatusCode(http.StatusRequestEntityTooLarge) {
+		t.Error("413 must not be a retryable status code")
+	}
+}
+
 func TestParseErrorXML_UnparseableIncludesSample(t *testing.T) {
 	body := []byte("totally not xml or json, just plain text that should be sampled")
 

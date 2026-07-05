@@ -50,6 +50,12 @@ type Client struct {
 	authenticator *Authenticator
 	generated     *generated.Client
 	quota         *quotaTracker
+
+	// downloadHTTPClient serves image/document downloads. It has no
+	// whole-request timeout (large pages may stream longer than Timeout);
+	// instead the transport bounds the wait for response headers.
+	downloadHTTPClient *http.Client
+	generatedDownload  *generated.Client
 }
 
 // getAcceptHeader returns the appropriate Accept header value based on the endpoint type.
@@ -154,35 +160,48 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 // NewClient creates a new EPO OPS API client.
+//
+// The caller's Config is copied, never mutated. Zero values mean "use the
+// default"; the documented sentinels opt out of a behavior entirely:
+// MaxRetries: -1 disables retries, Timeout: -1 disables the client timeout.
 func NewClient(config *Config) (*Client, error) {
 	if config == nil {
 		config = DefaultConfig()
 	}
 
+	// Defensive copy so a Config reused across clients is never mutated.
+	cfg := *config
+
 	// Validate required fields
-	if config.ConsumerKey == "" {
+	if cfg.ConsumerKey == "" {
 		return nil, &ConfigError{Message: "ConsumerKey is required"}
 	}
-	if config.ConsumerSecret == "" {
+	if cfg.ConsumerSecret == "" {
 		return nil, &ConfigError{Message: "ConsumerSecret is required"}
 	}
 
-	// Set defaults if not provided
-	if config.BaseURL == "" {
-		config.BaseURL = "https://ops.epo.org/3.2/rest-services"
+	// Set defaults if not provided; resolve the opt-out sentinels.
+	if cfg.BaseURL == "" {
+		cfg.BaseURL = "https://ops.epo.org/3.2/rest-services"
 	}
-	if config.MaxRetries == 0 {
-		config.MaxRetries = 3
+	switch {
+	case cfg.MaxRetries < 0:
+		cfg.MaxRetries = 0 // -1: no retries
+	case cfg.MaxRetries == 0:
+		cfg.MaxRetries = 3
 	}
-	if config.RetryDelay == 0 {
-		config.RetryDelay = 1 * time.Second
+	if cfg.RetryDelay == 0 {
+		cfg.RetryDelay = 1 * time.Second
 	}
-	if config.Timeout == 0 {
-		config.Timeout = 30 * time.Second
+	switch {
+	case cfg.Timeout < 0:
+		cfg.Timeout = 0 // -1: no client timeout
+	case cfg.Timeout == 0:
+		cfg.Timeout = 30 * time.Second
 	}
 
 	// Resolve the default User-Agent for all outbound traffic.
-	userAgent := config.UserAgent
+	userAgent := cfg.UserAgent
 	if userAgent == "" {
 		userAgent = DefaultUserAgent
 	}
@@ -191,7 +210,7 @@ func NewClient(config *Config) (*Client, error) {
 	// transport (e.g. egress rate limiting) governs all outbound EPO traffic. The
 	// User-Agent is applied at this shared layer so token, data, and retry requests
 	// all carry it while still funnelling through any injected transport.
-	base := config.Transport
+	base := cfg.Transport
 	if base == nil {
 		base = http.DefaultTransport
 	}
@@ -199,24 +218,24 @@ func NewClient(config *Config) (*Client, error) {
 
 	// Create base HTTP client (used for token requests)
 	baseClient := &http.Client{
-		Timeout:   config.Timeout,
+		Timeout:   cfg.Timeout,
 		Transport: base,
 	}
 
 	// Create authenticator
-	authenticator := NewAuthenticator(config.ConsumerKey, config.ConsumerSecret, baseClient)
+	authenticator := NewAuthenticator(cfg.ConsumerKey, cfg.ConsumerSecret, baseClient)
 
 	// Override auth URL if specified in config (mainly for testing)
-	if config.AuthURL != "" {
-		authenticator.authURL = config.AuthURL
+	if cfg.AuthURL != "" {
+		authenticator.authURL = cfg.AuthURL
 	}
 
 	// Wire the optional token store so tokens persist across clients.
-	authenticator.store = config.TokenStore
+	authenticator.store = cfg.TokenStore
 
 	// Create HTTP client with auth transport
 	httpClient := &http.Client{
-		Timeout: config.Timeout,
+		Timeout: cfg.Timeout,
 		Transport: &authTransport{
 			base:          base,
 			authenticator: authenticator,
@@ -224,17 +243,40 @@ func NewClient(config *Config) (*Client, error) {
 	}
 
 	// Create generated client
-	genClient, err := generated.NewClient(config.BaseURL, generated.WithHTTPClient(httpClient))
+	genClient, err := generated.NewClient(cfg.BaseURL, generated.WithHTTPClient(httpClient))
+	if err != nil {
+		return nil, err
+	}
+
+	// Download client: no whole-request timeout, so a large image page may
+	// stream longer than Timeout. Without an injected transport, a cloned
+	// default transport bounds the wait for response headers instead; an
+	// injected transport is used as-is (it owns its own limits).
+	downloadBase := base
+	if cfg.Transport == nil {
+		t := http.DefaultTransport.(*http.Transport).Clone()
+		t.ResponseHeaderTimeout = cfg.Timeout
+		downloadBase = &uaTransport{base: t, userAgent: userAgent}
+	}
+	downloadHTTPClient := &http.Client{
+		Transport: &authTransport{
+			base:          downloadBase,
+			authenticator: authenticator,
+		},
+	}
+	genDownloadClient, err := generated.NewClient(cfg.BaseURL, generated.WithHTTPClient(downloadHTTPClient))
 	if err != nil {
 		return nil, err
 	}
 
 	return &Client{
-		config:        config,
-		httpClient:    httpClient,
-		authenticator: authenticator,
-		generated:     genClient,
-		quota:         &quotaTracker{},
+		config:             &cfg,
+		httpClient:         httpClient,
+		authenticator:      authenticator,
+		generated:          genClient,
+		quota:              &quotaTracker{},
+		downloadHTTPClient: downloadHTTPClient,
+		generatedDownload:  genDownloadClient,
 	}, nil
 }
 
@@ -313,7 +355,8 @@ func (c *Client) handleErrorResponse(statusCode int, header http.Header, body []
 			}
 		case "SERVER.RateLimitExceeded", "SERVER.QuotaPerWeekExceeded", "HTTP.429":
 			return &QuotaExceededError{
-				Message: opsErr.Message,
+				Message:    opsErr.Message,
+				RetryAfter: retryAfter,
 			}
 		case "HTTP.503":
 			return &ServiceUnavailableError{
@@ -326,7 +369,7 @@ func (c *Client) handleErrorResponse(statusCode int, header http.Header, body []
 			// explicitly says so; a bare 403 is a forbidden/access error.
 			if statusCode == http.StatusForbidden {
 				if isQuotaErrorCode(opsErr.Code) {
-					return &QuotaExceededError{Message: opsErr.Message}
+					return &QuotaExceededError{Message: opsErr.Message, RetryAfter: retryAfter}
 				}
 				return &ForbiddenError{StatusCode: statusCode, Message: opsErr.Message}
 			}
@@ -355,13 +398,22 @@ func (c *Client) handleErrorResponse(statusCode int, header http.Header, body []
 		}
 	case http.StatusTooManyRequests:
 		return &QuotaExceededError{
-			Message: string(body),
+			Message:    string(body),
+			RetryAfter: retryAfter,
 		}
 	case http.StatusServiceUnavailable:
 		return &ServiceUnavailableError{
 			StatusCode: statusCode,
 			Message:    string(body),
 			RetryAfter: retryAfter,
+		}
+	case http.StatusRequestEntityTooLarge:
+		// An oversized response (e.g. a huge patent family). Non-retryable;
+		// the typed OPSError carries the status so callers can branch on it.
+		return &OPSError{
+			HTTPStatus: statusCode,
+			Code:       "HTTP.413",
+			Message:    string(body),
 		}
 	default:
 		return fmt.Errorf("HTTP %d: %s", statusCode, string(body))

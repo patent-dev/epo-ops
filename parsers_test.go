@@ -489,6 +489,64 @@ func TestParseRegisterEvents(t *testing.T) {
 	}
 }
 
+// TestParseRegisterEvents_AggregatesAllDocuments verifies that statuses and
+// events are collected across every register-document in the response, not
+// only the first, and that the ascending sort spans all of them.
+func TestParseRegisterEvents_AggregatesAllDocuments(t *testing.T) {
+	xmlData := `<?xml version="1.0" encoding="UTF-8"?>
+<ns2:world-patent-data xmlns:ns2="http://ops.epo.org" xmlns:ns3="http://www.epo.org/register">
+    <ns2:register-search total-result-count="2">
+        <ns2:query syntax="CQL">publication=EP1000000</ns2:query>
+        <ns2:range begin="1" end="2"/>
+        <ns3:register-documents produced-by="RO">
+            <ns3:register-document>
+                <ns3:ep-patent-statuses>
+                    <ns3:ep-patent-status change-date="20191025" status-code="8">The patent has been granted</ns3:ep-patent-status>
+                </ns3:ep-patent-statuses>
+                <ns3:events-data>
+                    <ns3:dossier-event id="EVT2">
+                        <ns3:event-date><ns3:date>20191127</ns3:date></ns3:event-date>
+                        <ns3:event-code>0009210</ns3:event-code>
+                        <ns3:event-text event-text-type="STATUS">Grant of the patent</ns3:event-text>
+                    </ns3:dossier-event>
+                </ns3:events-data>
+            </ns3:register-document>
+            <ns3:register-document>
+                <ns3:ep-patent-statuses>
+                    <ns3:ep-patent-status change-date="20111228" status-code="17">Application published</ns3:ep-patent-status>
+                </ns3:ep-patent-statuses>
+                <ns3:events-data>
+                    <ns3:dossier-event id="EVT1">
+                        <ns3:event-date><ns3:date>20111228</ns3:date></ns3:event-date>
+                        <ns3:event-code>0009012</ns3:event-code>
+                        <ns3:event-text event-text-type="STATUS">Publication of the application</ns3:event-text>
+                    </ns3:dossier-event>
+                </ns3:events-data>
+            </ns3:register-document>
+        </ns3:register-documents>
+    </ns2:register-search>
+</ns2:world-patent-data>`
+
+	data, err := ParseRegisterEvents(xmlData)
+	if err != nil {
+		t.Fatalf("ParseRegisterEvents failed: %v", err)
+	}
+
+	if len(data.Statuses) != 2 {
+		t.Errorf("Expected 2 statuses aggregated across documents, got %d", len(data.Statuses))
+	}
+	if len(data.Events) != 2 {
+		t.Fatalf("Expected 2 events aggregated across documents, got %d", len(data.Events))
+	}
+
+	// The sort must remain ascending across document boundaries: the second
+	// document's 2011 event comes before the first document's 2019 event.
+	if data.Events[0].EventCode != "0009012" || data.Events[1].EventCode != "0009210" {
+		t.Errorf("Events not sorted ascending across documents: got %s then %s",
+			data.Events[0].EventCode, data.Events[1].EventCode)
+	}
+}
+
 func TestParseRegisterEvents_EmptyEvents(t *testing.T) {
 	xmlData := `<?xml version="1.0" encoding="UTF-8"?>
 <ns2:world-patent-data xmlns:ns2="http://ops.epo.org" xmlns:ns3="http://www.epo.org/register">

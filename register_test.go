@@ -110,7 +110,7 @@ func TestGetRegisterProceduralStepsMultipleRaw(t *testing.T) {
 			format:    "epodoc",
 			numbers:   []string{},
 			wantError: true,
-			errorMsg:  "cannot be empty",
+			errorMsg:  "at least one patent number required",
 		},
 		{
 			name:      "Too many numbers",
@@ -269,7 +269,7 @@ func TestGetRegisterUNIPMultipleRaw(t *testing.T) {
 			format:    "epodoc",
 			numbers:   []string{},
 			wantError: true,
-			errorMsg:  "cannot be empty",
+			errorMsg:  "at least one patent number required",
 		},
 		{
 			name:      "Too many numbers",

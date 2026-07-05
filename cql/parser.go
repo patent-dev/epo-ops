@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 // CQLQuery represents a parsed CQL query.
@@ -175,8 +176,10 @@ func tokenize(query string) []CQLToken {
 	var inQuotes bool
 	var pos int
 
-	for i := 0; i < len(query); i++ {
-		ch := rune(query[i])
+	// Iterate rune by rune so multibyte input (e.g. pa=müller) survives intact.
+	// Token positions stay byte offsets into the raw query.
+	for i := 0; i < len(query); {
+		ch, size := utf8.DecodeRuneInString(query[i:])
 
 		switch {
 		case ch == '"':
@@ -190,7 +193,7 @@ func tokenize(query string) []CQLToken {
 			}
 			tokens = append(tokens, CQLToken{Type: TokenQuote, Value: "\"", Pos: i})
 			inQuotes = !inQuotes
-			pos = i + 1
+			pos = i + size
 
 		case (ch == '=' || ch == '<' || ch == '>') && !inQuotes:
 			if current.Len() > 0 {
@@ -207,14 +210,14 @@ func tokenize(query string) []CQLToken {
 				nextCh := rune(query[i+1])
 				if nextCh == '=' || (ch == '<' && nextCh == '>') {
 					tokens = append(tokens, CQLToken{Type: TokenEquals, Value: string([]rune{ch, nextCh}), Pos: i})
-					i++ // Skip the next character
-					pos = i + 1
+					i += 2 // Consume both characters
+					pos = i
 					continue
 				}
 			}
 
 			tokens = append(tokens, CQLToken{Type: TokenEquals, Value: string(ch), Pos: i})
-			pos = i + 1
+			pos = i + size
 
 		case ch == '(' && !inQuotes:
 			if current.Len() > 0 {
@@ -226,7 +229,7 @@ func tokenize(query string) []CQLToken {
 				current.Reset()
 			}
 			tokens = append(tokens, CQLToken{Type: TokenLParen, Value: "(", Pos: i})
-			pos = i + 1
+			pos = i + size
 
 		case ch == ')' && !inQuotes:
 			if current.Len() > 0 {
@@ -238,7 +241,7 @@ func tokenize(query string) []CQLToken {
 				current.Reset()
 			}
 			tokens = append(tokens, CQLToken{Type: TokenRParen, Value: ")", Pos: i})
-			pos = i + 1
+			pos = i + size
 
 		case unicode.IsSpace(ch) && !inQuotes:
 			if current.Len() > 0 {
@@ -249,14 +252,16 @@ func tokenize(query string) []CQLToken {
 				})
 				current.Reset()
 			}
-			pos = i + 1
+			pos = i + size
 
 		default:
 			if current.Len() == 0 {
 				pos = i
 			}
-			current.WriteByte(byte(ch))
+			current.WriteRune(ch)
 		}
+
+		i += size
 	}
 
 	// Add final token if any
@@ -390,8 +395,25 @@ func (q *CQLQuery) checkQueryStructure() {
 	}
 
 	if !hasValidPattern {
+		// Check for the field-relation pattern via the "within" range relation,
+		// e.g. pd within "20200101 20241231".
+		for i, token := range q.Tokens {
+			if token.Type == TokenOperator && strings.EqualFold(token.Value, "within") &&
+				i > 0 && i+1 < len(q.Tokens) {
+				hasValidPattern = true
+				break
+			}
+		}
+	}
+
+	if !hasValidPattern {
 		// Check if it's just a simple value (which is valid)
 		if len(q.Tokens) == 1 && q.Tokens[0].Type == TokenValue {
+			hasValidPattern = true
+		}
+		// A lone quoted phrase ("wireless mesh") is valid, like a lone bare term.
+		if len(q.Tokens) == 3 && q.Tokens[0].Type == TokenQuote &&
+			q.Tokens[1].Type == TokenValue && q.Tokens[2].Type == TokenQuote {
 			hasValidPattern = true
 		}
 	}

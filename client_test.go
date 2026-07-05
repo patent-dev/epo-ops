@@ -118,6 +118,63 @@ func TestNewClient(t *testing.T) {
 			t.Errorf("Expected ConfigError, got: %T", err)
 		}
 	})
+
+	t.Run("Does not mutate caller config", func(t *testing.T) {
+		config := &Config{
+			ConsumerKey:    "test",
+			ConsumerSecret: "test",
+		}
+
+		if _, err := NewClient(config); err != nil {
+			t.Fatalf("Expected no error, got: %v", err)
+		}
+
+		if config.BaseURL != "" {
+			t.Errorf("caller BaseURL mutated to %q", config.BaseURL)
+		}
+		if config.MaxRetries != 0 {
+			t.Errorf("caller MaxRetries mutated to %d", config.MaxRetries)
+		}
+		if config.RetryDelay != 0 {
+			t.Errorf("caller RetryDelay mutated to %v", config.RetryDelay)
+		}
+		if config.Timeout != 0 {
+			t.Errorf("caller Timeout mutated to %v", config.Timeout)
+		}
+	})
+
+	t.Run("Sentinel MaxRetries -1 disables retries", func(t *testing.T) {
+		client, err := NewClient(&Config{
+			ConsumerKey:    "test",
+			ConsumerSecret: "test",
+			MaxRetries:     -1,
+		})
+		if err != nil {
+			t.Fatalf("Expected no error, got: %v", err)
+		}
+
+		if client.config.MaxRetries != 0 {
+			t.Errorf("Expected effective MaxRetries 0, got: %d", client.config.MaxRetries)
+		}
+	})
+
+	t.Run("Sentinel Timeout -1 disables client timeout", func(t *testing.T) {
+		client, err := NewClient(&Config{
+			ConsumerKey:    "test",
+			ConsumerSecret: "test",
+			Timeout:        -1,
+		})
+		if err != nil {
+			t.Fatalf("Expected no error, got: %v", err)
+		}
+
+		if client.config.Timeout != 0 {
+			t.Errorf("Expected effective Timeout 0, got: %v", client.config.Timeout)
+		}
+		if client.httpClient.Timeout != 0 {
+			t.Errorf("Expected no HTTP client timeout, got: %v", client.httpClient.Timeout)
+		}
+	})
 }
 
 // Test text retrieval endpoints
@@ -436,6 +493,58 @@ func TestGetImage(t *testing.T) {
 	}
 }
 
+// TestGetImage_SlowStreamExceedsTimeout verifies that an image download whose
+// body streams for longer than Config.Timeout still succeeds: the download
+// path has no whole-request timeout, only a response-header bound.
+func TestGetImage_SlowStreamExceedsTimeout(t *testing.T) {
+	authServer := newMockAuthServer(t)
+	defer authServer.Close()
+
+	// TIFF header followed by chunks trickled out slower than the timeout.
+	mockTIFF := []byte{0x49, 0x49, 0x2A, 0x00, 0x08, 0x00, 0x00, 0x00}
+	const chunks = 3
+	const chunkDelay = 100 * time.Millisecond // 3 x 100ms > 200ms timeout
+
+	opsServer := newMockOPSServer(t, func(w http.ResponseWriter, _ *http.Request) {
+		flusher, ok := w.(http.Flusher)
+		if !ok {
+			t.Fatal("response writer does not support flushing")
+		}
+		w.Header().Set("Content-Type", "image/tiff")
+		_, _ = w.Write(mockTIFF)
+		flusher.Flush()
+		for i := 0; i < chunks; i++ {
+			time.Sleep(chunkDelay)
+			_, _ = w.Write([]byte{0x00, 0x01, 0x02, 0x03})
+			flusher.Flush()
+		}
+	})
+	defer opsServer.Close()
+
+	config := &Config{
+		ConsumerKey:    "test",
+		ConsumerSecret: "test",
+		BaseURL:        opsServer.URL,
+		Timeout:        200 * time.Millisecond,
+	}
+	config.AuthURL = authServer.URL + "/auth/accesstoken"
+
+	client, err := NewClient(config)
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
+
+	imageData, err := client.GetImage(context.Background(), "EP", "1000000", "B1", "Drawing", 1)
+	if err != nil {
+		t.Fatalf("GetImage failed on a slow stream: %v", err)
+	}
+
+	want := len(mockTIFF) + chunks*4
+	if len(imageData) != want {
+		t.Errorf("Expected %d bytes, got %d", want, len(imageData))
+	}
+}
+
 // Test legal and register endpoints
 func TestGetLegal(t *testing.T) {
 	authServer := newMockAuthServer(t)
@@ -557,6 +666,7 @@ func TestErrorHandling(t *testing.T) {
 			ConsumerKey:    "test",
 			ConsumerSecret: "test",
 			BaseURL:        opsServer.URL,
+			MaxRetries:     -1, // 429 is retryable; disable retries so the test stays fast
 		}
 		config.AuthURL = authServer.URL + "/auth/accesstoken"
 
