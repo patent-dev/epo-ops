@@ -32,18 +32,76 @@ type UnitaryStatus struct {
 
 // ProceduralStep is one procedural-data/procedural-step (the prosecution step log).
 type ProceduralStep struct {
-	ID    string   `xml:"id,attr"`
-	Phase string   `xml:"procedure-step-phase,attr"`
-	Code  string   `xml:"procedural-step-code"`
-	Texts []string `xml:"procedural-step-text"`
-	Date  string   `xml:"procedural-step-date>date"`
+	ID        string     `xml:"id,attr"`
+	Phase     string     `xml:"procedure-step-phase,attr"`
+	Code      string     `xml:"procedural-step-code"`
+	Texts     []StepText `xml:"procedural-step-text"`
+	Dates     []StepDate `xml:"procedural-step-date"`
+	TimeLimit *TimeLimit `xml:"time-limit"`
+}
+
+// StepText is one procedural-step-text with its step-text-type (e.g. STEP_DESCRIPTION,
+// "Kind of amendment").
+type StepText struct {
+	Type string `xml:"step-text-type,attr"`
+	Text string `xml:",chardata"`
+}
+
+// StepDate is one procedural-step-date with its step-date-type (e.g. DATE_OF_DISPATCH,
+// DATE_OF_REPLY, DATE_OF_REQUEST).
+type StepDate struct {
+	Type string `xml:"step-date-type,attr"`
+	Date string `xml:"date"`
+}
+
+// TimeLimit is the reply time limit stamped on a procedural step (e.g. 04 months).
+type TimeLimit struct {
+	Unit  string `xml:"time-limit-unit,attr"`
+	Value string `xml:",chardata"`
+}
+
+// Description returns the STEP_DESCRIPTION text, falling back to the first text.
+func (s ProceduralStep) Description() string {
+	for _, t := range s.Texts {
+		if t.Type == "STEP_DESCRIPTION" {
+			return strings.TrimSpace(t.Text)
+		}
+	}
+	if len(s.Texts) > 0 {
+		return strings.TrimSpace(s.Texts[0].Text)
+	}
+	return ""
+}
+
+// DateByType returns the date for the given step-date-type, or "" if absent.
+func (s ProceduralStep) DateByType(t string) string {
+	for _, d := range s.Dates {
+		if d.Type == t {
+			return d.Date
+		}
+	}
+	return ""
+}
+
+// PrimaryDate returns the first procedural-step-date (dispatch/request/...), or "".
+func (s ProceduralStep) PrimaryDate() string {
+	if len(s.Dates) > 0 {
+		return s.Dates[0].Date
+	}
+	return ""
+}
+
+// LapsedCountry is one designated state that lapsed, with the effective date.
+type LapsedCountry struct {
+	Country string `xml:"country"`
+	Date    string `xml:"date"`
 }
 
 // TermOfGrant is a term-of-grant entry (lapse / term changes per country).
 type TermOfGrant struct {
-	ChangeDate        string   `xml:"change-date,attr"`
-	GazetteNum        string   `xml:"change-gazette-num,attr"`
-	LapsedInCountries []string `xml:"lapsed-in-country"`
+	ChangeDate      string          `xml:"change-date,attr"`
+	GazetteNum      string          `xml:"change-gazette-num,attr"`
+	LapsedCountries []LapsedCountry `xml:"lapsed-in-country"`
 }
 
 // OppositionData captures opposition status (presence of an opposition-not-filed marker).

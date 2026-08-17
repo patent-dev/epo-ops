@@ -299,8 +299,6 @@ func completenessCases(t *testing.T) []completenessCase {
 				"/search-report-information @", // search report editorial attrs
 				"/date-search-report-mailed",
 				"/search-report-publication/document-id @lang",
-				"/term-of-grant/lapsed-in-country/country", // term-of-grant detailed form
-				"/term-of-grant/lapsed-in-country/date",
 				"/publication-reference @change-gazette-num",
 				"/publication-reference/document-id @lang",
 				"/publication-reference/document-id/date",
@@ -315,10 +313,6 @@ func completenessCases(t *testing.T) []completenessCase {
 			unmodeledPrefixes: []string{
 				"@date-produced", "@dtd-version", "@produced-by", "@lang", "@id",
 				"/procedural-step @", // procedural-step bookkeeping attrs (id/phase captured)
-				// secondary step detail not surfaced in the typed ProceduralStep:
-				"/time-limit",
-				"/procedural-step-date @step-date-type",
-				"/procedural-step-text @step-text-type",
 			},
 		},
 		{
@@ -344,8 +338,6 @@ func completenessCases(t *testing.T) []completenessCase {
 				"/search-report-information @",
 				"/date-search-report-mailed",
 				"/search-report-publication/document-id @lang",
-				"/term-of-grant/lapsed-in-country/country",
-				"/term-of-grant/lapsed-in-country/date",
 				"/publication-reference @change-gazette-num",
 				"/publication-reference/document-id @lang",
 				"/publication-reference/document-id/date",
@@ -736,6 +728,13 @@ func TestKeyFields(t *testing.T) {
 		assertLen(t, "Statuses", len(d.Statuses), 4)
 		if len(d.Biblio.TermsOfGrant) == 0 {
 			t.Error("no term-of-grant captured")
+		} else {
+			tg := d.Biblio.TermsOfGrant[0]
+			if len(tg.LapsedCountries) == 0 {
+				t.Fatal("term-of-grant captured but no lapsed countries (the detailed country/date form is dropped)")
+			}
+			assertEq(t, "LapsedCountries[0].Country", tg.LapsedCountries[0].Country, "HU")
+			assertEq(t, "LapsedCountries[0].Date", tg.LapsedCountries[0].Date, "20100624")
 		}
 		if len(d.Biblio.MilestoneDates) == 0 {
 			t.Error("no milestone dates captured")

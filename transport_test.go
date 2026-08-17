@@ -129,7 +129,7 @@ func TestDefaultUserAgent_ContainsSlugAndVersion(t *testing.T) {
 	if !strings.Contains(DefaultUserAgent, Version) {
 		t.Errorf("DefaultUserAgent %q missing version %q", DefaultUserAgent, Version)
 	}
-	if Version != "1.6.1" {
-		t.Errorf("Version = %q, want 1.6.1", Version)
+	if Version != "1.7.0" {
+		t.Errorf("Version = %q, want 1.7.0", Version)
 	}
 }

@@ -2,6 +2,7 @@ package epo_ops
 
 import (
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -121,4 +122,40 @@ func TestParseRegister_ProceduralSteps(t *testing.T) {
 		t.Error("procedural steps captured but none has a code")
 	}
 	t.Logf("captured %d procedural steps (%d with codes)", len(steps), withCode)
+
+	byID := func(id string) *ProceduralStep {
+		for i := range steps {
+			if steps[i].ID == id {
+				return &steps[i]
+			}
+		}
+		return nil
+	}
+
+	// EXRE (examining-division communication) carries the dispatch date, the reply
+	// deadline and the reply time limit - the depth ParseRegisterEvents drops.
+	exre := byID("STEP_EXRE_3360906")
+	if exre == nil {
+		t.Fatal("procedural step STEP_EXRE_3360906 not captured")
+	}
+	assertEq(t, "EXRE.Description", exre.Description(), "Communication from the examining division")
+	assertEq(t, "EXRE.DATE_OF_DISPATCH", exre.DateByType("DATE_OF_DISPATCH"), "20170201")
+	assertEq(t, "EXRE.DATE_OF_REPLY", exre.DateByType("DATE_OF_REPLY"), "20170601")
+	if exre.TimeLimit == nil {
+		t.Fatal("EXRE step captured but time-limit dropped")
+	}
+	assertEq(t, "EXRE.TimeLimit.Value", exre.TimeLimit.Value, "04")
+	assertEq(t, "EXRE.TimeLimit.Unit", exre.TimeLimit.Unit, "months")
+
+	// ABEX carries a second typed text (the kind of amendment) beyond the description.
+	abex := byID("STEP_ABEX_24139641")
+	if abex == nil {
+		t.Fatal("procedural step STEP_ABEX_24139641 not captured")
+	}
+	assertEq(t, "ABEX.Description", abex.Description(), "Amendments")
+	if len(abex.Texts) < 2 {
+		t.Fatalf("ABEX texts = %d, want >= 2 (secondary text dropped)", len(abex.Texts))
+	}
+	assertEq(t, "ABEX.Texts[1].Type", abex.Texts[1].Type, "Kind of amendment")
+	assertEq(t, "ABEX.Texts[1].Text", strings.TrimSpace(abex.Texts[1].Text), "(claims and/or description)")
 }
