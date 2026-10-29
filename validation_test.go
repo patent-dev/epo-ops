@@ -30,8 +30,12 @@ func TestValidateDocdbFormat(t *testing.T) {
 		{"Letters in number", "EP.100A000.B1", true},
 		{"US design with D prefix", "US.D854278.S", false},
 		{"US reissue with RE prefix", "US.RE46921.E", false},
+		{"TW invention with I prefix", "TW.I362952.B", false},
+		{"TW invention without kind", "TW.I362952", false},
 		{"US plant with PP prefix", "US.PP12345.P2", false},
-		{"Unknown series prefix", "US.XX854278.S", true},
+		{"Any two-letter series prefix validates (OPS decides)", "US.XX854278.S", false},
+		{"HR series prefix as OPS returns it", "HR.P20251003.T1", false},
+		{"Three-letter prefix is not a number", "US.XXX854278.S", true},
 	}
 
 	for _, tt := range tests {
@@ -75,8 +79,10 @@ func TestValidateEpodocFormat(t *testing.T) {
 		{"Single letter country", "E1000000B1", true},
 		{"US design with D prefix", "USD854278S", false},
 		{"US reissue with RE prefix", "USRE46921E", false},
+		{"TW invention with I prefix", "TWI362952B", false},
 		{"US plant with PP prefix", "USPP12345P2", false},
-		{"Unknown series prefix", "USXX854278S", true},
+		{"Any two-letter series prefix validates (OPS decides)", "USXX854278S", false},
+		{"HR series prefix epodoc", "HRP20251003T1", false},
 	}
 
 	for _, tt := range tests {
@@ -324,6 +330,21 @@ func TestNormalizeToDocdb(t *testing.T) {
 	}{
 		// Valid EPODOC format conversions
 		{
+			name:  "EPODOC TW invention with series prefix",
+			input: "TWI362952B",
+			want:  "TW.I362952.B",
+		},
+		{
+			name:  "EPODOC TW invention without kind",
+			input: "TWI362952",
+			want:  "TW.I362952",
+		},
+		{
+			name:  "EPODOC HR series prefix",
+			input: "HRP20251003T1",
+			want:  "HR.P20251003.T1",
+		},
+		{
 			name:  "EPODOC EP format",
 			input: "EP2884620A2",
 			want:  "EP.2884620.A2",
@@ -565,7 +586,7 @@ func TestNormalizeToDocdb_EdgeCases(t *testing.T) {
 		{"Very long number", "EP123456789012345678901234567890A1", false},
 		{"Single digit number", "EP1A", false},
 		{"Two digit number", "EP12A", false},
-		{"Three letter country (should fail)", "EUR1000000A1", true},
+		{"Two-letter code plus series letter (EU is the EUIPO ST.3 code; OPS decides)", "EUR1000000A1", false},
 		{"Numeric country code (should fail)", "12345678A1", true},
 		{"Special characters in country", "E@1000000A1", true},
 		{"Unicode characters", "EP\u20001000000A1", true},

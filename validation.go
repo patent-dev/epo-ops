@@ -9,24 +9,29 @@ import (
 // Regular expressions for patent number format validation
 var (
 	// Docdb format: CC.number[.KC] (e.g., EP.1000000.B1) - the kind code, and its separating
-	// dot, are optional. The OPS family/register endpoints are kind-agnostic and resolve the
-	// bare "CC.number" form (e.g. EP.1404685 -> 200) while 404ing on some kind-coded
-	// publications, so the bare form must validate.
-	// Country code (2 letters), dot, optional US series prefix (RE reissue, PP plant,
-	// AI additional improvement, D design, H statutory invention registration, T defensive
-	// publication), number (digits), optionally a dot + optional kind code.
-	// The series prefix covers e.g. US.D854278.S and US.RE46921.E.
-	docdbPattern = regexp.MustCompile(`^[A-Z]{2}\.(RE|PP|AI|D|H|T)?\d+(\.([A-Z]\d?)?)?$`)
+	// dot, are optional. The OPS family/register endpoints resolve the bare "CC.number" form
+	// (e.g. EP.1404685 -> 200) while 404ing on some kind-coded publications, so the bare
+	// form must validate; the kind-coded form stays meaningful where an office reuses a
+	// number across kinds (AT.15889.U9 is a 2016 utility model, AT.15889 the 1904 patent).
+	// Country code (2 letters), dot, number, optionally a dot + optional kind code. The
+	// number is up to two letters followed by digits: many offices carry a series prefix as
+	// part of the DOCDB document number (US.D854278.S design, US.RE46921.E reissue,
+	// TW.I362952.B Taiwanese invention, HR.P20251003.T1 as OPS returns it), and OPS, not
+	// this client, decides which prefixes exist. A prefixed number needs at least three
+	// digits so a bare kind code ("EP.A2") is not mistaken for one; nonsense prefixes with
+	// a plausible number reach OPS and 404 there.
+	docdbPattern = regexp.MustCompile(`^[A-Z]{2}\.(?:[A-Z]{1,2}\d{3,}|\d+)(\.([A-Z]\d?)?)?$`)
 
 	// Epodoc format: CCnumber or CCnumberKC (e.g., EP1000000 or EP1000000B1)
-	// Country code (2 letters), optional US series prefix (see docdbPattern),
-	// number (digits), optional kind code (letter + optional digit).
-	// The series prefix covers e.g. USRE46921E and USPP12345P2.
-	epodocPattern = regexp.MustCompile(`^[A-Z]{2}(RE|PP|AI|D|H|T)?\d+([A-Z]\d?)?$`)
+	// Country code (2 letters), number (up to two series letters + digits, see
+	// docdbPattern), optional kind code (letter + optional digit). The series prefix
+	// covers e.g. USRE46921E, USPP12345P2 and TWI362952B.
+	epodocPattern = regexp.MustCompile(`^[A-Z]{2}(?:[A-Z]{1,2}\d{3,}|\d+)([A-Z]\d?)?$`)
 
-	// Kind-less epodoc form: CC + optional US series prefix + digits (e.g. EP1000000).
-	// Used by NormalizeToDocdb to map to the kind-less docdb form CC.number.
-	kindlessEpodocPattern = regexp.MustCompile(`^[A-Z]{2}(RE|PP|AI|D|H|T)?\d+$`)
+	// Kind-less epodoc form: CC + number (optional series letters + digits), e.g.
+	// EP1000000 or TWI362952. Used by NormalizeToDocdb to map to the kind-less docdb form
+	// CC.number.
+	kindlessEpodocPattern = regexp.MustCompile(`^[A-Z]{2}(?:[A-Z]{1,2}\d{3,}|\d+)$`)
 
 	// Date format: YYYYMMDD (e.g., 20231015)
 	datePattern = regexp.MustCompile(`^\d{8}$`)
@@ -43,7 +48,7 @@ var (
 // Format rules:
 //   - Two-letter country code in uppercase
 //   - Dot separator
-//   - Numeric document number
+//   - Document number: digits, optionally preceded by up to two series letters (US.D854278.S, TW.I362952.B)
 //   - Dot separator
 //   - Optional kind code: letter + optional digit
 func ValidateDocdbFormat(number string) error {
@@ -78,7 +83,7 @@ func ValidateDocdbFormat(number string) error {
 //
 // Format rules:
 //   - Two-letter country code in uppercase
-//   - Numeric document number
+//   - Document number: digits, optionally preceded by up to two series letters (US.D854278.S, TW.I362952.B)
 //   - Optional kind code: letter + optional digit
 func ValidateEpodocFormat(number string) error {
 	if number == "" {
