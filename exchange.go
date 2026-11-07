@@ -130,6 +130,7 @@ type Agent struct {
 	Sequence string `xml:"sequence,attr"`
 	RepType  string `xml:"rep-type,attr"`
 	Name     string `xml:"addressbook>name"`
+	Country  string `xml:"addressbook>address>country"`
 }
 
 // PatentClassification is one CPC (or other unified-scheme) classification.

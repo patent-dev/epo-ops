@@ -163,10 +163,31 @@ func (m *MilestoneDates) UnmarshalXML(d *xml.Decoder, start xml.StartElement) er
 // plus register-specific children (term of grant, opposition, milestone dates, search reports).
 type RegisterBiblio struct {
 	BibliographicData
+	// AgentGroups keeps the register's representative blocks apart, newest first. The register
+	// repeats parties>agents for every change, so the flat Agents list mixes current and former
+	// representatives; ParseRegister still fills it with all of them.
+	AgentGroups    []AgentGroup    `xml:"parties>agents"`
 	TermsOfGrant   []TermOfGrant   `xml:"term-of-grant"`
 	Opposition     *OppositionData `xml:"opposition-data"`
 	MilestoneDates MilestoneDates  `xml:"dates-rights-effective"`
 	SearchReports  []SearchReport  `xml:"search-reports-information>search-report-information"`
+}
+
+// AgentGroup is one dated block of representatives in the EP Register. GazetteNum is the
+// bulletin that published the change; the register also uses non-dates such as "N/P" here.
+type AgentGroup struct {
+	ChangeDate string  `xml:"change-date,attr"`
+	GazetteNum string  `xml:"change-gazette-num,attr"`
+	Agents     []Agent `xml:"agent"`
+}
+
+// CurrentAgents returns the representatives of record: the first block, because the register
+// lists its blocks newest first. It is empty when the register names no representative.
+func (b RegisterBiblio) CurrentAgents() []Agent {
+	if len(b.AgentGroups) == 0 {
+		return nil
+	}
+	return b.AgentGroups[0].Agents
 }
 
 // RegisterDocument is one EP Register record. Biblio carries the bibliographic data
@@ -250,6 +271,9 @@ func ParseRegister(xmlData string) ([]RegisterDocument, error) {
 				XMLSample: truncateXML(xmlData, 200),
 				Cause:     err,
 			}
+		}
+		for _, g := range d.Biblio.AgentGroups {
+			d.Biblio.Agents = append(d.Biblio.Agents, g.Agents...)
 		}
 		docs = append(docs, d)
 	}
