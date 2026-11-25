@@ -53,7 +53,10 @@ refresh-fixtures:
 	cp demo/examples/get_family/response.xml                    testdata/family.xml
 	cp demo/examples/get_family_with_biblio/response.xml        testdata/family-biblio.xml
 	cp demo/examples/get_legal/response.xml                     testdata/legal.xml
-	cp demo/examples/search/response.xml                        testdata/search.xml
+	cp demo/examples/search_with_constituent/response.xml       testdata/search.xml
+	cp demo/examples/get_biblio_kindless/response.xml           testdata/biblio-kindless-ep2400812.xml
+	cp demo/examples/get_register_biblio_opposed/response.xml   testdata/register-biblio-ep2771468.xml
+	cp demo/examples/get_image_inquiry_raw/response.xml         testdata/image-inquiry.xml
 	cp demo/examples/get_published_equivalents/response.xml     testdata/equivalents.xml
 	cp demo/examples/get_register_events/response.xml           testdata/register-events.xml
 	cp demo/examples/get_register_biblio/response.xml           testdata/register-biblio.xml
@@ -62,6 +65,6 @@ refresh-fixtures:
 	cp demo/examples/convert_patent_number_epodoc/response.xml  testdata/number-conversion.xml
 	cp demo/examples/get_classification_schema/response.xml     testdata/classification-schema.xml
 	@echo "testdata/*.xml updated from demo/examples; review the diff before committing."
-	@echo "note: testdata/image-inquiry.xml is a curated XML fixture (the demo records"
-	@echo "      the image-inquiry endpoint as a text summary, not raw XML); refresh it"
-	@echo "      by hand from a GetImageInquiry raw response if needed."
+	@echo "note: a refreshed search, register or inquiry recording holds newer data, so"
+	@echo "      the tests that assert its values (documents_test.go, decode_fixtures_test.go,"
+	@echo "      xml_test.go) need the new values."

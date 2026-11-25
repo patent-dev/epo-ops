@@ -47,16 +47,16 @@ func demoSearch(demo *DemoContext) {
 			"range": "1-5",
 		}))
 
-	// 2. SearchWithConstituent (with specific data type)
-	// Note: Parsed version returns *SearchResultData
-	runEndpoint(demo, "search_with_constituent", "SearchWithConstituent",
+	// 2. SearchWithConstituentRaw (every hit with its biblio constituent)
+	// Note: the parsed SearchWithConstituent returns *SearchResultData
+	runEndpoint(demo, "search_with_constituent", "SearchWithConstituentRaw",
 		func() ([]byte, error) {
-			result, err := demo.Client.SearchRaw(demo.Ctx, "pa=Siemens", "1-3")
+			result, err := demo.Client.SearchWithConstituentRaw(demo.Ctx, ops.ConstituentBiblio, "ti=battery", "1-3")
 			return []byte(result), err
 		},
-		FormatRequestDescription("SearchWithConstituent", map[string]string{
+		FormatRequestDescription("SearchWithConstituentRaw", map[string]string{
 			"constituent": ops.ConstituentBiblio,
-			"query":       "pa=Siemens",
+			"query":       "ti=battery",
 			"range":       "1-3",
 		}))
 

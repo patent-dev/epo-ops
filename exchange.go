@@ -25,6 +25,8 @@ type DocumentID struct {
 	Kind      string `xml:"kind"`
 	Name      string `xml:"name"`
 	Date      string `xml:"date"`
+	// Lang is the language attribute the EP Register puts on a publication's document-id.
+	Lang string `xml:"lang,attr"`
 }
 
 // Reference is a publication-reference or application-reference: one element carrying one
@@ -34,6 +36,13 @@ type Reference struct {
 	DataFormat  string       `xml:"data-format,attr"`
 	DocID       string       `xml:"doc-id,attr"`
 	DocumentIDs []DocumentID `xml:"document-id"`
+	// IsRepresentative is the is-representative attribute OPS puts on a family member's
+	// application-reference.
+	IsRepresentative string `xml:"is-representative,attr"`
+	// ChangeDate and ChangeGazetteNum are the EP Register's stamps on a reference: when it
+	// was recorded and the bulletin that published it.
+	ChangeDate       string `xml:"change-date,attr"`
+	ChangeGazetteNum string `xml:"change-gazette-num,attr"`
 }
 
 // ByType returns the doc-number for a given format (document-id-type), tolerating the bulk
@@ -61,12 +70,48 @@ func pickRef(refs []Reference, prefer ...string) string {
 	return ""
 }
 
-// Applicant / Inventor / Agent are repeated once per data-format (docdb, epodoc).
+// Addressbook is the name-and-address block the EP Register gives for a party (applicant,
+// inventor, representative, opponent). The register writes the postal address as up to five
+// free lines plus a country; nothing in it is normalised.
+type Addressbook struct {
+	CDSID    string `xml:"cdsid,attr"`
+	Name     string `xml:"name"`
+	Address1 string `xml:"address>address-1"`
+	Address2 string `xml:"address>address-2"`
+	Address3 string `xml:"address>address-3"`
+	Address4 string `xml:"address>address-4"`
+	Address5 string `xml:"address>address-5"`
+	Country  string `xml:"address>country"`
+}
+
+// AddressLines returns the non-empty address lines in register order, without the country.
+func (a *Addressbook) AddressLines() []string {
+	if a == nil {
+		return nil
+	}
+	var lines []string
+	for _, l := range []string{a.Address1, a.Address2, a.Address3, a.Address4, a.Address5} {
+		if l != "" {
+			lines = append(lines, l)
+		}
+	}
+	return lines
+}
+
+// Applicant / Inventor / Agent are repeated once per data-format (docdb, epodoc, original).
 type Applicant struct {
 	Sequence   string `xml:"sequence,attr"`
 	DataFormat string `xml:"data-format,attr"`
 	Name       string `xml:"applicant-name>name"`
 	Residence  string `xml:"residence>country"`
+	// AppType and Designation are register attributes (e.g. "applicant", "all").
+	AppType     string `xml:"app-type,attr"`
+	Designation string `xml:"designation,attr"`
+	// Nationality is the register's nationality>country.
+	Nationality string `xml:"nationality>country"`
+	// Addressbook is the register's name and postal address; nil in published-data responses,
+	// which carry a name only.
+	Addressbook *Addressbook `xml:"addressbook"`
 }
 
 // UnmarshalXML decodes an applicant from either party serialization: the exchange
@@ -74,22 +119,29 @@ type Applicant struct {
 // exchange name wins when both are present; the addressbook name is the fallback.
 func (a *Applicant) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var aux struct {
-		Sequence        string `xml:"sequence,attr"`
-		DataFormat      string `xml:"data-format,attr"`
-		Name            string `xml:"applicant-name>name"`
-		AddressbookName string `xml:"addressbook>name"`
-		Residence       string `xml:"residence>country"`
+		Sequence    string       `xml:"sequence,attr"`
+		DataFormat  string       `xml:"data-format,attr"`
+		AppType     string       `xml:"app-type,attr"`
+		Designation string       `xml:"designation,attr"`
+		Name        string       `xml:"applicant-name>name"`
+		Addressbook *Addressbook `xml:"addressbook"`
+		Residence   string       `xml:"residence>country"`
+		Nationality string       `xml:"nationality>country"`
 	}
 	if err := d.DecodeElement(&aux, &start); err != nil {
 		return err
 	}
 	a.Sequence = aux.Sequence
 	a.DataFormat = aux.DataFormat
+	a.AppType = aux.AppType
+	a.Designation = aux.Designation
 	a.Name = aux.Name
-	if a.Name == "" {
-		a.Name = aux.AddressbookName
+	if a.Name == "" && aux.Addressbook != nil {
+		a.Name = aux.Addressbook.Name
 	}
 	a.Residence = aux.Residence
+	a.Nationality = aux.Nationality
+	a.Addressbook = aux.Addressbook
 	return nil
 }
 
@@ -99,6 +151,8 @@ type Inventor struct {
 	DataFormat string `xml:"data-format,attr"`
 	Name       string `xml:"inventor-name>name"`
 	Residence  string `xml:"residence>country"`
+	// Addressbook is the register's name and postal address; nil in published-data responses.
+	Addressbook *Addressbook `xml:"addressbook"`
 }
 
 // UnmarshalXML decodes an inventor from either party serialization: the exchange
@@ -106,11 +160,11 @@ type Inventor struct {
 // exchange name wins when both are present; the addressbook name is the fallback.
 func (n *Inventor) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var aux struct {
-		Sequence        string `xml:"sequence,attr"`
-		DataFormat      string `xml:"data-format,attr"`
-		Name            string `xml:"inventor-name>name"`
-		AddressbookName string `xml:"addressbook>name"`
-		Residence       string `xml:"residence>country"`
+		Sequence    string       `xml:"sequence,attr"`
+		DataFormat  string       `xml:"data-format,attr"`
+		Name        string       `xml:"inventor-name>name"`
+		Addressbook *Addressbook `xml:"addressbook"`
+		Residence   string       `xml:"residence>country"`
 	}
 	if err := d.DecodeElement(&aux, &start); err != nil {
 		return err
@@ -118,10 +172,11 @@ func (n *Inventor) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	n.Sequence = aux.Sequence
 	n.DataFormat = aux.DataFormat
 	n.Name = aux.Name
-	if n.Name == "" {
-		n.Name = aux.AddressbookName
+	if n.Name == "" && aux.Addressbook != nil {
+		n.Name = aux.Addressbook.Name
 	}
 	n.Residence = aux.Residence
+	n.Addressbook = aux.Addressbook
 	return nil
 }
 
@@ -131,6 +186,14 @@ type Agent struct {
 	RepType  string `xml:"rep-type,attr"`
 	Name     string `xml:"addressbook>name"`
 	Country  string `xml:"addressbook>address>country"`
+}
+
+// Representative is one representative with its complete name-and-address block. Agent keeps
+// only the name and the country; Representative is the same register element in full.
+type Representative struct {
+	Sequence    string      `xml:"sequence,attr"`
+	RepType     string      `xml:"rep-type,attr"`
+	Addressbook Addressbook `xml:"addressbook"`
 }
 
 // PatentClassification is one CPC (or other unified-scheme) classification.
@@ -147,6 +210,9 @@ type PatentClassification struct {
 	Subgroup         string `xml:"subgroup"`
 	Value            string `xml:"classification-value"`
 	GeneratingOffice string `xml:"generating-office"`
+	// ClassificationSymbol is the symbol as one string, the form OPS uses for schemes it does
+	// not split into section/class/subclass (e.g. the Japanese FI and FTERM schemes).
+	ClassificationSymbol string `xml:"classification-symbol"`
 }
 
 // Symbol renders the classification as e.g. "H04W84/20", or "" if unpopulated.
@@ -176,6 +242,13 @@ type Priority struct {
 	DataFormat  string       `xml:"data-format,attr"`
 	Active      string       `xml:"priority-active-indicator"`
 	DocumentIDs []DocumentID `xml:"document-id"`
+	// LinkageType is the priority-linkage-type element of a published-data priority claim.
+	LinkageType string `xml:"priority-linkage-type"`
+	// Country, DocNumber and Date are the EP Register form of a priority claim, which states
+	// them directly on the claim instead of inside a document-id.
+	Country   string `xml:"country"`
+	DocNumber string `xml:"doc-number"`
+	Date      string `xml:"date"`
 }
 
 // Patcit is a cited patent document.
@@ -184,6 +257,8 @@ type Patcit struct {
 	DnumType    string       `xml:"dnum-type,attr"`
 	Text        string       `xml:"text"`
 	DocumentIDs []DocumentID `xml:"document-id"`
+	// URL is the Espacenet link the EP Register attaches to a cited patent.
+	URL string `xml:"url,attr"`
 }
 
 // Number assembles the cited patent number for the first matching format.
@@ -224,6 +299,11 @@ type Citation struct {
 	RelPassages  []string `xml:"rel-passage>passage"`
 	Patcit       *Patcit  `xml:"patcit"`
 	Nplcit       *Nplcit  `xml:"nplcit"`
+	// ID and Office are citation attributes (the register's citation id, the citing office).
+	ID     string `xml:"id,attr"`
+	Office string `xml:"office,attr"`
+	// DOI is the register's digital object identifier of a cited non-patent document.
+	DOI string `xml:"doi"`
 }
 
 // Category returns the citation's first (often only) search category, or "".
@@ -249,6 +329,8 @@ type DesignationOfStates struct {
 	PCTRegional    []string `xml:"designation-pct>regional>country"`
 	PCTNational    []string `xml:"designation-pct>national>country"`
 	Contracting    []string `xml:"contracting-states>country"`
+	// PCTRegion is the region itself (e.g. "EP") the PCTRegional countries belong to.
+	PCTRegion []string `xml:"designation-pct>regional>region>country"`
 }
 
 // Abstract is one <abstract> constituent.
@@ -266,6 +348,17 @@ func (a Abstract) Text() string {
 type Title struct {
 	Lang string `xml:"lang,attr"`
 	Text string `xml:",chardata"`
+	// ChangeDate and ChangeGazetteNum are the EP Register's stamps on a title.
+	ChangeDate       string `xml:"change-date,attr"`
+	ChangeGazetteNum string `xml:"change-gazette-num,attr"`
+}
+
+// RawElement is an element the typed fields do not model, kept so it is not lost: its name,
+// its attributes and its inner XML exactly as sent.
+type RawElement struct {
+	XMLName  xml.Name
+	Attrs    []xml.Attr `xml:",any,attr"`
+	InnerXML string     `xml:",innerxml"`
 }
 
 // BibliographicData is the full bibliographic-data subtree.
@@ -285,6 +378,8 @@ type BibliographicData struct {
 	Designations          DesignationOfStates      `xml:"designation-of-states"`
 	LanguageOfFiling      string                   `xml:"language-of-filing"`
 	LanguageOfPublication string                   `xml:"language-of-publication"`
+	// Unparsed holds every direct child of bibliographic-data that no field above models.
+	Unparsed []RawElement `xml:",any"`
 }
 
 // ExchangeDocument is one <exchange-document> with its bibliographic data and abstracts.
@@ -299,6 +394,8 @@ type ExchangeDocument struct {
 	DatePubl  string            `xml:"date-publ,attr"`
 	Biblio    BibliographicData `xml:"bibliographic-data"`
 	Abstracts []Abstract        `xml:"abstract"`
+	// Unparsed holds every direct child of the exchange-document that no field above models.
+	Unparsed []RawElement `xml:",any"`
 }
 
 // PublicationNumber returns the publication number for the first preferred format

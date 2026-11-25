@@ -38,7 +38,7 @@ import (
 )
 
 // Version is the library version. It surfaces through the default User-Agent.
-const Version = "1.7.4"
+const Version = "1.8.0"
 
 // DefaultUserAgent identifies this library in outbound requests.
 const DefaultUserAgent = "epo-ops-go/" + Version + " (patent.dev; +https://github.com/patent-dev/epo-ops)"

@@ -109,6 +109,27 @@ func DefaultConfig() *Config {
 type ImageInquiry struct {
 	// DocumentInstances contains the list of available document types and their metadata
 	DocumentInstances []DocumentInstance
+
+	// Publication is the document the inquiry was made for, as OPS echoes it.
+	Publication []DocumentID
+
+	// Results keeps the instances of each publication apart. An inquiry for a number without
+	// a kind code is answered with one result per published kind, and DocumentInstances above
+	// lists the instances of all of them.
+	Results []ImageInquiryResult
+}
+
+// ImageInquiryResult is one inquiry-result: a publication and its document instances.
+type ImageInquiryResult struct {
+	Publication       []DocumentID
+	DocumentInstances []DocumentInstance
+}
+
+// DocumentSection is one document-section of a document instance: a named part of the
+// document (e.g. "DRAWINGS", "CLAIMS") and the page it starts on.
+type DocumentSection struct {
+	Name      string `xml:"name,attr"`
+	StartPage string `xml:"start-page,attr"`
 }
 
 // DocumentInstance represents a single document type available for a patent.
@@ -131,6 +152,12 @@ type DocumentInstance struct {
 	// DocType is the internal document type identifier
 	// Examples: "Drawing", "FullDocument"
 	DocType string
+
+	// System is the system attribute of the instance (e.g. "ops.epo.org").
+	System string
+
+	// Sections are the named parts of the document with their start pages.
+	Sections []DocumentSection
 }
 
 // UsageStats represents usage statistics from the EPO OPS Data Usage API.

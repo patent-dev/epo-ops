@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<fault xmlns="http://ops.epo.org">
+    <code>SERVER.EntityNotFound</code>
+    <message>No results found</message>
+</fault>

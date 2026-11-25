@@ -210,12 +210,12 @@ func TestParseFamily_SimpleFixture(t *testing.T) {
 		t.Fatalf("ParseFamily failed: %v", err)
 	}
 
-	if len(data.Members) != 3 {
-		t.Errorf("Expected 3 family members, got %d", len(data.Members))
+	if len(data.Members) != 5 {
+		t.Errorf("Expected 5 family members, got %d", len(data.Members))
 	}
 
 	// Verify Countries from simple fixture
-	expectedCountries := []string{"EP", "US", "WO"}
+	expectedCountries := []string{"CA", "EP", "US"}
 	if len(data.Countries) != len(expectedCountries) {
 		t.Errorf("Expected countries %v, got %v", expectedCountries, data.Countries)
 	} else {

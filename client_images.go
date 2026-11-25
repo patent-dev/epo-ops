@@ -109,21 +109,27 @@ func (c *Client) GetImagePOST(ctx context.Context, page int, identifier string) 
 //	    }
 //	}
 func (c *Client) GetImageInquiry(ctx context.Context, refType, format, number string) (*ImageInquiry, error) {
-	if err := ValidateRefType(refType); err != nil {
+	xmlData, err := c.GetImageInquiryRaw(ctx, refType, format, number)
+	if err != nil {
 		return nil, err
+	}
+	return ParseImageInquiry(xmlData)
+}
+
+// GetImageInquiryRaw retrieves the image inquiry response as raw XML.
+// For parsed data, use GetImageInquiry() instead.
+func (c *Client) GetImageInquiryRaw(ctx context.Context, refType, format, number string) (string, error) {
+	if err := ValidateRefType(refType); err != nil {
+		return "", err
 	}
 	if err := ValidateFormat(format, number); err != nil {
-		return nil, err
+		return "", err
 	}
 
-	xmlData, err := c.makeRequest(ctx, func() (*http.Response, error) {
+	return c.makeRequest(ctx, func() (*http.Response, error) {
 		return c.generated.PublishedImagesInquiryService(ctx,
 			generated.PublishedImagesInquiryServiceParamsType(refType),
 			generated.PublishedImagesInquiryServiceParamsFormat(format),
 			number)
 	})
-	if err != nil {
-		return nil, err
-	}
-	return ParseImageInquiry(xmlData)
 }

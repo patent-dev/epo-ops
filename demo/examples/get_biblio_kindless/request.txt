@@ -1,0 +1,6 @@
+Method: GetBiblioRaw
+
+Parameters:
+  refType: publication
+  format: epodoc
+  number: EP2400812

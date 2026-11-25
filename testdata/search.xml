@@ -1,35 +1,488 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ops:world-patent-data xmlns:ops="http://ops.epo.org" xmlns="http://www.epo.org/exchange">
-  <ops:biblio-search total-result-count="1523">
-    <ops:query syntax="CQL">ti="battery"</ops:query>
-    <ops:range begin="1" end="5"/>
-    <ops:search-result>
-      <exchange-documents>
-        <exchange-document system="ops.epo.org" family-id="43088294" country="EP" doc-number="2400812" kind="A1">
-          <bibliographic-data>
-            <publication-reference>
-              <document-id document-id-type="docdb">
-                <country>EP</country>
-                <doc-number>2400812</doc-number>
-                <kind>A1</kind>
-              </document-id>
-            </publication-reference>
-            <invention-title lang="en">Battery Management System</invention-title>
-          </bibliographic-data>
-        </exchange-document>
-        <exchange-document system="ops.epo.org" family-id="43088295" country="EP" doc-number="2400813" kind="A1">
-          <bibliographic-data>
-            <publication-reference>
-              <document-id document-id-type="docdb">
-                <country>EP</country>
-                <doc-number>2400813</doc-number>
-                <kind>A1</kind>
-              </document-id>
-            </publication-reference>
-            <invention-title lang="en">Improved Battery Technology</invention-title>
-          </bibliographic-data>
-        </exchange-document>
-      </exchange-documents>
-    </ops:search-result>
-  </ops:biblio-search>
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="../../../style/exchange.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ops:biblio-search total-result-count="910983" publications-count="3">
+        <ops:query syntax="CQL">ti = battery</ops:query>
+        <ops:range begin="1" end="3"/>
+        <ops:search-result>
+            <exchange-documents>
+                <exchange-document system="ops.epo.org" family-id="102044919" country="WO" doc-number="2026237540" kind="A1">
+                    <bibliographic-data>
+                        <publication-reference>
+                            <document-id document-id-type="docdb">
+                                <country>WO</country>
+                                <doc-number>2026237540</doc-number>
+                                <kind>A1</kind>
+                                <date>20261119</date>
+                            </document-id>
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO2026237540</doc-number>
+                                <date>20261119</date>
+                            </document-id>
+                        </publication-reference>
+                        <classifications-ipcr>
+                            <classification-ipcr sequence="1">
+                                <text>H01M  10/   613            A I                    </text>
+                            </classification-ipcr>
+                        </classifications-ipcr>
+                        <patent-classifications/>
+                        <application-reference doc-id="659284376">
+                            <document-id document-id-type="docdb">
+                                <country>CN</country>
+                                <doc-number>2026084654</doc-number>
+                                <kind>W</kind>
+                                <date>20260319</date>
+                            </document-id>
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO2026CN84654</doc-number>
+                                <date>20260319</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>CN2026/084654</doc-number>
+                            </document-id>
+                        </application-reference>
+                        <priority-claims>
+                            <priority-claim sequence="1" kind="national">
+                                <document-id document-id-type="docdb">
+                                    <country>CN</country>
+                                    <doc-number>202510624955</doc-number>
+                                    <kind>A</kind>
+                                    <date>20250514</date>
+                                </document-id>
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>CN202510624955</doc-number>
+                                    <date>20250514</date>
+                                </document-id>
+                                <document-id document-id-type="original">
+                                    <doc-number>202510624955.2</doc-number>
+                                </document-id>
+                            </priority-claim>
+                            <priority-claim sequence="2" kind="national">
+                                <document-id document-id-type="docdb">
+                                    <country>CN</country>
+                                    <doc-number>202520955360</doc-number>
+                                    <kind>U</kind>
+                                    <date>20250514</date>
+                                </document-id>
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>CN202520955360U</doc-number>
+                                    <date>20250514</date>
+                                </document-id>
+                                <document-id document-id-type="original">
+                                    <doc-number>202520955360.0</doc-number>
+                                </document-id>
+                            </priority-claim>
+                        </priority-claims>
+                        <parties>
+                            <applicants>
+                                <applicant sequence="1" data-format="epodoc">
+                                    <applicant-name>
+                                        <name>EVE ENERGY CO LTD [CN]</name>
+                                    </applicant-name>
+                                </applicant>
+                                <applicant sequence="1" data-format="original">
+                                    <applicant-name>
+                                        <name>惠州亿纬锂能股份有限公司</name>
+                                    </applicant-name>
+                                </applicant>
+                            </applicants>
+                            <inventors>
+                                <inventor sequence="1" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>LAI YIMING [CN]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="2" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>ZHANG QIANG [CN]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="3" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>LU GUANGNING [CN]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="4" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>LI LIANG [CN]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="1" data-format="original">
+                                    <inventor-name>
+                                        <name>赖一明</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="2" data-format="original">
+                                    <inventor-name>
+                                        <name>张强</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="3" data-format="original">
+                                    <inventor-name>
+                                        <name>路广宁</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="4" data-format="original">
+                                    <inventor-name>
+                                        <name>李亮</name>
+                                    </inventor-name>
+                                </inventor>
+                            </inventors>
+                        </parties>
+                        <invention-title lang="fr">BOÎTIER DE BATTERIE ET BLOC-BATTERIE</invention-title>
+                        <invention-title lang="en">BATTERY CASE AND BATTERY PACK</invention-title>
+                        <invention-title lang="ol">电池箱和电池包</invention-title>
+                    </bibliographic-data>
+                    <abstract lang="en">
+                        <p>Provided in the present application are a battery case and a battery pack. The battery case comprises: a case body structure and a bottom plate structure, wherein an accommodating cavity is formed between the bottom plate structure and the case body structure; an airflow channel in communication with the accommodating cavity is provided inside the case body structure; a plurality of battery cells are arranged at intervals to form heat dissipation gaps; and gas that flows out from the airflow channel flows through the heat dissipation gaps for heat exchange. By means of the provision of the heat dissipation gaps, the present application enables gas that flows out from the airflow channel to flow through the heat dissipation gaps for heat exchange, thereby improving the heat dissipation uniformity across the plurality of battery cells. The battery case provided in the present application has a reasonable heat dissipation design and can meet the heat dissipation requirements of the battery cells.</p>
+                    </abstract>
+                    <abstract lang="fr">
+                        <p>La présente demande concerne un boîtier de batterie et un bloc-batterie. Le boîtier de batterie comprend : une structure de corps de boîtier et une structure de plaque inférieure, une cavité de réception étant formée entre la structure de plaque inférieure et la structure de corps de boîtier ; un canal d'écoulement d'air en communication avec la cavité de réception est disposé à l'intérieur de la structure de corps de boîtier ; une pluralité d'éléments de batterie sont agencés à des intervalles pour former des espaces de dissipation de chaleur ; et le gaz qui s'échappe du canal d'écoulement d'air circule à travers les espaces de dissipation de chaleur pour un échange de chaleur. Au moyen des espaces de dissipation de chaleur, selon la présente demande, le gaz qui s'échappe du canal d'écoulement d'air peut circuler à travers les espaces de dissipation de chaleur pour un échange de chaleur, ce qui permet d'améliorer l'uniformité de dissipation de chaleur à travers la pluralité d'éléments de batterie. Le boîtier de batterie selon la présente demande offre une conception de dissipation de chaleur raisonnable et peut satisfaire aux exigences de dissipation de chaleur des éléments de batterie.</p>
+                    </abstract>
+                    <abstract lang="ol">
+                        <p>本申请提供了一种电池箱和电池包，电池箱包括：箱体结构和底板结构；底板结构与箱体结构之间形成容纳腔；箱体结构内部具有与容纳腔连通的气流通道；其中，多个电芯间隔设置，形成散热间隙；从气流通道内流出的气体流经散热间隙,以进行换热。本申请通过设置散热间隙，使得气流通道内流出的气体可以流经散热间隙进行换热，进而提高了对于多个电芯的散热均匀性；本申请提出的电池箱，散热方式设计合理，可以满足电芯散热的要求。</p>
+                    </abstract>
+                </exchange-document>
+            </exchange-documents>
+            <exchange-documents>
+                <exchange-document system="ops.epo.org" family-id="102044533" country="WO" doc-number="2026239923" kind="A1">
+                    <bibliographic-data>
+                        <publication-reference>
+                            <document-id document-id-type="docdb">
+                                <country>WO</country>
+                                <doc-number>2026239923</doc-number>
+                                <kind>A1</kind>
+                                <date>20261119</date>
+                            </document-id>
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO2026239923</doc-number>
+                                <date>20261119</date>
+                            </document-id>
+                        </publication-reference>
+                        <classifications-ipcr>
+                            <classification-ipcr sequence="1">
+                                <text>G01R  31/   367            A I                    </text>
+                            </classification-ipcr>
+                            <classification-ipcr sequence="2">
+                                <text>G01R  31/   392            A I                    </text>
+                            </classification-ipcr>
+                        </classifications-ipcr>
+                        <patent-classifications/>
+                        <application-reference doc-id="659282268">
+                            <document-id document-id-type="docdb">
+                                <country>JP</country>
+                                <doc-number>2026016703</doc-number>
+                                <kind>W</kind>
+                                <date>20260427</date>
+                            </document-id>
+                            <document-id document-id-type="epodoc">
+                                <doc-number>WO2026JP16703</doc-number>
+                                <date>20260427</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>JP2026/016703</doc-number>
+                            </document-id>
+                        </application-reference>
+                        <priority-claims>
+                            <priority-claim sequence="1" kind="national">
+                                <document-id document-id-type="docdb">
+                                    <country>JP</country>
+                                    <doc-number>2025082495</doc-number>
+                                    <kind>A</kind>
+                                    <date>20250516</date>
+                                </document-id>
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>JP20250082495</doc-number>
+                                    <date>20250516</date>
+                                </document-id>
+                                <document-id document-id-type="original">
+                                    <doc-number>2025-082495</doc-number>
+                                </document-id>
+                            </priority-claim>
+                        </priority-claims>
+                        <parties>
+                            <applicants>
+                                <applicant sequence="1" data-format="epodoc">
+                                    <applicant-name>
+                                        <name>PANASONIC IP MAN CO LTD [JP]</name>
+                                    </applicant-name>
+                                </applicant>
+                                <applicant sequence="1" data-format="original">
+                                    <applicant-name>
+                                        <name>パナソニックＩＰマネジメント株式会社</name>
+                                    </applicant-name>
+                                </applicant>
+                            </applicants>
+                            <inventors>
+                                <inventor sequence="1" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>SADA TOMOKAZU</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="2" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>NAGAYAMA MASATOSHI</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="3" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>AGA ETSUSHI</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="4" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>TAKEDA MUTSUHIKO</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="5" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>ITAKURA YUSUKE</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="1" data-format="original">
+                                    <inventor-name>
+                                        <name>佐田　友和</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="2" data-format="original">
+                                    <inventor-name>
+                                        <name>永山　雅敏</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="3" data-format="original">
+                                    <inventor-name>
+                                        <name>阿賀　悦史</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="4" data-format="original">
+                                    <inventor-name>
+                                        <name>武田　睦彦</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="5" data-format="original">
+                                    <inventor-name>
+                                        <name>板倉　佑輔</name>
+                                    </inventor-name>
+                                </inventor>
+                            </inventors>
+                        </parties>
+                        <invention-title lang="fr">SYSTÈME, PROCÉDÉ ET PROGRAMME DE DIAGNOSTIC DE BATTERIE</invention-title>
+                        <invention-title lang="en">BATTERY DIAGNOSIS SYSTEM, BATTERY DIAGNOSIS METHOD, AND BATTERY DIAGNOSIS PROGRAM</invention-title>
+                        <invention-title lang="ol">電池診断システム、電池診断方法、及び電池診断プログラム</invention-title>
+                    </bibliographic-data>
+                    <abstract lang="en">
+                        <p>In a battery diagnosis system (32), a data acquisition unit (331) acquires measured voltages of a secondary battery during a period in which a test is performed in which currents at a plurality of C-rates are sequentially passed through the secondary battery and the voltage of the secondary battery is measured. A prediction unit (337) predicts the time at which the current density of an electrode of the secondary battery reaches the limiting current density on the basis of changes over time in voltage response data for each C-rate of the secondary battery obtained for each periodically performed test. In each test, currents at a plurality of C-rates are sequentially passed through the secondary battery according to a predetermined regularity.</p>
+                    </abstract>
+                    <abstract lang="fr">
+                        <p>Dans un système de diagnostic de batterie (32), une unité d'acquisition de données (331) acquiert des tensions mesurées d'une batterie secondaire pendant une période au cours de laquelle est effectué un test consistant à faire circuler séquentiellement à travers la batterie secondaire des courants à une pluralité de régimes C et à mesurer la tension de la batterie secondaire. Une unité de prédiction (337) prédit l'instant auquel la densité de courant d'une électrode de la batterie secondaire atteint la densité de courant limite, sur la base des changements au cours du temps des données de réponse en tension pour chaque régime C de la batterie secondaire, obtenues pour chaque test effectué périodiquement. Dans chaque test, des courants à une pluralité de régimes C sont séquentiellement passés à travers la batterie secondaire selon une régularité prédéterminée.</p>
+                    </abstract>
+                    <abstract lang="ol">
+                        <p>電池診断システム（３２）において、データ取得部（３３１）は、二次電池に複数のＣレートの電流を順番に流して二次電池の電圧を計測する検査が実施された期間の、二次電池の計測電圧を取得する。予測部（３３７）は、定期的に実施される検査ごとに得られる、二次電池のＣレート別の電圧応答データの推移をもとに、二次電池の電極の電流密度が限界電流密度に到達する時期を予測する。各検査において、前記二次電池に複数のＣレートの電流が、所定の規則性にしたがい順番に流される。</p>
+                    </abstract>
+                </exchange-document>
+            </exchange-documents>
+            <exchange-documents>
+                <exchange-document system="ops.epo.org" family-id="99717528" country="US" doc-number="20260369753" kind="A1">
+                    <bibliographic-data>
+                        <publication-reference>
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>20260369753</doc-number>
+                                <kind>A1</kind>
+                                <date>20261119</date>
+                            </document-id>
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US20260369753</doc-number>
+                                <date>20261119</date>
+                            </document-id>
+                        </publication-reference>
+                        <classifications-ipcr>
+                            <classification-ipcr sequence="1">
+                                <text>H01M  50/   105            A I                    </text>
+                            </classification-ipcr>
+                            <classification-ipcr sequence="2">
+                                <text>H01M  50/   121            A I                    </text>
+                            </classification-ipcr>
+                            <classification-ipcr sequence="3">
+                                <text>H01M  50/   124            A I                    </text>
+                            </classification-ipcr>
+                        </classifications-ipcr>
+                        <patent-classifications>
+                            <patent-classification sequence="1">
+                                <classification-scheme office="EP" scheme="CPCI"/>
+                                <section>H</section>
+                                <class>01</class>
+                                <subclass>M</subclass>
+                                <main-group>10</main-group>
+                                <subgroup>0413</subgroup>
+                                <classification-value>I</classification-value>
+                                <generating-office>EP</generating-office>
+                            </patent-classification>
+                            <patent-classification sequence="2">
+                                <classification-scheme office="EP" scheme="CPCI"/>
+                                <section>H</section>
+                                <class>01</class>
+                                <subclass>M</subclass>
+                                <main-group>50</main-group>
+                                <subgroup>105</subgroup>
+                                <classification-value>I</classification-value>
+                                <generating-office>US</generating-office>
+                            </patent-classification>
+                            <patent-classification sequence="3">
+                                <classification-scheme office="EP" scheme="CPCI"/>
+                                <section>H</section>
+                                <class>01</class>
+                                <subclass>M</subclass>
+                                <main-group>50</main-group>
+                                <subgroup>105</subgroup>
+                                <classification-value>I</classification-value>
+                                <generating-office>EP</generating-office>
+                            </patent-classification>
+                            <patent-classification sequence="4">
+                                <classification-scheme office="EP" scheme="CPCI"/>
+                                <section>H</section>
+                                <class>01</class>
+                                <subclass>M</subclass>
+                                <main-group>50</main-group>
+                                <subgroup>121</subgroup>
+                                <classification-value>I</classification-value>
+                                <generating-office>US</generating-office>
+                            </patent-classification>
+                            <patent-classification sequence="5">
+                                <classification-scheme office="EP" scheme="CPCI"/>
+                                <section>H</section>
+                                <class>01</class>
+                                <subclass>M</subclass>
+                                <main-group>50</main-group>
+                                <subgroup>124</subgroup>
+                                <classification-value>I</classification-value>
+                                <generating-office>US</generating-office>
+                            </patent-classification>
+                        </patent-classifications>
+                        <application-reference doc-id="659169445">
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>202619661747</doc-number>
+                                <kind>A</kind>
+                                <date>20260429</date>
+                            </document-id>
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US202619661747</doc-number>
+                                <date>20260429</date>
+                            </document-id>
+                            <document-id document-id-type="original">
+                                <doc-number>19661747</doc-number>
+                            </document-id>
+                        </application-reference>
+                        <priority-claims>
+                            <priority-claim sequence="1" kind="national">
+                                <document-id document-id-type="docdb">
+                                    <country>JP</country>
+                                    <doc-number>2025083377</doc-number>
+                                    <kind>A</kind>
+                                    <date>20250519</date>
+                                </document-id>
+                                <document-id document-id-type="epodoc">
+                                    <doc-number>JP20250083377</doc-number>
+                                    <date>20250519</date>
+                                </document-id>
+                                <document-id document-id-type="original">
+                                    <doc-number>2025-083377</doc-number>
+                                </document-id>
+                            </priority-claim>
+                        </priority-claims>
+                        <parties>
+                            <applicants>
+                                <applicant sequence="1" data-format="epodoc">
+                                    <applicant-name>
+                                        <name>TOYOTA MOTOR CO LTD [JP]</name>
+                                    </applicant-name>
+                                </applicant>
+                                <applicant sequence="1" data-format="original">
+                                    <applicant-name>
+                                        <name>TOYOTA JIDOSHA KABUSHIKI KAISHA</name>
+                                    </applicant-name>
+                                </applicant>
+                            </applicants>
+                            <inventors>
+                                <inventor sequence="1" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>IZUMI JUN [JP]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="2" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>SUGIHARA ATSUSHI [JP]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="3" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>NAKASHIMA SATOSHI [JP]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="4" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>ONO MASATO [JP]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="5" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>HAGA MASAYOSHI [JP]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="6" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>ISHIZUKA MASAHIRO [JP]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="7" data-format="epodoc">
+                                    <inventor-name>
+                                        <name>MIYAHARA KENTA [JP]</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="1" data-format="original">
+                                    <inventor-name>
+                                        <name>IZUMI, Jun</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="2" data-format="original">
+                                    <inventor-name>
+                                        <name>SUGIHARA, Atsushi</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="3" data-format="original">
+                                    <inventor-name>
+                                        <name>NAKASHIMA, Satoshi</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="4" data-format="original">
+                                    <inventor-name>
+                                        <name>ONO, Masato</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="5" data-format="original">
+                                    <inventor-name>
+                                        <name>HAGA, Masayoshi</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="6" data-format="original">
+                                    <inventor-name>
+                                        <name>ISHIZUKA, Masahiro</name>
+                                    </inventor-name>
+                                </inventor>
+                                <inventor sequence="7" data-format="original">
+                                    <inventor-name>
+                                        <name>MIYAHARA, Kenta</name>
+                                    </inventor-name>
+                                </inventor>
+                            </inventors>
+                        </parties>
+                        <invention-title lang="en">BATTERY CELL</invention-title>
+                    </bibliographic-data>
+                    <abstract lang="en">
+                        <p>[0000]    A battery cell includes a power storage element and an outer case. The outer case has first and second film portions. The power storage element is disposed between the first and second film portions. The outer case has first and second storage portions respectively formed by portions of the first and second film portions, covering the power storage element, and an outer peripheral stacked portion where first and second outer peripheral portions that are respectively portions of the first and second film portions, surrounding the power storage element, are stacked and welded together. The outer peripheral stacked portion has a folded portion folded at a fold line toward the power storage element. A fixing portion that is a part of the folded portion is welded to a fixed portion provided in a portion of the outer case, located on a side opposite to the folded portion across the fold line.</p>
+                    </abstract>
+                </exchange-document>
+            </exchange-documents>
+        </ops:search-result>
+    </ops:biblio-search>
 </ops:world-patent-data>

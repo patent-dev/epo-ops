@@ -6,6 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -207,9 +208,18 @@ func parseErrorXML(body []byte, statusCode int) (*OPSError, error) {
 			message = faultResp.Description
 		}
 
+		// A fault carries either a numeric HTTP status ("404") or one of the
+		// string codes the <error> format also uses ("SERVER.EntityNotFound",
+		// which is what OPS really sends for an unknown document). Only the
+		// numeric form is prefixed; a string code is kept as it is, so it maps to
+		// the same typed error whichever element wraps it.
+		code := faultResp.Code
+		if _, numErr := strconv.Atoi(code); numErr == nil {
+			code = "HTTP." + code
+		}
 		return &OPSError{
 			HTTPStatus: statusCode,
-			Code:       "HTTP." + faultResp.Code, // Prefix numeric codes with "HTTP."
+			Code:       code,
 			Message:    message,
 			MoreInfo:   "",
 		}, nil

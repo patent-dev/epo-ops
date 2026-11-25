@@ -24,6 +24,18 @@ func demoRegister(demo *DemoContext) {
 			"number":  demo.Patent,
 		}))
 
+	// 1b. GetRegisterBiblioRaw for an opposed patent (opponents, revocation, appeal)
+	runEndpoint(demo, "get_register_biblio_opposed", "GetRegisterBiblioRaw (opposed patent)",
+		func() ([]byte, error) {
+			result, err := demo.Client.GetRegisterBiblioRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, opposedPatent)
+			return []byte(result), err
+		},
+		FormatRequestDescription("GetRegisterBiblioRaw", map[string]string{
+			"refType": ops.RefTypePublication,
+			"format":  ops.FormatEPODOC,
+			"number":  opposedPatent,
+		}))
+
 	// 2. GetRegisterBiblioMultipleRaw (POST - bulk register biblio)
 	runEndpoint(demo, "get_register_biblio_multiple", "GetRegisterBiblioMultipleRaw",
 		func() ([]byte, error) {

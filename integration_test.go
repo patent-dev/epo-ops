@@ -495,6 +495,24 @@ func TestIntegrationSearchWithConstituent(t *testing.T) {
 	}
 }
 
+func TestIntegrationSearchWithConstituentRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.SearchWithConstituentRaw(integrationCtx(t), "biblio", "ti=plastic", "1-3")
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("SearchWithConstituentRaw: %v", err)
+	}
+	docs, err := ParseBiblioDocuments(raw)
+	if err != nil {
+		t.Fatalf("ParseBiblioDocuments: %v", err)
+	}
+	if len(docs) == 0 || docs[0].Document == nil {
+		t.Fatal("no exchange-documents in the search response")
+	}
+}
+
 // --- Family services -----------------------------------------------------------
 
 func TestIntegrationGetFamily(t *testing.T) {
@@ -994,6 +1012,24 @@ func TestIntegrationGetImageInquiry(t *testing.T) {
 	}
 	if d == nil || len(d.DocumentInstances) == 0 {
 		t.Fatal("no image instances")
+	}
+}
+
+func TestIntegrationGetImageInquiryRaw(t *testing.T) {
+	c := integrationClient(t)
+	raw, err := c.GetImageInquiryRaw(integrationCtx(t), pubRefType, docdb, convertDocdb)
+	if skipIfTransient(t, err) {
+		return
+	}
+	if err != nil {
+		t.Fatalf("GetImageInquiryRaw: %v", err)
+	}
+	d, err := ParseImageInquiry(raw)
+	if err != nil {
+		t.Fatalf("ParseImageInquiry: %v", err)
+	}
+	if len(d.Results) == 0 || len(d.Results[0].Publication) == 0 {
+		t.Fatal("inquiry result without a publication")
 	}
 }
 

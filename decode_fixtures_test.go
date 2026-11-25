@@ -131,14 +131,11 @@ func completenessCases(t *testing.T) []completenessCase {
 		},
 		{
 			name: "description", data: readFixtureBytes(t, "description.xml"), raw: descriptionXML{},
+			// The recorded description response states the document's identity in the
+			// publication-reference and carries plain <p> paragraphs only.
 			unmodeled: []string{
 				"/world-patent-data/fulltext-documents/fulltext-document @fulltext-format",
-				"/world-patent-data/fulltext-documents/fulltext-document @lang",
-				"/world-patent-data/fulltext-documents/fulltext-document @status",
 				"/world-patent-data/fulltext-documents/fulltext-document @system",
-				// description headings are not part of the paragraph projection.
-				"/world-patent-data/fulltext-documents/fulltext-document/description/heading",
-				"/world-patent-data/fulltext-documents/fulltext-document/description/heading @id",
 			},
 		},
 		{
@@ -154,7 +151,16 @@ func completenessCases(t *testing.T) []completenessCase {
 		},
 		{
 			name: "family", data: readFixtureBytes(t, "family.xml"), raw: familyXML{},
-			// family.xml is the plain (no-constituent) family list; fully modeled.
+			// family.xml is the plain (no-constituent) family list. familyXML is the
+			// projection the selected FamilyMember fields are built from; the number
+			// format of each document-id and the is-representative flag are carried by
+			// the complete references (FamilyMember.PublicationRefs / ApplicationRefs /
+			// Priorities, FamilyData.Publication), proven by TestEveryValueReachable.
+			unmodeled: []string{
+				"/world-patent-data/patent-family/family-member/application-reference @is-representative",
+				"/world-patent-data/patent-family/family-member/priority-claim/document-id @document-id-type",
+				"/world-patent-data/patent-family/publication-reference/document-id @document-id-type",
+			},
 		},
 		{
 			name: "family_biblio", data: readFixtureBytes(t, "family-biblio.xml"), raw: familyXML{},
@@ -190,14 +196,14 @@ func completenessCases(t *testing.T) []completenessCase {
 		},
 		{
 			name: "search", data: readFixtureBytes(t, "search.xml"), raw: searchXML{},
-			// searchXML keeps the search envelope + each hit's identity and title.
-			// The nested publication-reference inside each exchange-document's
-			// bibliographic-data (the hit already carries country/doc-number/kind as
-			// attributes) and the query @syntax attr are not modeled.
-			unmodeled: []string{
-				"/world-patent-data/biblio-search/query @syntax",
+			// searchXML keeps the search envelope + each hit's identity and title. The
+			// rest of each hit's exchange-document (the biblio constituent: references,
+			// parties, classifications, priorities, abstract) is carried in full by
+			// SearchResult.Document, proven by TestEveryValueReachable.
+			unmodeledPrefixes: []string{
+				"/exchange-document/bibliographic-data/",
+				"/exchange-document/abstract",
 			},
-			unmodeledPrefixes: []string{"/bibliographic-data/publication-reference"},
 		},
 		{
 			name: "equivalents", data: readFixtureBytes(t, "equivalents.xml"), raw: equivalentsXML{},
@@ -620,7 +626,7 @@ func TestKeyFields(t *testing.T) {
 		}
 		assertEq(t, "Country", d.Country, "EP")
 		assertEq(t, "DocNumber", d.DocNumber, "2400812")
-		assertEq(t, "Kind", d.Kind, "B1")
+		assertEq(t, "Kind", d.Kind, "A1")
 		if d.Description == nil {
 			t.Error("Description constituent not parsed")
 		}
@@ -631,14 +637,16 @@ func TestKeyFields(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if d.TotalCount != 1523 {
-			t.Errorf("TotalCount = %d, want 1523", d.TotalCount)
+		if d.TotalCount != 910983 {
+			t.Errorf("TotalCount = %d, want 910983", d.TotalCount)
 		}
-		assertLen(t, "Results", len(d.Results), 2)
-		assertEq(t, "Results[0].Country", d.Results[0].Country, "EP")
-		assertEq(t, "Results[0].DocNumber", d.Results[0].DocNumber, "2400812")
-		assertEq(t, "Results[0].Title", d.Results[0].Title, "Battery Management System")
-		assertEq(t, "Results[0].FamilyID", d.Results[0].FamilyID, "43088294")
+		assertEq(t, "Query", d.Query, "ti = battery")
+		assertLen(t, "Results", len(d.Results), 3)
+		assertEq(t, "Results[0].Country", d.Results[0].Country, "WO")
+		assertEq(t, "Results[0].DocNumber", d.Results[0].DocNumber, "2026237540")
+		assertEq(t, "Results[0].Kind", d.Results[0].Kind, "A1")
+		assertEq(t, "Results[0].Title", d.Results[0].Title, "BATTERY CASE AND BATTERY PACK")
+		assertEq(t, "Results[0].FamilyID", d.Results[0].FamilyID, "102044919")
 	})
 
 	t.Run("family", func(t *testing.T) {
@@ -647,9 +655,9 @@ func TestKeyFields(t *testing.T) {
 			t.Fatal(err)
 		}
 		assertEq(t, "PatentNumber", d.PatentNumber, "EP2400812")
-		assertLen(t, "Members", len(d.Members), 3)
-		if got := strings.Join(d.Countries, ","); got != "EP,US,WO" {
-			t.Errorf("Countries = %q, want EP,US,WO", got)
+		assertLen(t, "Members", len(d.Members), 5)
+		if got := strings.Join(d.Countries, ","); got != "CA,EP,US" {
+			t.Errorf("Countries = %q, want CA,EP,US", got)
 		}
 	})
 
@@ -762,7 +770,9 @@ func TestKeyFields(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assertLen(t, "DocumentInstances", len(d.DocumentInstances), 3)
+		// Two publications (A1 and B1), three instances each.
+		assertLen(t, "DocumentInstances", len(d.DocumentInstances), 6)
+		assertLen(t, "Results", len(d.Results), 2)
 	})
 }
 

@@ -4,6 +4,8 @@ import (
 	_ "embed"
 	"encoding/xml"
 	"fmt"
+	"io"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -70,6 +72,11 @@ type BiblioData struct {
 	Inventors       []Party
 	IPCClasses      []string
 	CPCClasses      []CPCClass
+	// Document is the complete parse of the exchange-document this result was read from:
+	// application reference, publication references in every format, titles, parties in every
+	// data-format (docdb, epodoc, original), priority claims with their kind, classifications,
+	// citations and abstracts. Nil when the response holds no exchange-document.
+	Document *ExchangeDocument
 }
 
 // ClaimsData represents parsed patent claims
@@ -97,6 +104,18 @@ type CPCClass struct {
 	MainGroup string
 	Subgroup  string
 	Full      string // Combined representation (e.g., "H04W 84/20")
+	// Sequence, SchemeOffice, Scheme, Value, GeneratingOffice and ClassificationSymbol are the
+	// rest of the patent-classification element as OPS states it: its position, the
+	// classification-scheme attributes (e.g. office "", scheme "CPCI"), the
+	// classification-value ("I" inventive, "A" additional), the office that assigned the
+	// symbol, and the one-string symbol of schemes OPS does not split (e.g. FI, FTERM). Two
+	// entries with the same symbol differ in these fields.
+	Sequence             string
+	SchemeOffice         string
+	Scheme               string
+	Value                string
+	GeneratingOffice     string
+	ClassificationSymbol string
 }
 
 // Claim represents a single patent claim
@@ -116,6 +135,16 @@ type FamilyMember struct {
 	Applicants     []string // Applicant names (populated from biblio data, epodoc format)
 	ApplicationRef ApplicationReference
 	PriorityClaims []PriorityClaim
+	// PublicationRefs, ApplicationRefs and Priorities are the member's references and priority
+	// claims in full: every document-id in every format (docdb, epodoc, original), the
+	// reference attributes and each claim's kind. The fields above are a selection from them.
+	PublicationRefs []Reference
+	ApplicationRefs []Reference
+	Priorities      []Priority
+	// Documents are the member's exchange-documents in full (family with the biblio constituent).
+	Documents []ExchangeDocument
+	// LegalEvents are the member's INPADOC legal events (family with the legal constituent).
+	LegalEvents []LegalEvent
 }
 
 // ApplicationReference represents the application reference for a family member
@@ -136,6 +165,9 @@ type PriorityClaim struct {
 	Date      string
 	Sequence  string
 	Active    string
+	// ClaimKind is the kind attribute of the priority-claim (e.g. "national", "regional",
+	// "international"). Kind above is the kind code of the priority document.
+	ClaimKind string
 }
 
 // FamilyData represents parsed patent family data
@@ -147,6 +179,9 @@ type FamilyData struct {
 	Legal        bool
 	Countries    []string // Unique country codes from all members, sorted alphabetically
 	Members      []FamilyMember
+	// Publication is the document the family was requested for, as OPS echoes it at the top
+	// of the response (with its kind code and number format).
+	Publication []DocumentID
 }
 
 // LegalEvent represents a single legal event
@@ -159,6 +194,56 @@ type LegalEvent struct {
 	Date        string            // Gazette date from L007EP field
 	EventCode   string            // Legal event code from L008EP field
 	Fields      map[string]string // All L-code field values
+
+	// The fields below name L-codes that Fields holds under their code. Each is empty when the
+	// event does not carry the code.
+	RefCountry   string // L501EP "Ref Country Code": the state the event applies to
+	RefEventCode string // L502EP "Ref Legal Event Code": the event code in that state
+	// RefEventDescription and RefEventInfluence are the descData and infl attributes of
+	// L502EP: what the national event means (e.g. "LAPSED BECAUSE OF NON-PAYMENT OF THE ANNUAL
+	// FEE") and its influence on the right ("+" or "-"). Influence above is the infl of the
+	// event itself.
+	RefEventDescription string
+	RefEventInfluence   string
+	Owner               string // L509EP "OWNER"
+	FreeText            string // L510EP "Free Format Text", e.g. the stated reason of a lapse
+	PaymentDate         string // L518EP "Payment DATE" of a renewal fee
+	FeeYear             string // L520EP "Year of Fee Payment"
+	EffectiveDate       string // L525EP "Effective DATE"
+
+	// FieldList is every L-code of the event in document order with the label OPS gives it.
+	// Unlike Fields it keeps a code that occurs more than once.
+	FieldList []LegalField
+	// Pre are the event's raw <pre> lines.
+	Pre []LegalPre
+}
+
+// LegalField is one L-code element of a legal event. Desc is the label OPS attaches
+// (e.g. "Effective DATE"); Parent is the enclosing L-code for nested ones (e.g. "L500EP").
+// DescData and Influence are the descData and infl attributes OPS adds to a referenced
+// national event code (L502EP): its meaning and its influence on the right.
+type LegalField struct {
+	Code      string
+	Desc      string
+	Value     string
+	Parent    string
+	DescData  string
+	Influence string
+}
+
+// LegalPre is one raw <pre> line of a legal event with its line number.
+type LegalPre struct {
+	Line string
+	Text string
+}
+
+// LegalMember is one family member of a legal response with the events that belong to it.
+type LegalMember struct {
+	FamilyID        string
+	PublicationRefs []Reference
+	ApplicationRefs []Reference
+	Priorities      []Priority
+	LegalEvents     []LegalEvent
 }
 
 // LegalData represents parsed legal event data
@@ -167,6 +252,14 @@ type LegalData struct {
 	PatentNumber string
 	FamilyID     string
 	LegalEvents  []LegalEvent
+	// Publication is the document the events were requested for, as OPS echoes it at the top
+	// of the response (with its kind code and number format).
+	Publication []DocumentID
+	// TotalCount is the total-result-count of the response (the number of family members).
+	TotalCount int
+	// Members attributes the events: LegalEvents is the flat list over all family members,
+	// Members keeps each member's publication, application and priority with its own events.
+	Members []LegalMember
 }
 
 // RegisterEvent represents a single dossier event from the EPO Register
@@ -264,6 +357,12 @@ type SearchResult struct {
 	DocNumber string
 	Kind      string
 	Title     string
+	// DocumentIDType is the number format of a hit returned without a constituent
+	// (document-id-type, e.g. "docdb").
+	DocumentIDType string
+	// Document is the hit's exchange-document in full when the search was run with a
+	// constituent (biblio, abstract, full-cycle); nil otherwise.
+	Document *ExchangeDocument
 }
 
 // SearchResultData represents search results with pagination
@@ -274,6 +373,10 @@ type SearchResultData struct {
 	RangeBegin int
 	RangeEnd   int
 	Results    []SearchResult
+	// QuerySyntax is the syntax attribute of the echoed query ("CQL"); PublicationsCount the
+	// publications-count of the response (the number of hits in this page).
+	QuerySyntax       string
+	PublicationsCount int
 }
 
 // EquivalentPatent represents an equivalent patent
@@ -305,54 +408,65 @@ type abstractXML struct {
 }
 
 type biblioXML struct {
-	XMLName          xml.Name `xml:"world-patent-data"`
-	ExchangeDocument struct {
-		Country    string `xml:"country,attr"`
-		DocNumber  string `xml:"doc-number,attr"`
-		Kind       string `xml:"kind,attr"`
-		FamilyID   string `xml:"family-id,attr"`
-		BiblioData struct {
-			PublicationRef struct {
-				DocumentID []struct {
-					Type      string `xml:"document-id-type,attr"`
-					Country   string `xml:"country"`
-					DocNumber string `xml:"doc-number"`
-					Kind      string `xml:"kind"`
-					Date      string `xml:"date"`
-				} `xml:"document-id"`
-			} `xml:"publication-reference"`
-			InventionTitles []struct {
-				Lang string `xml:"lang,attr"`
-				Text string `xml:",chardata"`
-			} `xml:"invention-title"`
-			Parties struct {
-				Applicants []struct {
-					Sequence      string `xml:"sequence,attr"`
-					DataFormat    string `xml:"data-format,attr"`
-					ApplicantName struct {
-						Name string `xml:"name"`
-					} `xml:"applicant-name"`
-				} `xml:"applicants>applicant"`
-				Inventors []struct {
-					Sequence     string `xml:"sequence,attr"`
-					DataFormat   string `xml:"data-format,attr"`
-					InventorName struct {
-						Name string `xml:"name"`
-					} `xml:"inventor-name"`
-				} `xml:"inventors>inventor"`
-			} `xml:"parties"`
-			ClassificationsIPCR []struct {
-				Text string `xml:"text"`
-			} `xml:"classifications-ipcr>classification-ipcr"`
-			PatentClassifications []struct {
-				Section   string `xml:"section"`
-				Class     string `xml:"class"`
-				Subclass  string `xml:"subclass"`
-				MainGroup string `xml:"main-group"`
-				Subgroup  string `xml:"subgroup"`
-			} `xml:"patent-classifications>patent-classification"`
-		} `xml:"bibliographic-data"`
-	} `xml:"exchange-documents>exchange-document"`
+	XMLName           xml.Name       `xml:"world-patent-data"`
+	ExchangeDocuments []biblioDocXML `xml:"exchange-documents>exchange-document"`
+}
+
+// biblioDocXML is the projection of one exchange-document that BiblioData is built from.
+type biblioDocXML struct {
+	Country    string `xml:"country,attr"`
+	DocNumber  string `xml:"doc-number,attr"`
+	Kind       string `xml:"kind,attr"`
+	FamilyID   string `xml:"family-id,attr"`
+	BiblioData struct {
+		PublicationRef struct {
+			DocumentID []struct {
+				Type      string `xml:"document-id-type,attr"`
+				Country   string `xml:"country"`
+				DocNumber string `xml:"doc-number"`
+				Kind      string `xml:"kind"`
+				Date      string `xml:"date"`
+			} `xml:"document-id"`
+		} `xml:"publication-reference"`
+		InventionTitles []struct {
+			Lang string `xml:"lang,attr"`
+			Text string `xml:",chardata"`
+		} `xml:"invention-title"`
+		Parties struct {
+			Applicants []struct {
+				Sequence      string `xml:"sequence,attr"`
+				DataFormat    string `xml:"data-format,attr"`
+				ApplicantName struct {
+					Name string `xml:"name"`
+				} `xml:"applicant-name"`
+			} `xml:"applicants>applicant"`
+			Inventors []struct {
+				Sequence     string `xml:"sequence,attr"`
+				DataFormat   string `xml:"data-format,attr"`
+				InventorName struct {
+					Name string `xml:"name"`
+				} `xml:"inventor-name"`
+			} `xml:"inventors>inventor"`
+		} `xml:"parties"`
+		ClassificationsIPCR []struct {
+			Text string `xml:"text"`
+		} `xml:"classifications-ipcr>classification-ipcr"`
+		PatentClassifications []struct {
+			Sequence string `xml:"sequence,attr"`
+			Scheme   struct {
+				Office string `xml:"office,attr"`
+				Name   string `xml:"scheme,attr"`
+			} `xml:"classification-scheme"`
+			Section              string `xml:"section"`
+			Class                string `xml:"class"`
+			Subclass             string `xml:"subclass"`
+			MainGroup            string `xml:"main-group"`
+			Subgroup             string `xml:"subgroup"`
+			Value                string `xml:"classification-value"`
+			GeneratingOffice     string `xml:"generating-office"`
+			ClassificationSymbol string `xml:"classification-symbol"`
+		} `xml:"patent-classifications>patent-classification"`
+	} `xml:"bibliographic-data"`
 }
 
 type claimsXML struct {
@@ -417,18 +531,109 @@ func ParseAbstract(xmlData string) (*AbstractData, error) {
 	return data, nil
 }
 
-// ParseBiblio parses bibliographic XML into structured data
+// ParseBiblio parses a published-data biblio response into structured data.
+//
+// A response holds one exchange-document per publication kind. Asked for a number WITH a
+// kind code (EP2400812A1) OPS answers with that one document, and ParseBiblio returns it.
+// Asked for a number WITHOUT a kind code (EP2400812) OPS answers with every kind it has
+// published (A1, B1, ...), each a complete record of its own. ParseBiblio then returns the
+// LAST exchange-document of the response, whole: its kind, publication date, family id,
+// titles, parties and classifications all come from that one document and from no other.
+// In the recorded responses OPS lists the kinds in publication order (A1 before B1), which
+// makes the last one the most recent publication; the order is OPS's, it is not sorted here.
+// Use ParseBiblioDocuments to get every document of the response.
+//
+// Only exchange-documents directly under world-patent-data/exchange-documents count; a
+// response without one yields an empty result (non-nil, empty Titles) and a nil error.
 func ParseBiblio(xmlData string) (*BiblioData, error) {
 	var raw biblioXML
 	if err := xml.Unmarshal([]byte(xmlData), &raw); err != nil {
 		return nil, err
 	}
+	if len(raw.ExchangeDocuments) == 0 {
+		return &BiblioData{Titles: make(map[string]string)}, nil
+	}
+	last := len(raw.ExchangeDocuments) - 1
+	data := biblioFromDoc(raw.ExchangeDocuments[last])
 
+	// Attach the complete parse of the same document. The path test keeps the two parses
+	// aligned: both see exactly the exchange-documents under world-patent-data/exchange-documents.
+	full, err := decodeElements[ExchangeDocument](xmlData, "ParseBiblio", "exchange-document", "world-patent-data", "exchange-documents")
+	if err == nil && len(full) == len(raw.ExchangeDocuments) {
+		data.Document = &full[last]
+	}
+	return data, nil
+}
+
+// ParseBiblioDocuments parses every exchange-document of an OPS response into its own
+// BiblioData, in response order and regardless of nesting (published-data, search with the
+// biblio constituent, family with biblio). No field of one document reaches another. A
+// response with no exchange-document yields an empty slice and a nil error; only malformed
+// XML returns an error.
+func ParseBiblioDocuments(xmlData string) ([]*BiblioData, error) {
+	narrow, err := decodeElements[biblioDocXML](xmlData, "ParseBiblioDocuments", "exchange-document")
+	if err != nil {
+		return nil, err
+	}
+	full, err := decodeElements[ExchangeDocument](xmlData, "ParseBiblioDocuments", "exchange-document")
+	if err != nil {
+		return nil, err
+	}
+	docs := make([]*BiblioData, 0, len(narrow))
+	for i := range narrow {
+		data := biblioFromDoc(narrow[i])
+		if len(full) == len(narrow) {
+			data.Document = &full[i]
+		}
+		docs = append(docs, data)
+	}
+	return docs, nil
+}
+
+// decodeElements decodes every element with the given local name into a T, in document
+// order. With parents given, only elements whose ancestors are exactly those names (outermost
+// first) are decoded. Elements nested inside a decoded element are not visited again.
+func decodeElements[T any](xmlData, parser, local string, parents ...string) ([]T, error) {
+	fail := func(err error) error {
+		return &XMLParseError{Parser: parser, Element: local, XMLSample: truncateXML(xmlData, 200), Cause: err}
+	}
+	dec := xml.NewDecoder(strings.NewReader(xmlData))
+	var out []T
+	var stack []string
+	for {
+		tok, err := dec.Token()
+		if err == io.EOF {
+			return out, nil
+		}
+		if err != nil {
+			return nil, fail(err)
+		}
+		switch t := tok.(type) {
+		case xml.StartElement:
+			if t.Name.Local == local && (len(parents) == 0 || slices.Equal(stack, parents)) {
+				var v T
+				if err := dec.DecodeElement(&v, &t); err != nil {
+					return nil, fail(err)
+				}
+				out = append(out, v)
+				continue
+			}
+			stack = append(stack, t.Name.Local)
+		case xml.EndElement:
+			if len(stack) > 0 {
+				stack = stack[:len(stack)-1]
+			}
+		}
+	}
+}
+
+// biblioFromDoc builds the BiblioData of one exchange-document.
+func biblioFromDoc(doc biblioDocXML) *BiblioData {
 	data := &BiblioData{
-		Country:   raw.ExchangeDocument.Country,
-		DocNumber: raw.ExchangeDocument.DocNumber,
-		Kind:      raw.ExchangeDocument.Kind,
-		FamilyID:  raw.ExchangeDocument.FamilyID,
+		Country:   doc.Country,
+		DocNumber: doc.DocNumber,
+		Kind:      doc.Kind,
+		FamilyID:  doc.FamilyID,
 		Titles:    make(map[string]string),
 	}
 
@@ -438,7 +643,7 @@ func ParseBiblio(xmlData string) (*BiblioData, error) {
 	}
 
 	// Extract publication date from first docdb document-id
-	for _, docID := range raw.ExchangeDocument.BiblioData.PublicationRef.DocumentID {
+	for _, docID := range doc.BiblioData.PublicationRef.DocumentID {
 		if docID.Type == "docdb" && docID.Date != "" {
 			data.PublicationDate = docID.Date
 			break
@@ -446,14 +651,14 @@ func ParseBiblio(xmlData string) (*BiblioData, error) {
 	}
 
 	// Extract titles (multilingual)
-	for _, title := range raw.ExchangeDocument.BiblioData.InventionTitles {
+	for _, title := range doc.BiblioData.InventionTitles {
 		if title.Lang != "" && title.Text != "" {
 			data.Titles[title.Lang] = strings.TrimSpace(title.Text)
 		}
 	}
 
 	// Extract applicants (only epodoc format to avoid duplicates)
-	for _, applicant := range raw.ExchangeDocument.BiblioData.Parties.Applicants {
+	for _, applicant := range doc.BiblioData.Parties.Applicants {
 		if applicant.DataFormat == "epodoc" && applicant.ApplicantName.Name != "" {
 			name := strings.TrimSpace(applicant.ApplicantName.Name)
 			// Extract country from name if present (format: "NAME [CC]")
@@ -472,7 +677,7 @@ func ParseBiblio(xmlData string) (*BiblioData, error) {
 	}
 
 	// Extract inventors (only epodoc format)
-	for _, inventor := range raw.ExchangeDocument.BiblioData.Parties.Inventors {
+	for _, inventor := range doc.BiblioData.Parties.Inventors {
 		if inventor.DataFormat == "epodoc" && inventor.InventorName.Name != "" {
 			name := strings.TrimSpace(inventor.InventorName.Name)
 			country := ""
@@ -490,27 +695,33 @@ func ParseBiblio(xmlData string) (*BiblioData, error) {
 	}
 
 	// Extract IPC classifications
-	for _, ipc := range raw.ExchangeDocument.BiblioData.ClassificationsIPCR {
+	for _, ipc := range doc.BiblioData.ClassificationsIPCR {
 		if ipc.Text != "" {
 			data.IPCClasses = append(data.IPCClasses, strings.TrimSpace(ipc.Text))
 		}
 	}
 
 	// Extract CPC classifications
-	for _, cpc := range raw.ExchangeDocument.BiblioData.PatentClassifications {
+	for _, cpc := range doc.BiblioData.PatentClassifications {
 		class := CPCClass{
-			Section:   cpc.Section,
-			Class:     cpc.Class,
-			Subclass:  cpc.Subclass,
-			MainGroup: cpc.MainGroup,
-			Subgroup:  cpc.Subgroup,
+			Section:              cpc.Section,
+			Class:                cpc.Class,
+			Subclass:             cpc.Subclass,
+			MainGroup:            cpc.MainGroup,
+			Subgroup:             cpc.Subgroup,
+			Sequence:             cpc.Sequence,
+			SchemeOffice:         cpc.Scheme.Office,
+			Scheme:               cpc.Scheme.Name,
+			Value:                cpc.Value,
+			GeneratingOffice:     cpc.GeneratingOffice,
+			ClassificationSymbol: cpc.ClassificationSymbol,
 		}
 		// Build full representation
 		class.Full = fmt.Sprintf("%s%s%s %s/%s", class.Section, class.Class, class.Subclass, class.MainGroup, class.Subgroup)
 		data.CPCClasses = append(data.CPCClasses, class)
 	}
 
-	return data, nil
+	return data
 }
 
 // ParseClaims parses claims XML into structured data
@@ -559,46 +770,37 @@ func ParseClaims(xmlData string) (*ClaimsData, error) {
 type imageInquiryXML struct {
 	XMLName         xml.Name `xml:"world-patent-data"`
 	DocumentInquiry struct {
-		InquiryResult struct {
-			DocumentInstances []struct {
-				Desc          string `xml:"desc,attr"`
-				NumberOfPages int    `xml:"number-of-pages,attr"`
-				DocType       string `xml:"doc-type,attr"`
-				LinkAttr      string `xml:"link,attr"`
-				LinkElem      struct {
-					Href string `xml:"href,attr"`
-				} `xml:"document-instance-link"`
-				FormatOptions struct {
-					Formats []struct {
-						Value string `xml:",chardata"`
-					} `xml:"document-format"`
-				} `xml:"document-format-options"`
-			} `xml:"document-instance"`
-		} `xml:"inquiry-result"`
+		Publication    []DocumentID            `xml:"publication-reference>document-id"`
+		InquiryResults []imageInquiryResultXML `xml:"inquiry-result"`
 	} `xml:"document-inquiry"`
 }
 
-// ParseImageInquiry parses image inquiry XML into structured data.
+type imageInquiryResultXML struct {
+	Publication       []DocumentID `xml:"publication-reference>document-id"`
+	DocumentInstances []struct {
+		System        string `xml:"system,attr"`
+		Desc          string `xml:"desc,attr"`
+		NumberOfPages int    `xml:"number-of-pages,attr"`
+		DocType       string `xml:"doc-type,attr"`
+		LinkAttr      string `xml:"link,attr"`
+		LinkElem      struct {
+			Href string `xml:"href,attr"`
+		} `xml:"document-instance-link"`
+		FormatOptions struct {
+			Formats []struct {
+				Value string `xml:",chardata"`
+			} `xml:"document-format"`
+		} `xml:"document-format-options"`
+		Sections []DocumentSection `xml:"document-section"`
+	} `xml:"document-instance"`
+}
+
+// ParseImageInquiry parses an image inquiry response.
 //
-// This function processes the XML response from the EPO OPS Published Images Inquiry service
-// and extracts information about available document instances (drawings, full document, etc.),
-// their page counts, available formats, and download links.
-//
-// Example XML structure:
-//
-//	<ops:world-patent-data>
-//	  <ops:document-inquiry>
-//	    <ops:inquiry-result>
-//	      <ops:document-instance desc="Drawing" number-of-pages="5" doc-type="Drawing">
-//	        <ops:document-instance-link href="..."/>
-//	        <ops:document-format-options>
-//	          <ops:document-format>application/pdf</ops:document-format>
-//	          <ops:document-format>image/tiff</ops:document-format>
-//	        </ops:document-format-options>
-//	      </ops:document-instance>
-//	    </ops:inquiry-result>
-//	  </ops:document-inquiry>
-//	</ops:world-patent-data>
+// The response holds one inquiry-result per publication: a number without a kind code is
+// answered with one result per published kind (A1, B1, ...). DocumentInstances lists the
+// instances of ALL results in response order, as it always did; Results keeps them apart,
+// each with the publication it belongs to.
 func ParseImageInquiry(xmlData string) (*ImageInquiry, error) {
 	var raw imageInquiryXML
 	if err := xml.Unmarshal([]byte(xmlData), &raw); err != nil {
@@ -611,38 +813,47 @@ func ParseImageInquiry(xmlData string) (*ImageInquiry, error) {
 	}
 
 	result := &ImageInquiry{
-		DocumentInstances: make([]DocumentInstance, 0, len(raw.DocumentInquiry.InquiryResult.DocumentInstances)),
+		DocumentInstances: []DocumentInstance{},
+		Publication:       raw.DocumentInquiry.Publication,
 	}
 
-	for _, inst := range raw.DocumentInquiry.InquiryResult.DocumentInstances {
-		// The link is a "link" attribute on document-instance; tolerate the nested
-		// document-instance-link/@href form as a fallback.
-		link := strings.TrimSpace(inst.LinkAttr)
-		if link == "" {
-			link = strings.TrimSpace(inst.LinkElem.Href)
-		}
-		if link == "" {
-			// An instance without a resolvable link cannot be fetched; skip it
-			// rather than failing the whole inquiry.
-			continue
-		}
-
-		// Extract formats
-		formats := make([]string, 0, len(inst.FormatOptions.Formats))
-		for _, f := range inst.FormatOptions.Formats {
-			format := strings.TrimSpace(f.Value)
-			if format != "" {
-				formats = append(formats, format)
+	for _, res := range raw.DocumentInquiry.InquiryResults {
+		group := ImageInquiryResult{Publication: res.Publication}
+		for _, inst := range res.DocumentInstances {
+			// The link is a "link" attribute on document-instance; tolerate the nested
+			// document-instance-link/@href form as a fallback.
+			link := strings.TrimSpace(inst.LinkAttr)
+			if link == "" {
+				link = strings.TrimSpace(inst.LinkElem.Href)
 			}
-		}
+			if link == "" {
+				// An instance without a resolvable link cannot be fetched; skip it
+				// rather than failing the whole inquiry.
+				continue
+			}
 
-		result.DocumentInstances = append(result.DocumentInstances, DocumentInstance{
-			Description:   inst.Desc,
-			Link:          link,
-			NumberOfPages: inst.NumberOfPages,
-			Formats:       formats,
-			DocType:       inst.DocType,
-		})
+			// Extract formats
+			formats := make([]string, 0, len(inst.FormatOptions.Formats))
+			for _, f := range inst.FormatOptions.Formats {
+				format := strings.TrimSpace(f.Value)
+				if format != "" {
+					formats = append(formats, format)
+				}
+			}
+
+			instance := DocumentInstance{
+				Description:   inst.Desc,
+				Link:          link,
+				NumberOfPages: inst.NumberOfPages,
+				Formats:       formats,
+				DocType:       inst.DocType,
+				System:        inst.System,
+				Sections:      inst.Sections,
+			}
+			group.DocumentInstances = append(group.DocumentInstances, instance)
+			result.DocumentInstances = append(result.DocumentInstances, instance)
+		}
+		result.Results = append(result.Results, group)
 	}
 
 	// Validate we have at least one document instance
@@ -812,6 +1023,7 @@ func ParseFamily(xmlData string) (*FamilyData, error) {
 				Date:      pc.DocumentID.Date,
 				Sequence:  pc.Sequence,
 				Active:    pc.ActiveIndicator,
+				ClaimKind: pc.Kind,
 			})
 		}
 
@@ -873,7 +1085,41 @@ func ParseFamily(xmlData string) (*FamilyData, error) {
 		data.Countries = []string{}
 	}
 
+	// Attach each member's complete references, exchange-documents and legal events. The path
+	// test keeps this second pass aligned with the members read above.
+	full, err := decodeElements[familyMemberXML](xmlData, "ParseFamily", "family-member", "world-patent-data", "patent-family")
+	if err == nil && len(full) == len(data.Members) {
+		for i, m := range full {
+			data.Members[i].PublicationRefs = m.PublicationRefs
+			data.Members[i].ApplicationRefs = m.ApplicationRefs
+			data.Members[i].Priorities = m.Priorities
+			data.Members[i].Documents = m.Documents
+			for _, l := range m.Legal {
+				data.Members[i].LegalEvents = append(data.Members[i].LegalEvents, legalEventFrom(l))
+			}
+		}
+	}
+	if head, err := decodeElements[familyHeadXML](xmlData, "ParseFamily", "patent-family", "world-patent-data"); err == nil && len(head) > 0 {
+		data.Publication = head[0].Publication
+	}
+
 	return data, nil
+}
+
+// familyMemberXML is one family-member in full, shared by the family and legal parsers.
+type familyMemberXML struct {
+	FamilyID        string             `xml:"family-id,attr"`
+	PublicationRefs []Reference        `xml:"publication-reference"`
+	ApplicationRefs []Reference        `xml:"application-reference"`
+	Priorities      []Priority         `xml:"priority-claim"`
+	Documents       []ExchangeDocument `xml:"exchange-document"`
+	Legal           []legalEventXML    `xml:"legal"`
+}
+
+// familyHeadXML is the patent-family element's own data: its attributes and the echoed request.
+type familyHeadXML struct {
+	TotalResultCount string       `xml:"total-result-count,attr"`
+	Publication      []DocumentID `xml:"publication-reference>document-id"`
 }
 
 // Internal structs for Legal XML unmarshaling
@@ -905,6 +1151,8 @@ type legalEventXML struct {
 	DateMigr string            `xml:"dateMigr,attr"`
 	Pre      []string          `xml:"pre"`
 	Fields   map[string]string // every L-code child element (L001EP..L5xxEP), unbounded
+	List     []LegalField      // the same elements in document order, repeats kept
+	PreLines []LegalPre        // the <pre> lines with their line attribute
 }
 
 // UnmarshalXML captures every child element of <legal> dynamically, so any L-code is kept
@@ -924,15 +1172,32 @@ func (e *legalEventXML) UnmarshalXML(d *xml.Decoder, start xml.StartElement) err
 			e.DateMigr = a.Value
 		}
 	}
-	return e.walkLegal(d, start)
+	return e.walkLegal(d, start, "")
 }
 
 // walkLegal records the direct text of every descendant element under its local name. OPS
 // nests some L-codes inside others (e.g. L500EP contains L525EP), so a flat walk over direct
 // children misses them; recursing captures every L-code at any depth. <pre> raw lines are
 // collected separately.
-func (e *legalEventXML) walkLegal(d *xml.Decoder, start xml.StartElement) error {
+func (e *legalEventXML) walkLegal(d *xml.Decoder, start xml.StartElement, parent string) error {
 	var text strings.Builder
+	// Reserve the element's place before its children are walked, so List is in document order.
+	at := -1
+	if start.Name.Local != "legal" {
+		at = len(e.List)
+		f := LegalField{Code: start.Name.Local, Parent: parent}
+		for _, a := range start.Attr {
+			switch a.Name.Local {
+			case "desc":
+				f.Desc = a.Value
+			case "descData":
+				f.DescData = a.Value
+			case "infl":
+				f.Influence = a.Value
+			}
+		}
+		e.List = append(e.List, f)
+	}
 	for {
 		tok, err := d.Token()
 		if err != nil {
@@ -943,14 +1208,22 @@ func (e *legalEventXML) walkLegal(d *xml.Decoder, start xml.StartElement) error 
 			text.Write(t)
 		case xml.StartElement:
 			if t.Name.Local == "pre" {
-				var v string
+				var v struct {
+					Line string `xml:"line,attr"`
+					Text string `xml:",chardata"`
+				}
 				if err := d.DecodeElement(&v, &t); err != nil {
 					return err
 				}
-				e.Pre = append(e.Pre, v)
+				e.Pre = append(e.Pre, v.Text)
+				e.PreLines = append(e.PreLines, LegalPre{Line: v.Line, Text: v.Text})
 				continue
 			}
-			if err := e.walkLegal(d, t); err != nil {
+			child := parent
+			if start.Name.Local != "legal" {
+				child = start.Name.Local
+			}
+			if err := e.walkLegal(d, t, child); err != nil {
 				return err
 			}
 		case xml.EndElement:
@@ -960,6 +1233,9 @@ func (e *legalEventXML) walkLegal(d *xml.Decoder, start xml.StartElement) error 
 			// are preserved separately in Pre.
 			if v := strings.TrimSpace(text.String()); v != "" && start.Name.Local != "legal" {
 				e.Fields[start.Name.Local] = v
+			}
+			if at >= 0 {
+				e.List[at].Value = strings.TrimSpace(text.String())
 			}
 			return nil
 		}
@@ -1000,23 +1276,67 @@ func ParseLegal(xmlData string) (*LegalData, error) {
 		}
 
 		for _, legal := range member.LegalEvents {
-			fields := legal.Fields
-			event := LegalEvent{
-				Code:        strings.TrimSpace(legal.Code),
-				Description: strings.TrimSpace(legal.Desc),
-				Influence:   strings.TrimSpace(legal.Infl),
-				DateMigr:    strings.TrimSpace(legal.DateMigr),
-				Country:     strings.TrimSpace(fields["L001EP"]),
-				Date:        strings.TrimSpace(fields["L007EP"]),
-				EventCode:   strings.TrimSpace(fields["L008EP"]),
-				Fields:      fields,
-			}
+			data.LegalEvents = append(data.LegalEvents, legalEventFrom(legal))
+		}
+	}
 
-			data.LegalEvents = append(data.LegalEvents, event)
+	// Attribute the events to their family members and read the response head.
+	if members, err := decodeElements[familyMemberXML](xmlData, "ParseLegal", "family-member", "world-patent-data", "patent-family"); err == nil {
+		for _, m := range members {
+			lm := LegalMember{
+				FamilyID:        m.FamilyID,
+				PublicationRefs: m.PublicationRefs,
+				ApplicationRefs: m.ApplicationRefs,
+				Priorities:      m.Priorities,
+			}
+			for _, l := range m.Legal {
+				lm.LegalEvents = append(lm.LegalEvents, legalEventFrom(l))
+			}
+			data.Members = append(data.Members, lm)
+		}
+	}
+	if head, err := decodeElements[familyHeadXML](xmlData, "ParseLegal", "patent-family", "world-patent-data"); err == nil && len(head) > 0 {
+		data.Publication = head[0].Publication
+		if head[0].TotalResultCount != "" {
+			_, _ = fmt.Sscanf(head[0].TotalResultCount, "%d", &data.TotalCount)
 		}
 	}
 
 	return data, nil
+}
+
+// legalEventFrom builds the public event from one decoded <legal> element.
+func legalEventFrom(legal legalEventXML) LegalEvent {
+	fields := legal.Fields
+	var refDesc, refInfl string
+	for _, f := range legal.List {
+		if f.Code == "L502EP" {
+			refDesc, refInfl = f.DescData, f.Influence
+		}
+	}
+	return LegalEvent{
+		Code:         strings.TrimSpace(legal.Code),
+		Description:  strings.TrimSpace(legal.Desc),
+		Influence:    strings.TrimSpace(legal.Infl),
+		DateMigr:     strings.TrimSpace(legal.DateMigr),
+		Country:      strings.TrimSpace(fields["L001EP"]),
+		Date:         strings.TrimSpace(fields["L007EP"]),
+		EventCode:    strings.TrimSpace(fields["L008EP"]),
+		Fields:       fields,
+		RefCountry:   fields["L501EP"],
+		RefEventCode: fields["L502EP"],
+
+		RefEventDescription: refDesc,
+		RefEventInfluence:   refInfl,
+
+		Owner:         fields["L509EP"],
+		FreeText:      fields["L510EP"],
+		PaymentDate:   fields["L518EP"],
+		FeeYear:       fields["L520EP"],
+		EffectiveDate: fields["L525EP"],
+		FieldList:     legal.List,
+		Pre:           legal.PreLines,
+	}
 }
 
 // Internal structs for Description XML unmarshaling
@@ -1029,6 +1349,7 @@ type descriptionXML struct {
 			Kind       string `xml:"kind,attr"`
 			BiblioData struct {
 				PublicationRef struct {
+					DataFormat string `xml:"data-format,attr"`
 					DocumentID struct {
 						Country   string `xml:"country"`
 						DocNumber string `xml:"doc-number"`
@@ -1072,6 +1393,11 @@ func ParseDescription(xmlData string) (*DescriptionData, error) {
 	if doc.BiblioData.PublicationRef.DocumentID.Country != "" {
 		pubRef := doc.BiblioData.PublicationRef.DocumentID
 		data.PatentNumber = pubRef.Country + pubRef.DocNumber
+		// OPS states the document's identity in the publication-reference, not as
+		// attributes of fulltext-document; read it from there when the attributes are absent.
+		if data.Country == "" && data.DocNumber == "" && data.Kind == "" {
+			data.Country, data.DocNumber, data.Kind = pubRef.Country, pubRef.DocNumber, pubRef.Kind
+		}
 	} else {
 		data.PatentNumber = doc.Country + doc.DocNumber
 	}
@@ -1098,6 +1424,14 @@ type fulltextXML struct {
 			Kind      string `xml:"kind,attr"`
 			Lang      string `xml:"lang,attr"`
 			Status    string `xml:"status,attr"`
+			PubRef    struct {
+				DataFormat string `xml:"data-format,attr"`
+				DocumentID struct {
+					Country   string `xml:"country"`
+					DocNumber string `xml:"doc-number"`
+					Kind      string `xml:"kind"`
+				} `xml:"document-id"`
+			} `xml:"bibliographic-data>publication-reference"`
 		} `xml:"fulltext-document"`
 	} `xml:"fulltext-documents"`
 }
@@ -1116,6 +1450,12 @@ func ParseFulltext(xmlData string) (*FulltextData, error) {
 		Kind:      doc.Kind,
 		Language:  doc.Lang,
 		Status:    doc.Status,
+	}
+	// OPS states the document's identity in the publication-reference, not as attributes of
+	// fulltext-document; read it from there when the attributes are absent.
+	if data.Country == "" && data.DocNumber == "" && data.Kind == "" {
+		id := doc.PubRef.DocumentID
+		data.Country, data.DocNumber, data.Kind = id.Country, id.DocNumber, id.Kind
 	}
 
 	// Try to parse each section separately using existing parsers
@@ -1162,6 +1502,7 @@ type searchPubRef struct {
 	System   string `xml:"system,attr"`
 	FamilyID string `xml:"family-id,attr"`
 	DocID    struct {
+		Type      string `xml:"document-id-type,attr"`
 		Country   string `xml:"country"`
 		DocNumber string `xml:"doc-number"`
 		Kind      string `xml:"kind"`
@@ -1172,9 +1513,13 @@ type searchPubRef struct {
 type searchXML struct {
 	XMLName      xml.Name `xml:"world-patent-data"`
 	BiblioSearch struct {
-		TotalResultCount string `xml:"total-result-count,attr"`
-		Query            string `xml:"query"`
-		Range            struct {
+		TotalResultCount  string `xml:"total-result-count,attr"`
+		PublicationsCount string `xml:"publications-count,attr"`
+		Query             struct {
+			Syntax string `xml:"syntax,attr"`
+			Text   string `xml:",chardata"`
+		} `xml:"query"`
+		Range struct {
 			Begin string `xml:"begin,attr"`
 			End   string `xml:"end,attr"`
 		} `xml:"range"`
@@ -1199,7 +1544,11 @@ func ParseSearch(xmlData string) (*SearchResultData, error) {
 	}
 
 	data := &SearchResultData{
-		Query: raw.BiblioSearch.Query,
+		Query:       raw.BiblioSearch.Query.Text,
+		QuerySyntax: raw.BiblioSearch.Query.Syntax,
+	}
+	if raw.BiblioSearch.PublicationsCount != "" {
+		_, _ = fmt.Sscanf(raw.BiblioSearch.PublicationsCount, "%d", &data.PublicationsCount)
 	}
 
 	// Parse counts and ranges
@@ -1233,15 +1582,28 @@ func ParseSearch(xmlData string) (*SearchResultData, error) {
 		data.Results = append(data.Results, result)
 	}
 
+	// Attach each hit's complete exchange-document. The path test keeps this second pass
+	// aligned with the hits read above.
+	if len(data.Results) > 0 {
+		full, err := decodeElements[ExchangeDocument](xmlData, "ParseSearch", "exchange-document",
+			"world-patent-data", "biblio-search", "search-result", "exchange-documents")
+		if err == nil && len(full) == len(data.Results) {
+			for i := range full {
+				data.Results[i].Document = &full[i]
+			}
+		}
+	}
+
 	// Fallback: parse publication-reference elements (search without constituents)
 	if len(data.Results) == 0 {
 		for _, ref := range raw.BiblioSearch.SearchResult.PublicationReferences {
 			data.Results = append(data.Results, SearchResult{
-				System:    ref.System,
-				FamilyID:  ref.FamilyID,
-				Country:   ref.DocID.Country,
-				DocNumber: ref.DocID.DocNumber,
-				Kind:      ref.DocID.Kind,
+				System:         ref.System,
+				FamilyID:       ref.FamilyID,
+				Country:        ref.DocID.Country,
+				DocNumber:      ref.DocID.DocNumber,
+				Kind:           ref.DocID.Kind,
+				DocumentIDType: ref.DocID.Type,
 			})
 		}
 	}

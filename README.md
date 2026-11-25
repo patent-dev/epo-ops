@@ -159,6 +159,49 @@ fulltext, err := client.GetFulltext(ctx, "publication", "docdb", "EP.1000000.B1"
 equivalents, err := client.GetPublishedEquivalents(ctx, "publication", "docdb", "EP.1000000.B1")
 ```
 
+#### Numbers without a kind code
+
+A biblio response holds one exchange-document per publication kind. A number with a kind
+code (`EP.2400812.A1`) is answered with that one document. A number without one
+(`EP2400812` in epodoc format) is answered with every kind OPS has published (A1, B1, ...),
+each a complete record of its own with its own publication date, classifications and
+citations.
+
+- `ParseBiblioDocuments` returns one `*BiblioData` per exchange-document, in response order.
+  No field of one document reaches another.
+- `ParseBiblio` (and `GetBiblio`) returns one document: the last exchange-document of the
+  response, whole. In the recorded responses OPS lists the kinds in publication order (A1
+  before B1), which makes that the most recent publication; the library does not sort.
+
+```go
+raw, err := client.GetBiblioRaw(ctx, "publication", "epodoc", "EP2400812")
+docs, err := ops.ParseBiblioDocuments(raw)
+for _, d := range docs {
+    fmt.Println(d.PatentNumber, d.PublicationDate) // EP2400812A1 20111228, EP2400812B1 20191127
+}
+```
+
+#### Complete bibliographic data
+
+`BiblioData` is a selection. Its `Document` field is the complete parse of the same
+exchange-document (`*ExchangeDocument`, also returned by `ParseExchangeDocuments` and
+`GetExchangeDocuments`): the application reference with number and filing date in every
+format, titles in every language, parties in every data-format (docdb, epodoc, original),
+priority claims with their kind, classifications with scheme, value and generating office,
+citations with the cited document's kind, name and date, and abstracts.
+
+```go
+doc := biblio.Document
+fmt.Println(doc.ApplicationNumber("epodoc"), doc.Title("de", "en"))
+for _, c := range biblio.CPCClasses {
+    fmt.Println(c.Full, c.Scheme, c.Value, c.GeneratingOffice) // H04W 84/20 CPCI I US
+}
+```
+
+An element OPS sends that no typed field models is kept, not dropped: the `Unparsed`
+field of `ExchangeDocument`, `BibliographicData` and `RegisterDocument` holds its name,
+attributes and inner XML.
+
 ### Search
 
 Returns `*SearchResultData` with parsed results.
@@ -173,11 +216,15 @@ for _, r := range results.Results {
     fmt.Printf("  %s%s%s - %s\n", r.Country, r.DocNumber, r.Kind, r.Title)
 }
 
-// Search with a specific constituent.
+// Search with a specific constituent. Each hit carries its whole exchange-document.
 results, err = client.SearchWithConstituent(ctx, "biblio", "pa=Siemens", "1-10")
+for _, r := range results.Results {
+    fmt.Println(r.Document.ApplicationNumber("epodoc"), len(r.Document.Biblio.Applicants))
+}
 
 // Raw XML access.
 xmlData, err := client.SearchRaw(ctx, "ti=battery", "1-25")
+xmlData, err = client.SearchWithConstituentRaw(ctx, "biblio", "ti=battery", "1-25")
 ```
 
 CQL examples: `ti=plastic` (title), `pa=Siemens` (applicant), `ic=H04W` (IPC class),
@@ -207,6 +254,11 @@ family, err = client.GetFamilyWithLegal(ctx, "publication", "docdb", "EP.1000000
 // Raw XML access.
 xmlData, err := client.GetFamilyRaw(ctx, "publication", "docdb", "EP.1000000.B1")
 ```
+
+Each `FamilyMember` also carries its complete references and priority claims
+(`PublicationRefs`, `ApplicationRefs`, `Priorities`), its exchange-documents (`Documents`,
+with the biblio constituent) and its legal events (`LegalEvents`, with the legal
+constituent).
 
 ### Images and TIFF conversion
 
@@ -249,6 +301,39 @@ regEvents, err := client.GetRegisterEvents(ctx, "publication", "epodoc", "EP1000
 
 // EPO Register bibliographic data (raw XML).
 registerBiblio, err := client.GetRegisterBiblioRaw(ctx, "publication", "epodoc", "EP1000000")
+
+// EPO Register record, parsed -> []RegisterDocument
+docs, err := client.GetRegister(ctx, "publication", "epodoc", "EP1000000")
+```
+
+A legal event keeps every L-code in `Fields` (by code) and `FieldList` (in order, with the
+label OPS gives it). The codes with a meaning of their own also have a named field:
+`RefCountry` (the state the event applies to), `RefEventCode`, `RefEventDescription` (e.g.
+the stated reason of a lapse), `RefEventInfluence`, `EffectiveDate`, `PaymentDate`,
+`FeeYear`, `Owner` and `FreeText`. `LegalData.Members` attributes the events to their
+family member.
+
+The register keeps history: it repeats a block (applicants, inventors, representatives,
+classifications, priorities, designated states, opposition data) once per change, newest
+first, each stamped with a change date and a gazette number. `RegisterDocument.Biblio`
+keeps the blocks apart (`ApplicantGroups`, `InventorGroups`, `AgentGroups`, `IPCRGroups`,
+`CPCGroups`, `PriorityGroups`, `DesignationGroups`, `Oppositions`) next to the flat lists
+that hold the entries of all blocks. Parties come with their full addressbook (address
+lines, country, rep-type). The record also carries the status text and timeline, the filing
+language, examination milestones (`Milestones`), divisional parents and children
+(`RelatedDocuments`), search report information (`SearchReports`), opponents with their
+representatives, revocation and appeal data, the dossier events (`Events`), and for unitary
+patents the procedural steps and events of the request for unitary effect
+(`UnitaryProceduralSteps`, `UnitaryEvents`).
+
+```go
+b := docs[0].Biblio
+for _, rep := range b.CurrentRepresentatives() {
+    fmt.Println(rep.Addressbook.Name, rep.Addressbook.AddressLines(), rep.Addressbook.Country)
+}
+for _, g := range b.AgentGroups[1:] { // former representatives
+    fmt.Println(g.ChangeDate, g.GazetteNum, g.Representatives[0].Addressbook.Name)
+}
 ```
 
 ### Number conversion
@@ -331,6 +416,11 @@ Integration tests require credentials in the environment:
 export EPO_OPS_CONSUMER_KEY="your-key"
 export EPO_OPS_CONSUMER_SECRET="your-secret"
 ```
+
+The fixtures in `testdata/` are recorded OPS responses. `make examples` records them
+through the demo into `demo/examples/`, and `make refresh-fixtures` copies the recordings
+over the fixtures. `testdata/error_404.xml` and `testdata/error_429.xml` are the two
+exceptions: they are hand-written fault bodies, not recordings.
 
 See the [demo/](demo/) directory for a complete example application exercising all features.
 

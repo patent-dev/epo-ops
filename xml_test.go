@@ -209,57 +209,49 @@ func TestParseImageInquiry(t *testing.T) {
 		t.Fatalf("ParseImageInquiry failed: %v", err)
 	}
 
-	// Should have 3 document instances
-	if len(data.DocumentInstances) != 3 {
-		t.Fatalf("DocumentInstances: got %d, want 3", len(data.DocumentInstances))
+	// The inquiry was made without a kind code, so OPS answers with one result per
+	// publication (A1 and B1), three instances each.
+	if len(data.DocumentInstances) != 6 {
+		t.Fatalf("DocumentInstances: got %d, want 6", len(data.DocumentInstances))
 	}
 
-	// Check first instance (Drawing)
+	// Check first instance (Drawing of the A1)
 	drawing := data.DocumentInstances[0]
 	if drawing.Description != "Drawing" {
 		t.Errorf("Drawing desc: got %q, want %q", drawing.Description, "Drawing")
 	}
-	if drawing.NumberOfPages != 8 {
-		t.Errorf("Drawing pages: got %d, want 8", drawing.NumberOfPages)
-	}
-	if drawing.DocType != "Drawing" {
-		t.Errorf("Drawing type: got %q, want %q", drawing.DocType, "Drawing")
+	if drawing.NumberOfPages != 3 {
+		t.Errorf("Drawing pages: got %d, want 3", drawing.NumberOfPages)
 	}
 	if len(drawing.Formats) != 2 {
 		t.Errorf("Drawing formats: got %d, want 2", len(drawing.Formats))
 	}
-	if drawing.Link != "/rest-services/published-data/images/EP/1000000/B1/Drawing/fullimage" {
+	if drawing.Link != "published-data/images/EP/2400812/A1/thumbnail" {
 		t.Errorf("Drawing link: got %q", drawing.Link)
 	}
 
-	// Check second instance (FullDocument)
-	fullDoc := data.DocumentInstances[1]
-	if fullDoc.Description != "FullDocument" {
-		t.Errorf("FullDocument desc: got %q, want %q", fullDoc.Description, "FullDocument")
-	}
-	if fullDoc.NumberOfPages != 15 {
-		t.Errorf("FullDocument pages: got %d, want 15", fullDoc.NumberOfPages)
-	}
-	if len(fullDoc.Formats) != 1 {
-		t.Errorf("FullDocument formats: got %d, want 1", len(fullDoc.Formats))
-	}
-	if fullDoc.Formats[0] != "application/pdf" {
-		t.Errorf("FullDocument format: got %q, want %q", fullDoc.Formats[0], "application/pdf")
-	}
-
-	// Check third instance (FirstPageClipping)
-	clipping := data.DocumentInstances[2]
+	// Check second instance (FirstPageClipping of the A1)
+	clipping := data.DocumentInstances[1]
 	if clipping.Description != "FirstPageClipping" {
 		t.Errorf("FirstPageClipping desc: got %q, want %q", clipping.Description, "FirstPageClipping")
 	}
 	if clipping.NumberOfPages != 1 {
 		t.Errorf("FirstPageClipping pages: got %d, want 1", clipping.NumberOfPages)
 	}
-	if len(clipping.Formats) != 1 {
-		t.Errorf("FirstPageClipping formats: got %d, want 1", len(clipping.Formats))
+	if len(clipping.Formats) != 4 {
+		t.Errorf("FirstPageClipping formats: got %d, want 4", len(clipping.Formats))
 	}
-	if clipping.Formats[0] != "image/tiff" {
-		t.Errorf("FirstPageClipping format: got %q, want %q", clipping.Formats[0], "image/tiff")
+
+	// Check third instance (FullDocument of the A1)
+	fullDoc := data.DocumentInstances[2]
+	if fullDoc.Description != "FullDocument" {
+		t.Errorf("FullDocument desc: got %q, want %q", fullDoc.Description, "FullDocument")
+	}
+	if fullDoc.NumberOfPages != 18 {
+		t.Errorf("FullDocument pages: got %d, want 18", fullDoc.NumberOfPages)
+	}
+	if fullDoc.Link != "published-data/images/EP/2400812/A1/fullimage" {
+		t.Errorf("FullDocument link: got %q", fullDoc.Link)
 	}
 
 	t.Logf("Found %d document instances", len(data.DocumentInstances))

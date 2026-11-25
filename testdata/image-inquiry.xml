@@ -1,26 +1,84 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ops:world-patent-data xmlns:ops="http://ops.epo.org">
-  <ops:document-inquiry>
-    <ops:inquiry-result>
-      <ops:document-instance desc="Drawing" number-of-pages="8" doc-type="Drawing">
-        <ops:document-instance-link href="/rest-services/published-data/images/EP/1000000/B1/Drawing/fullimage"/>
-        <ops:document-format-options>
-          <ops:document-format>application/pdf</ops:document-format>
-          <ops:document-format>image/tiff</ops:document-format>
-        </ops:document-format-options>
-      </ops:document-instance>
-      <ops:document-instance desc="FullDocument" number-of-pages="15" doc-type="FullDocument">
-        <ops:document-instance-link href="/rest-services/published-data/images/EP/1000000/B1/FullDocument/fullimage"/>
-        <ops:document-format-options>
-          <ops:document-format>application/pdf</ops:document-format>
-        </ops:document-format-options>
-      </ops:document-instance>
-      <ops:document-instance desc="FirstPageClipping" number-of-pages="1" doc-type="FirstPageClipping">
-        <ops:document-instance-link href="/rest-services/published-data/images/EP/1000000/B1/FirstPageClipping/fullimage"/>
-        <ops:document-format-options>
-          <ops:document-format>image/tiff</ops:document-format>
-        </ops:document-format-options>
-      </ops:document-instance>
-    </ops:inquiry-result>
-  </ops:document-inquiry>
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="../../../../../style/pub-inquiry.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ops:document-inquiry>
+        <ops:publication-reference>
+            <document-id document-id-type="epodoc">
+                <doc-number>EP2400812</doc-number>
+            </document-id>
+        </ops:publication-reference>
+        <ops:inquiry-result>
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>2400812</doc-number>
+                    <kind>A1</kind>
+                </document-id>
+            </publication-reference>
+            <ops:document-instance system="ops.epo.org" number-of-pages="3" desc="Drawing" link="published-data/images/EP/2400812/A1/thumbnail">
+                <ops:document-format-options>
+                    <ops:document-format>application/pdf</ops:document-format>
+                    <ops:document-format>application/tiff</ops:document-format>
+                </ops:document-format-options>
+                <ops:document-section name="DRAWINGS" start-page="1"/>
+            </ops:document-instance>
+            <ops:document-instance system="ops.epo.org" number-of-pages="1" desc="FirstPageClipping" link="published-data/images/EP/2400812/A1/firstpage">
+                <ops:document-format-options>
+                    <ops:document-format>application/pdf</ops:document-format>
+                    <ops:document-format>application/tiff</ops:document-format>
+                    <ops:document-format>image/jpeg</ops:document-format>
+                    <ops:document-format>image/png</ops:document-format>
+                </ops:document-format-options>
+                <ops:document-section name="ABSTRACT" start-page="1"/>
+                <ops:document-section name="BIBLIOGRAPHY" start-page="1"/>
+            </ops:document-instance>
+            <ops:document-instance system="ops.epo.org" number-of-pages="18" desc="FullDocument" link="published-data/images/EP/2400812/A1/fullimage">
+                <ops:document-format-options>
+                    <ops:document-format>application/pdf</ops:document-format>
+                    <ops:document-format>application/tiff</ops:document-format>
+                </ops:document-format-options>
+                <ops:document-section name="ABSTRACT" start-page="1"/>
+                <ops:document-section name="BIBLIOGRAPHY" start-page="1"/>
+                <ops:document-section name="CLAIMS" start-page="9"/>
+                <ops:document-section name="DESCRIPTION" start-page="2"/>
+                <ops:document-section name="DRAWINGS" start-page="11"/>
+                <ops:document-section name="SEARCH_REPORT" start-page="14"/>
+            </ops:document-instance>
+        </ops:inquiry-result>
+        <ops:inquiry-result>
+            <publication-reference>
+                <document-id document-id-type="docdb">
+                    <country>EP</country>
+                    <doc-number>2400812</doc-number>
+                    <kind>B1</kind>
+                </document-id>
+            </publication-reference>
+            <ops:document-instance system="ops.epo.org" number-of-pages="3" desc="Drawing" link="published-data/images/EP/2400812/B1/thumbnail">
+                <ops:document-format-options>
+                    <ops:document-format>application/pdf</ops:document-format>
+                    <ops:document-format>application/tiff</ops:document-format>
+                </ops:document-format-options>
+                <ops:document-section name="DRAWINGS" start-page="1"/>
+            </ops:document-instance>
+            <ops:document-instance system="ops.epo.org" number-of-pages="17" desc="FullDocument" link="published-data/images/EP/2400812/B1/fullimage">
+                <ops:document-format-options>
+                    <ops:document-format>application/pdf</ops:document-format>
+                    <ops:document-format>application/tiff</ops:document-format>
+                </ops:document-format-options>
+                <ops:document-section name="BIBLIOGRAPHY" start-page="1"/>
+                <ops:document-section name="CLAIMS" start-page="8"/>
+                <ops:document-section name="DESCRIPTION" start-page="2"/>
+                <ops:document-section name="DRAWINGS" start-page="14"/>
+            </ops:document-instance>
+            <ops:document-instance system="ops.epo.org" number-of-pages="1" desc="FirstPageClipping" link="published-data/images/EP/2400812/A1/firstpage">
+                <ops:document-format-options>
+                    <ops:document-format>application/pdf</ops:document-format>
+                    <ops:document-format>application/tiff</ops:document-format>
+                    <ops:document-format>image/jpeg</ops:document-format>
+                    <ops:document-format>image/png</ops:document-format>
+                </ops:document-format-options>
+                <ops:document-section name="ABSTRACT" start-page="1"/>
+                <ops:document-section name="BIBLIOGRAPHY" start-page="1"/>
+            </ops:document-instance>
+        </ops:inquiry-result>
+    </ops:document-inquiry>
 </ops:world-patent-data>

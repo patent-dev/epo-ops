@@ -1,0 +1,6 @@
+Method: GetImageInquiryRaw
+
+Parameters:
+  refType: publication
+  format: epodoc
+  number: EP2400812

@@ -1,6 +1,6 @@
-Method: SearchWithConstituent
+Method: SearchWithConstituentRaw
 
 Parameters:
   constituent: biblio
-  query: pa=Siemens
+  query: ti=battery
   range: 1-3

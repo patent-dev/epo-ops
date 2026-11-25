@@ -6,6 +6,13 @@ import (
 	ops "github.com/patent-dev/epo-ops"
 )
 
+// kindlessPatent is the demo patent without a kind code, in epodoc format.
+const kindlessPatent = "EP2400812"
+
+// opposedPatent is a patent whose register record carries opposition, revocation and
+// appeal data.
+const opposedPatent = "EP2771468"
+
 // demoPublished demonstrates all Published Data Services endpoints (15 endpoints)
 func demoPublished(demo *DemoContext) {
 	fmt.Println("==============================================================")
@@ -22,6 +29,19 @@ func demoPublished(demo *DemoContext) {
 			"refType": ops.RefTypePublication,
 			"format":  ops.FormatDocDB,
 			"number":  demo.Patent,
+		}))
+
+	// 1b. GetBiblio for a number without a kind code: OPS answers with one
+	// exchange-document per publication kind (A1, B1, ...).
+	runEndpoint(demo, "get_biblio_kindless", "GetBiblioRaw (number without kind code)",
+		func() ([]byte, error) {
+			result, err := demo.Client.GetBiblioRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, kindlessPatent)
+			return []byte(result), err
+		},
+		FormatRequestDescription("GetBiblioRaw", map[string]string{
+			"refType": ops.RefTypePublication,
+			"format":  ops.FormatEPODOC,
+			"number":  kindlessPatent,
 		}))
 
 	// 2. GetBiblioMultiple (POST)
@@ -163,6 +183,19 @@ func demoPublished(demo *DemoContext) {
 			"refType": ops.RefTypePublication,
 			"format":  ops.FormatDocDB,
 			"numbers": "bulk test patents from CSV",
+		}))
+
+	// 12b. GetImageInquiryRaw for a number without a kind code: one inquiry-result
+	// per publication kind.
+	runEndpoint(demo, "get_image_inquiry_raw", "GetImageInquiryRaw (number without kind code)",
+		func() ([]byte, error) {
+			result, err := demo.Client.GetImageInquiryRaw(demo.Ctx, ops.RefTypePublication, ops.FormatEPODOC, kindlessPatent)
+			return []byte(result), err
+		},
+		FormatRequestDescription("GetImageInquiryRaw", map[string]string{
+			"refType": ops.RefTypePublication,
+			"format":  ops.FormatEPODOC,
+			"number":  kindlessPatent,
 		}))
 
 	// 13. GetImageInquiry (GET) - Check which images are available

@@ -67,15 +67,28 @@ func (c *Client) SearchRaw(ctx context.Context, query string, rangeStr string) (
 //   - query: CQL query string
 //   - rangeStr: Optional range in format "1-25"
 //
-// Returns parsed search results with the requested constituent data.
+// Returns parsed search results with the requested constituent data. The typed result keeps
+// each hit's identity and title only; use SearchWithConstituentRaw with
+// ParseExchangeDocuments (or ParseBiblioDocuments) to read the full constituent of each hit.
 func (c *Client) SearchWithConstituent(ctx context.Context, constituent, query string, rangeStr string) (*SearchResultData, error) {
-	// Validate CQL query
-	cqlQuery, err := cql.ParseCQL(query)
+	xmlData, err := c.SearchWithConstituentRaw(ctx, constituent, query, rangeStr)
 	if err != nil {
 		return nil, err
 	}
+	return ParseSearch(xmlData)
+}
+
+// SearchWithConstituentRaw performs a bibliographic search with a specific constituent and
+// returns the raw XML. Every hit is an exchange-document carrying the requested constituent,
+// so the response can be handed to ParseSearch, ParseExchangeDocuments or ParseBiblioDocuments.
+func (c *Client) SearchWithConstituentRaw(ctx context.Context, constituent, query string, rangeStr string) (string, error) {
+	// Validate CQL query
+	cqlQuery, err := cql.ParseCQL(query)
+	if err != nil {
+		return "", err
+	}
 	if err := cqlQuery.Validate(); err != nil {
-		return nil, err
+		return "", err
 	}
 
 	if rangeStr == "" {
@@ -87,13 +100,9 @@ func (c *Client) SearchWithConstituent(ctx context.Context, constituent, query s
 		Range: &rangeStr,
 	}
 
-	xmlData, err := c.makeRequest(ctx, func() (*http.Response, error) {
+	return c.makeRequest(ctx, func() (*http.Response, error) {
 		return c.generated.PublishedDataKeywordsSearchWithVariableConstituents(ctx,
 			generated.PublishedDataKeywordsSearchWithVariableConstituentsParamsConstituent(constituent),
 			params)
 	})
-	if err != nil {
-		return nil, err
-	}
-	return ParseSearch(xmlData)
 }
